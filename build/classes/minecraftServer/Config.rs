@@ -1,2 +1,0 @@
-minecraftServer.Config
-minecraftServer.Instalacion

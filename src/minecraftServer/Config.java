@@ -8,7 +8,7 @@ import util.Function;
 public class Config{
     
     private String ruta;
-    private Map<String,String> configurations= new HashMap<>();
+    private Map<String,String> configurations=new HashMap<>();
     
     // Configuración
     public Config(String ruta){
@@ -30,6 +30,20 @@ public class Config{
     
     public String getConfigData(String key){
         return this.configurations.get(key);
+    }
+    
+    public static String folder_servidores="servers";
+    public static String folder_servidor="server_";
+    public static String file_config="server.cfg";
+    public static String file_server="minecraft_server_";
+    
+    public static String getUrlVersion(String version){
+        for(Instalacion ins:Config.servers){
+            if(ins.version.equals(version)){
+                return ins.url;
+            }
+        }
+        return "";
     }
     
     public static Instalacion[] servers={
