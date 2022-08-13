@@ -2,9 +2,12 @@ package minecraftServer;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -23,7 +26,7 @@ public class Main extends javax.swing.JFrame{
     }
     
     public void getServidores(){
-        int ancho=200, alto=70;
+        int ancho=210, alto=80;
         int ancho_total=this.scroll_servidores.getWidth()-20;
         int total_columnas=(int)Math.floor(ancho_total/ancho)-1;
         int x=0, y=0, conta=0, filas=0;
@@ -37,17 +40,20 @@ public class Main extends javax.swing.JFrame{
                 panel.setBounds(x,y,ancho,alto);
                 panel.setOpaque(false);
                 panel.setToolTipText(config.getConfigData("name")+" ( "+config.getConfigData("version")+" )");
+                panel.setBorder(BorderFactory.createLineBorder(new Color(150,150,150)));
                 panel.addMouseListener(new MouseListener(){
                     @Override
                     public void mouseClicked(MouseEvent evt){}
                     @Override
                     public void mousePressed(MouseEvent evt){
-                        if(Seleccion.panel!=null){
-                            Seleccion.panel.setBackground(null);
-                            Seleccion.panel.setOpaque(false);
+                        Seleccion.panel_mundo=null;
+                        if(Seleccion.panel_servidor!=null){
+                            Seleccion.panel_servidor.setBackground(null);
+                            Seleccion.panel_servidor.setOpaque(false);
                         }
-                        Seleccion.panel=panel;
+                        Seleccion.panel_servidor=panel;
                         Seleccion.config=config;
+                        Seleccion.folder=folder;
                         panel.setBackground(Color.decode("#b2cff0"));
                         panel.setOpaque(true);
                         String version=config.getConfigData("version");
@@ -58,19 +64,20 @@ public class Main extends javax.swing.JFrame{
                         }else{
                             btn_descargar_version.setText("Descargar");
                         }
+                        getMundos();
                     }
                     @Override
                     public void mouseReleased(MouseEvent evt){}
                     @Override
                     public void mouseEntered(MouseEvent evt){
-                        if(Seleccion.panel!=panel){
+                        if(Seleccion.panel_servidor!=panel){
                             panel.setBackground(new Color(200,200,200));
                             panel.setOpaque(true);
                         }
                     }
                     @Override
                     public void mouseExited(MouseEvent evt){
-                        if(Seleccion.panel!=panel){
+                        if(Seleccion.panel_servidor!=panel){
                             panel.setBackground(null);
                             panel.setOpaque(false);
                         }
@@ -88,6 +95,7 @@ public class Main extends javax.swing.JFrame{
                     conta=0;
                 }
                 
+                // Componentes
                 JLabel version=new JLabel("Versión: "+config.getConfigData("version"));
                 version.setBounds(0,0,ancho,alto/3);
                 version.setFont(new Font("arial",Font.PLAIN,12));
@@ -104,15 +112,94 @@ public class Main extends javax.swing.JFrame{
                 Design.margen(panel,10);
                 
                 this.panel_servidores.add(panel);
-                this.panel_servidores.updateUI();
             }
         }
+        this.panel_servidores.updateUI();
         this.panel_servidores.setPreferredSize(Function.createDimencion(ancho_total,filas*alto));
         //this.scroll_panel_peliculas.setVerticalScrollBar(scroll_panel_peliculas.getVerticalScrollBar());
     }
     
     public void getMundos(){
-        
+        int ancho=170, alto=170;
+        int ancho_total=this.scroll_mundos.getWidth()-20;
+        int total_columnas=(int)Math.floor(ancho_total/ancho)-1;
+        int x=0, y=0, conta=0, filas=0;
+        this.panel_mundos.removeAll();
+        String dir=Config.folder_servidores+"/"+Seleccion.folder+"/"+Config.folder_servidor+Seleccion.config.getConfigData("version")+"/"+Config.folder_mundos;
+        if(!Storage.exists(dir)){
+            Storage.createFolder(dir);
+        }
+        for(String folder:Storage.listDirectory(dir,true,false,null)){
+                JPanel panel=new JPanel();
+                panel.setLayout(null);
+                panel.setBounds(x,y,ancho,alto);
+                panel.setOpaque(false);
+                panel.setToolTipText(folder);
+                panel.setBorder(BorderFactory.createLineBorder(new Color(150,150,150)));
+                panel.addMouseListener(new MouseListener(){
+                    @Override
+                    public void mouseClicked(MouseEvent evt){}
+                    @Override
+                    public void mousePressed(MouseEvent evt){
+                        if(Seleccion.panel_mundo!=null){
+                            Seleccion.panel_mundo.setBackground(null);
+                            Seleccion.panel_mundo.setOpaque(false);
+                        }
+                        Seleccion.panel_mundo=panel;
+                        panel.setBackground(Color.decode("#b2cff0"));
+                        panel.setOpaque(true);
+                    }
+                    @Override
+                    public void mouseReleased(MouseEvent evt){}
+                    @Override
+                    public void mouseEntered(MouseEvent evt){
+                        if(Seleccion.panel_mundo!=panel){
+                            panel.setBackground(new Color(200,200,200));
+                            panel.setOpaque(true);
+                        }
+                    }
+                    @Override
+                    public void mouseExited(MouseEvent evt){
+                        if(Seleccion.panel_mundo!=panel){
+                            panel.setBackground(null);
+                            panel.setOpaque(false);
+                        }
+                    }
+                });
+                if(x==0){
+                    filas++;
+                }
+                if(conta<total_columnas){
+                    x+=ancho;
+                    conta++;
+                }else{
+                    y+=alto;
+                    x=0;
+                    conta=0;
+                }
+                
+                // Componentes
+                JLabel icon=new JLabel();
+                icon.setBounds(0,0,ancho,(alto/7)*5);
+                icon.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+                icon.setIcon(new ImageIcon(
+                        new ImageIcon(dir+"/"+folder+"/icon.png").getImage().getScaledInstance(icon.getWidth()-30,icon.getHeight()-10,Image.SCALE_DEFAULT)
+                ));
+                panel.add(icon);
+                
+                JLabel nombre=new JLabel(folder);
+                nombre.setBounds(0,(alto/7)*5,ancho,(alto/7));
+                nombre.setFont(new Font("arial",Font.PLAIN,16));
+                nombre.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+                panel.add(nombre);
+                
+                // Diseño
+                Design.margen(panel,10);
+                
+                this.panel_mundos.add(panel);
+        }
+        this.panel_mundos.updateUI();
+        this.panel_mundos.setPreferredSize(Function.createDimencion(ancho_total,filas*alto));
     }
     
     @SuppressWarnings("unchecked")
@@ -144,7 +231,7 @@ public class Main extends javax.swing.JFrame{
         );
         panel_servidoresLayout.setVerticalGroup(
             panel_servidoresLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 354, Short.MAX_VALUE)
+            .addGap(0, 719, Short.MAX_VALUE)
         );
 
         scroll_servidores.setViewportView(panel_servidores);
@@ -160,11 +247,11 @@ public class Main extends javax.swing.JFrame{
         panel_mundos.setLayout(panel_mundosLayout);
         panel_mundosLayout.setHorizontalGroup(
             panel_mundosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 417, Short.MAX_VALUE)
+            .addGap(0, 441, Short.MAX_VALUE)
         );
         panel_mundosLayout.setVerticalGroup(
             panel_mundosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 337, Short.MAX_VALUE)
+            .addGap(0, 704, Short.MAX_VALUE)
         );
 
         scroll_mundos.setViewportView(panel_mundos);
@@ -209,10 +296,10 @@ public class Main extends javax.swing.JFrame{
                         .addComponent(btn_crear)
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(scroll_servidores, javax.swing.GroupLayout.PREFERRED_SIZE, 515, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(scroll_servidores, javax.swing.GroupLayout.DEFAULT_SIZE, 476, Short.MAX_VALUE)
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(scroll_mundos)
+                            .addComponent(scroll_mundos, javax.swing.GroupLayout.DEFAULT_SIZE, 382, Short.MAX_VALUE)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(btn_descargar_version)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -237,8 +324,8 @@ public class Main extends javax.swing.JFrame{
                             .addComponent(btn_crear_mundo)
                             .addComponent(btn_propiedades))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(scroll_mundos))
-                    .addComponent(scroll_servidores))
+                        .addComponent(scroll_mundos, javax.swing.GroupLayout.DEFAULT_SIZE, 367, Short.MAX_VALUE))
+                    .addComponent(scroll_servidores, javax.swing.GroupLayout.DEFAULT_SIZE, 397, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -253,7 +340,7 @@ public class Main extends javax.swing.JFrame{
             }
         }
         String version=Seleccion.config.getConfigData("version");
-        String nombre=Seleccion.config.getConfigData("name");
+        String nombre=Seleccion.folder;
         String folder=Config.folder_servidores+"/"+nombre+"/"+Config.folder_servidor+version;
         String name=Config.file_server+version+".jar";
         new Download(this,true,folder,name,Config.getUrlVersion(version),"Conectando con los servidores de mojang...").setVisible(true);
@@ -306,6 +393,8 @@ public class Main extends javax.swing.JFrame{
 }
 
 class Seleccion{
-    public static JPanel panel=null;
+    public static JPanel panel_servidor=null;
+    public static JPanel panel_mundo=null;
+    public static String folder="";
     public static Config config=null;
 }

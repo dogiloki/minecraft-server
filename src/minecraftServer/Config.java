@@ -36,6 +36,7 @@ public class Config{
     public static String folder_servidor="server_";
     public static String file_config="server.cfg";
     public static String file_server="minecraft_server_";
+    public static String folder_mundos="saves";
     
     public static String getUrlVersion(String version){
         for(Instalacion ins:Config.servers){
