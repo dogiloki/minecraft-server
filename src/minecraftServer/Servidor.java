@@ -70,7 +70,7 @@ public class Servidor extends javax.swing.JDialog {
         );
         content_versionLayout.setVerticalGroup(
             content_versionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 218, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 267, Short.MAX_VALUE)
         );
 
         content.addTab("Versión", content_version);
@@ -83,7 +83,7 @@ public class Servidor extends javax.swing.JDialog {
         );
         content_configLayout.setVerticalGroup(
             content_configLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 218, Short.MAX_VALUE)
+            .addGap(0, 267, Short.MAX_VALUE)
         );
 
         content.addTab("Configuración", content_config);
@@ -115,7 +115,7 @@ public class Servidor extends javax.swing.JDialog {
                     .addComponent(jLabel1)
                     .addComponent(caja_nombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(content)
+                .addComponent(content, javax.swing.GroupLayout.DEFAULT_SIZE, 294, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btn_cancelar)
@@ -147,7 +147,7 @@ public class Servidor extends javax.swing.JDialog {
             "version="+version,
             "JavaPath=java"
         };
-        Storage.createFolder(folder+"/server_"+version);
+        Storage.createFolder(folder+"/"+Config.folder_servidor);
         Storage.writeFile(lineas,folder+"/"+Config.file_config);
         dispose();
     }//GEN-LAST:event_btn_okActionPerformed

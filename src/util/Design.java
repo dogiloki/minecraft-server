@@ -3,6 +3,11 @@ package util;
 import java.awt.Component;
 import java.awt.Rectangle;
 
+/**
+ *
+ * @author dogi_
+ */
+
 public class Design{
     
     public static void margen(Component content, float size){

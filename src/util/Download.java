@@ -6,11 +6,14 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
-import javax.swing.JOptionPane;
+
+/**
+ *
+ * @author dogi_
+ */
 
 public class Download extends javax.swing.JDialog implements Runnable{
 
-    private Thread t=new Thread(this);
     private String folder;
     private String name;
     private String url;
@@ -31,7 +34,7 @@ public class Download extends javax.swing.JDialog implements Runnable{
         this.name=name;
         this.url=url;
         this.progreso_texto.setText(msg);
-        this.t.start();
+        new Thread(this).start();
     }
     
     @Override

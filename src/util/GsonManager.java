@@ -1,0 +1,84 @@
+package util;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import java.util.List;
+
+public class GsonManager{
+
+    public String json;
+    private JsonParser parser;
+    private JsonArray array;
+    private JsonElement element;
+    private JsonObject object;
+    private int indice;
+    private boolean is_array;
+
+    public GsonManager(String json){
+        this.indice=0;
+        this.json=json.trim();
+        this.parser=new JsonParser();
+        this.json=(this.json==null || this.json.equals(""))?"[]":this.json;
+        this.is_array=this.json.substring(0,1).equals("[") && this.json.substring(this.json.length()-1,this.json.length()).equals("]");
+        if(this.is_array){
+            this.array=this.parser.parse(this.json).getAsJsonArray();
+            this.element=this.array.get(this.indice);
+            this.object=this.element.getAsJsonObject();
+        }else{
+            this.object=this.parser.parse(this.json).getAsJsonObject();
+        }
+    }
+
+    public JsonArray getArray(){
+        return this.is_array?this.array:new JsonArray();
+    }
+
+    public JsonObject getObject(){
+        return this.is_array?this.object:new JsonObject();
+    }
+
+    public JsonObject selectObject(int indice){
+        if(this.is_array){
+            this.indice=indice;
+            this.element=this.array.get(this.indice);
+            this.object=this.element.getAsJsonObject();
+            return this.object;
+        }else{
+            return new JsonObject();
+        }
+    }
+
+    public boolean nextObject(){
+        if(this.array.size()<=0){
+            return false;
+        }
+        if(this.is_array){
+        	if(this.indice<this.array.size()){
+            	this.element=this.array.get(this.indice);
+            	this.object=this.element.getAsJsonObject();
+            	this.indice++;
+                return this.indice<=this.array.size() || this.indice==1;
+        	}else{
+                return false;
+            }
+        }else{
+            return false;
+        }
+    }
+
+    public String getValue(String key){
+        return this.object.get(key).getAsString();
+    }
+
+    // Crear texto json a partir de un objeto
+    public static String createJson(List json){
+        return new Gson().toJson(json);
+    }
+    public static String createJson(Object json){
+        return new Gson().toJson(json);
+    }
+
+}

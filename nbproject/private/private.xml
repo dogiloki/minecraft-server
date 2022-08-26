@@ -5,8 +5,8 @@
         <group>
             <file>file:/E:/Github/Netbeans/minecraftServer/src/minecraftServer/Main.java</file>
             <file>file:/E:/Github/Netbeans/minecraftServer/src/minecraftServer/Config.java</file>
-            <file>file:/E:/Github/Netbeans/minecraftServer/src/minecraftServer/Servidor.java</file>
-            <file>file:/E:/Github/Netbeans/minecraftServer/src/util/Design.java</file>
+            <file>file:/E:/Github/Netbeans/minecraftServer/src/util/Storage.java</file>
+            <file>file:/E:/Github/Netbeans/minecraftServer/src/test/generartedUrls.java</file>
         </group>
     </open-files>
 </project-private>

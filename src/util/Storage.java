@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Map;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -39,7 +40,7 @@ public class Storage{
         }
     }
     
-    // Escribir / crear contenido en un archivo
+    // Crear contenido en un archivo
     public static boolean writeFile(String[] lineas, String ruta){
         try{
             File directorio=new File(ruta);
@@ -47,6 +48,44 @@ public class Storage{
             for(int a=0; a<lineas.length; a++){
                 bw.write((a<lineas.length-1)?(lineas[a]+"\n"):(lineas[a]));
             }
+            bw.close();
+            return true;
+        }catch(IOException ex){
+            JOptionPane.showMessageDialog(null,ex,"Error",JOptionPane.ERROR_MESSAGE);
+        }
+        return false;
+    }
+    public static boolean writeFile(Map<Integer,String> lineas, String ruta){
+        try{
+            String[] texto=Storage.readFile(ruta);
+            File directorio=new File(ruta);
+            BufferedWriter bw=new BufferedWriter(new FileWriter(directorio));
+            String linea;
+            //int conta=0;
+            for(int a=0; a<texto.length; a++){
+                linea=lineas.get(a);
+                if(linea==null){
+                    linea=texto[a];
+                }else{
+                    //conta++;
+                }
+                if(linea!=null){
+                    bw.write((a<texto.length-1)?(linea+"\n"):(linea));
+                }
+                //a=conta>=lineas.size()?texto.length:a;
+            }
+            bw.close();
+            return true;
+        }catch(IOException ex){
+            JOptionPane.showMessageDialog(null,ex,"Error",JOptionPane.ERROR_MESSAGE);
+        }
+        return false;
+    }
+    public static boolean writeFile(String linea, String ruta){
+        try{
+            File directorio=new File(ruta);
+            BufferedWriter bw=new BufferedWriter(new FileWriter(directorio,true));
+            bw.write(linea);
             bw.close();
             return true;
         }catch(IOException ex){
@@ -65,6 +104,7 @@ public class Storage{
             while((linea=bf.readLine())!=null){
                 lineas.add(linea);
             }
+            bf.close();
             return lineas.toArray(new String[lineas.size()]);
         }catch(IOException ex){
             JOptionPane.showMessageDialog(null,ex,"Error",JOptionPane.ERROR_MESSAGE);
@@ -86,7 +126,6 @@ public class Storage{
             JOptionPane.showMessageDialog(null,ex,"Error",JOptionPane.ERROR_MESSAGE);
             return null;
         }
-        //return lineas.toArray(new String[lineas.size()]);
     }
     
     // Obtener tamaño de archvio

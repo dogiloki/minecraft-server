@@ -5,8 +5,8 @@ import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.text.MessageFormat;
 import javax.swing.BorderFactory;
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -15,19 +15,30 @@ import util.*;
 
 public class Main extends javax.swing.JFrame{
     
+    private Watcher watcher;
+    
     public Main(){
         initComponents();
         this.setLocationRelativeTo(null);
         if(!Storage.exists(Config.folder_servidores)){
             Storage.createFolder(Config.folder_servidores);
         }
+        try{
+            this.watcher=new Watcher(Config.folder_servidores,this,Function.createdArray(Main.class.getMethod("getServidores"),Main.class.getMethod("getMundos")));
+        }catch(NoSuchMethodException ex){
+            System.out.println(ex);
+        }
         this.scroll_servidores.getVerticalScrollBar().setUnitIncrement(16);
         this.getServidores();
     }
     
     public void getServidores(){
+        this.panel_mundos.removeAll();
+        this.panel_mundos.updateUI();
+        Seleccion.panel_servidor=null;
+        Seleccion.panel_mundo=null;
         int ancho=210, alto=80;
-        int ancho_total=this.scroll_servidores.getWidth()-20;
+        int ancho_total=this.scroll_servidores.getWidth()-25;
         int total_columnas=(int)Math.floor(ancho_total/ancho)-1;
         int x=0, y=0, conta=0, filas=0;
         this.panel_servidores.removeAll();
@@ -46,6 +57,10 @@ public class Main extends javax.swing.JFrame{
                     public void mouseClicked(MouseEvent evt){}
                     @Override
                     public void mousePressed(MouseEvent evt){
+                        btn_descargar_version.setEnabled(true);
+                        btn_crear_mundo.setEnabled(true);
+                        btn_editar_mundo.setEnabled(false);
+                        btn_iniciar.setEnabled(false);
                         Seleccion.panel_mundo=null;
                         if(Seleccion.panel_servidor!=null){
                             Seleccion.panel_servidor.setBackground(null);
@@ -57,10 +72,9 @@ public class Main extends javax.swing.JFrame{
                         panel.setBackground(Color.decode("#b2cff0"));
                         panel.setOpaque(true);
                         String version=config.getConfigData("version");
-                        String name_file=Config.folder_servidores+"/"+folder+"/"+Config.folder_servidor+version+"/"+Config.file_server+version+".jar";
-                        btn_descargar_version.setEnabled(true);
+                        String name_file=Config.folder_servidores+"/"+folder+"/"+Config.folder_servidor+"/"+MessageFormat.format(Config.file_server,version);
                         if(Storage.exists(name_file)){
-                            btn_descargar_version.setText("Actualizar");
+                            btn_descargar_version.setText("Re-Descargar");
                         }else{
                             btn_descargar_version.setText("Descargar");
                         }
@@ -120,12 +134,16 @@ public class Main extends javax.swing.JFrame{
     }
     
     public void getMundos(){
+        this.panel_mundos.removeAll();
+        this.panel_mundos.updateUI();
+        if(Seleccion.panel_servidor==null){
+            return;
+        }
         int ancho=170, alto=170;
-        int ancho_total=this.scroll_mundos.getWidth()-20;
+        int ancho_total=this.scroll_mundos.getWidth()-25;
         int total_columnas=(int)Math.floor(ancho_total/ancho)-1;
         int x=0, y=0, conta=0, filas=0;
-        this.panel_mundos.removeAll();
-        String dir=Config.folder_servidores+"/"+Seleccion.folder+"/"+Config.folder_servidor+Seleccion.config.getConfigData("version")+"/"+Config.folder_mundos;
+        String dir=Config.folder_servidores+"/"+Seleccion.folder+"/"+Config.folder_servidor+"/"+Config.folder_mundos;
         if(!Storage.exists(dir)){
             Storage.createFolder(dir);
         }
@@ -141,6 +159,8 @@ public class Main extends javax.swing.JFrame{
                     public void mouseClicked(MouseEvent evt){}
                     @Override
                     public void mousePressed(MouseEvent evt){
+                        btn_editar_mundo.setEnabled(true);
+                        btn_iniciar.setEnabled(true);
                         if(Seleccion.panel_mundo!=null){
                             Seleccion.panel_mundo.setBackground(null);
                             Seleccion.panel_mundo.setOpaque(false);
@@ -212,9 +232,10 @@ public class Main extends javax.swing.JFrame{
         scroll_mundos = new javax.swing.JScrollPane();
         panel_mundos = new javax.swing.JPanel();
         btn_descargar_version = new javax.swing.JButton();
-        btn_inciar = new javax.swing.JButton();
+        btn_iniciar = new javax.swing.JButton();
         btn_crear_mundo = new javax.swing.JButton();
-        btn_propiedades = new javax.swing.JButton();
+        btn_editar_mundo = new javax.swing.JButton();
+        btn_crear1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         addComponentListener(new java.awt.event.ComponentAdapter() {
@@ -223,15 +244,17 @@ public class Main extends javax.swing.JFrame{
             }
         });
 
+        panel_servidores.setPreferredSize(new java.awt.Dimension(0, 0));
+
         javax.swing.GroupLayout panel_servidoresLayout = new javax.swing.GroupLayout(panel_servidores);
         panel_servidores.setLayout(panel_servidoresLayout);
         panel_servidoresLayout.setHorizontalGroup(
             panel_servidoresLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 935, Short.MAX_VALUE)
+            .addGap(0, 473, Short.MAX_VALUE)
         );
         panel_servidoresLayout.setVerticalGroup(
             panel_servidoresLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 719, Short.MAX_VALUE)
+            .addGap(0, 394, Short.MAX_VALUE)
         );
 
         scroll_servidores.setViewportView(panel_servidores);
@@ -243,15 +266,17 @@ public class Main extends javax.swing.JFrame{
             }
         });
 
+        panel_mundos.setPreferredSize(new java.awt.Dimension(0, 0));
+
         javax.swing.GroupLayout panel_mundosLayout = new javax.swing.GroupLayout(panel_mundos);
         panel_mundos.setLayout(panel_mundosLayout);
         panel_mundosLayout.setHorizontalGroup(
             panel_mundosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 441, Short.MAX_VALUE)
+            .addGap(0, 379, Short.MAX_VALUE)
         );
         panel_mundosLayout.setVerticalGroup(
             panel_mundosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 704, Short.MAX_VALUE)
+            .addGap(0, 364, Short.MAX_VALUE)
         );
 
         scroll_mundos.setViewportView(panel_mundos);
@@ -264,24 +289,34 @@ public class Main extends javax.swing.JFrame{
             }
         });
 
-        btn_inciar.setText("Iniciar");
-        btn_inciar.addActionListener(new java.awt.event.ActionListener() {
+        btn_iniciar.setText("Iniciar");
+        btn_iniciar.setEnabled(false);
+        btn_iniciar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_inciarActionPerformed(evt);
+                btn_iniciarActionPerformed(evt);
             }
         });
 
         btn_crear_mundo.setText("Crear mundo");
+        btn_crear_mundo.setEnabled(false);
         btn_crear_mundo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_crear_mundoActionPerformed(evt);
             }
         });
 
-        btn_propiedades.setText("Propiedades");
-        btn_propiedades.addActionListener(new java.awt.event.ActionListener() {
+        btn_editar_mundo.setText("Editar mundo");
+        btn_editar_mundo.setEnabled(false);
+        btn_editar_mundo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_propiedadesActionPerformed(evt);
+                btn_editar_mundoActionPerformed(evt);
+            }
+        });
+
+        btn_crear1.setText("Editar servidor");
+        btn_crear1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_crear1ActionPerformed(evt);
             }
         });
 
@@ -294,35 +329,37 @@ public class Main extends javax.swing.JFrame{
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(btn_crear)
-                        .addGap(0, 0, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btn_crear1))
+                    .addComponent(scroll_servidores, javax.swing.GroupLayout.DEFAULT_SIZE, 476, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(scroll_mundos, javax.swing.GroupLayout.DEFAULT_SIZE, 382, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(scroll_servidores, javax.swing.GroupLayout.DEFAULT_SIZE, 476, Short.MAX_VALUE)
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(scroll_mundos, javax.swing.GroupLayout.DEFAULT_SIZE, 382, Short.MAX_VALUE)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(btn_descargar_version)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(btn_crear_mundo)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btn_propiedades)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btn_inciar)))))
+                        .addComponent(btn_descargar_version)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btn_crear_mundo)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btn_editar_mundo)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btn_iniciar)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(btn_crear)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btn_crear)
+                    .addComponent(btn_crear1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(btn_descargar_version)
-                            .addComponent(btn_inciar)
+                            .addComponent(btn_iniciar)
                             .addComponent(btn_crear_mundo)
-                            .addComponent(btn_propiedades))
+                            .addComponent(btn_editar_mundo))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(scroll_mundos, javax.swing.GroupLayout.DEFAULT_SIZE, 367, Short.MAX_VALUE))
                     .addComponent(scroll_servidores, javax.swing.GroupLayout.DEFAULT_SIZE, 397, Short.MAX_VALUE))
@@ -333,19 +370,19 @@ public class Main extends javax.swing.JFrame{
     }// </editor-fold>//GEN-END:initComponents
 
     private void btn_descargar_versionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_descargar_versionActionPerformed
-        if(this.btn_descargar_version.getText().equals("Actualizar")){
-            int op=JOptionPane.showConfirmDialog(null,"Esto volvera a descargar la versión del servidor\nSu configuración y mundos se conservarán","Actualizar servidor",JOptionPane.WARNING_MESSAGE);
+        if(!this.btn_descargar_version.getText().equals("Descargar")){
+            int op=JOptionPane.showConfirmDialog(null,"Esto volvera a descargar la versión del servidor\nSu configuración y mundos se conservarán","Volver a descargar servidor",JOptionPane.WARNING_MESSAGE);
             if(op!=0){
                 return;
             }
         }
         String version=Seleccion.config.getConfigData("version");
         String nombre=Seleccion.folder;
-        String folder=Config.folder_servidores+"/"+nombre+"/"+Config.folder_servidor+version;
-        String name=Config.file_server+version+".jar";
+        String folder=Config.folder_servidores+"/"+nombre+"/"+Config.folder_servidor;
+        String name=MessageFormat.format(Config.file_server,version);
         new Download(this,true,folder,name,Config.getUrlVersion(version),"Conectando con los servidores de mojang...").setVisible(true);
         if(Storage.exists(folder+"/"+name)){
-            this.btn_descargar_version.setText("Actualizar");
+            this.btn_descargar_version.setText("Re-Descargar");
         }else{
             this.btn_descargar_version.setText("Descargar");
         }
@@ -353,24 +390,27 @@ public class Main extends javax.swing.JFrame{
 
     private void btn_crearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_crearActionPerformed
         new Servidor(this,true).setVisible(true);
-        this.getServidores();
     }//GEN-LAST:event_btn_crearActionPerformed
 
     private void formComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentResized
         //this.getServidores();
     }//GEN-LAST:event_formComponentResized
 
-    private void btn_inciarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_inciarActionPerformed
+    private void btn_iniciarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_iniciarActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_btn_inciarActionPerformed
+    }//GEN-LAST:event_btn_iniciarActionPerformed
 
     private void btn_crear_mundoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_crear_mundoActionPerformed
-        // TODO add your handling code here:
+        this.watcher.terminar=true;
     }//GEN-LAST:event_btn_crear_mundoActionPerformed
 
-    private void btn_propiedadesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_propiedadesActionPerformed
+    private void btn_editar_mundoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_editar_mundoActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_btn_propiedadesActionPerformed
+    }//GEN-LAST:event_btn_editar_mundoActionPerformed
+
+    private void btn_crear1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_crear1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btn_crear1ActionPerformed
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
@@ -381,10 +421,11 @@ public class Main extends javax.swing.JFrame{
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btn_crear;
+    private javax.swing.JButton btn_crear1;
     private javax.swing.JButton btn_crear_mundo;
     private javax.swing.JButton btn_descargar_version;
-    private javax.swing.JButton btn_inciar;
-    private javax.swing.JButton btn_propiedades;
+    private javax.swing.JButton btn_editar_mundo;
+    private javax.swing.JButton btn_iniciar;
     private javax.swing.JPanel panel_mundos;
     private javax.swing.JPanel panel_servidores;
     private javax.swing.JScrollPane scroll_mundos;

@@ -1,7 +1,14 @@
 package util;
 
 import java.awt.Dimension;
+import java.lang.reflect.Method;
+import java.net.InetAddress;
 import java.text.DecimalFormat;
+
+/**
+ *
+ * @author dogi_
+ */
 
 public class Function{
     
@@ -26,6 +33,10 @@ public class Function{
         return "";
     }
     
+    // Crea un array Method
+    public static Method[] createdArray(Method... args){
+        return args;
+    }
     // Crea un array de tipo texto o caracter, según la cantidad de parametros
     public static String[] createdArray(String... args){
         return args;
@@ -43,19 +54,47 @@ public class Function{
         return args;
     }
     
-    // Búscar el primer caracter en texto
-    public static int searchCaracter(String texto, String search){
-        for(int a=0; a<texto.length(); a++){
-            if(texto.substring(a,a+1).equals(search)){
-                return a;
-            }
-        }
-        return -1;
-    }
-    
     // Convertir dos parámetro numéricos en dimenciones
     public static Dimension createDimencion(float ancho, float alto){
         return new Dimension((int)ancho,(int)alto);
+    }
+    
+    // Obtener ip privada
+    public static String getIp(){
+        try{
+            InetAddress address=InetAddress.getLocalHost();
+            return address.getHostAddress();
+        }catch(Exception ex){
+            System.out.println(ex);
+            return "";
+        }
+    }
+    public static String getIp(String ip){
+        try{
+            InetAddress address=InetAddress.getByName(ip);
+            return address.getHostAddress();
+        }catch(Exception ex){
+            System.out.println(ex);
+            return "";
+        }
+    }
+    public static String getHost(){
+        try{
+            InetAddress address=InetAddress.getLocalHost();
+            return address.getHostName();
+        }catch(Exception ex){
+            System.out.println(ex);
+            return "";
+        }
+    }
+    public static String getHost(String host){
+        try{
+            InetAddress address=InetAddress.getByName(host);
+            return address.getHostName();
+        }catch(Exception ex){
+            System.out.println(ex);
+            return "";
+        }
     }
     
 }

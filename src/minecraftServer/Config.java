@@ -3,28 +3,36 @@ package minecraftServer;
 import java.util.HashMap;
 import java.util.Map;
 import util.Storage;
-import util.Function;
 
 public class Config{
     
-    private String ruta;
+    private String dir;
     private Map<String,String> configurations=new HashMap<>();
+    private Map<String,Integer> position=new HashMap<>();
     
     // Configuración
-    public Config(String ruta){
-        this.ruta=ruta;
-        for(String linea:Storage.readFile(ruta)){
+    public Config(String dir){
+        this.dir=dir;
+        int contador=0;
+        for(String linea:Storage.readFile(this.dir)){
             int posi_key_inicio=0;
-            int posi_key_fin=Function.searchCaracter(linea,"=");
-            int posi_value_inicio=posi_key_fin+1;
-            int posi_value_fin=linea.length();
-            String key=linea.substring(posi_key_inicio,posi_key_fin);
-            String value=linea.substring(posi_value_inicio,posi_value_fin);
-            this.setConfigData(key,value);
+            int posi_key_fin=linea.indexOf("=");
+            if(posi_key_fin>=0){
+                int posi_value_inicio=posi_key_fin+1;
+                int posi_value_fin=linea.length();
+                String key=linea.substring(posi_key_inicio,posi_key_fin);
+                String value=linea.substring(posi_value_inicio,posi_value_fin);
+                this.configurations.put(key,value);
+                this.position.put(key,contador);
+            }
+            contador++;
         }
     }
     
     public void setConfigData(String key, String value){
+        int linea_num=this.position.get(key);
+        String linea_texto=key+"="+value;
+        Storage.writeFile(new HashMap<Integer,String>(){{put(linea_num,linea_texto);}},this.dir);
         this.configurations.put(key,value);
     }
     
@@ -33,9 +41,9 @@ public class Config{
     }
     
     public static String folder_servidores="servers";
-    public static String folder_servidor="server_";
+    public static String folder_servidor="server";
     public static String file_config="server.cfg";
-    public static String file_server="minecraft_server_";
+    public static String file_server="minecraft-{0}-server.jar";
     public static String folder_mundos="saves";
     
     public static String getUrlVersion(String version){
@@ -101,10 +109,11 @@ public class Config{
 }
 
 class Instalacion{
+    public String version;
+    public String url;
+    public String adler32; // Comprobar integridad del archivo
     public Instalacion(String version, String url){
         this.version=version;
         this.url=url;
     }
-    public String version;
-    public String url;
 }
