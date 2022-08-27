@@ -40,7 +40,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="scroll_mundos" pref="382" max="32767" attributes="0"/>
                   <Group type="102" attributes="0">
-                      <Component id="btn_descargar_version" min="-2" max="-2" attributes="0"/>
+                      <Component id="btn_iniciar_server" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="32767" attributes="0"/>
                       <Component id="btn_crear_mundo" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
@@ -65,7 +65,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="btn_descargar_version" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="btn_iniciar_server" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="btn_iniciar" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="btn_crear_mundo" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="btn_editar_mundo" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -141,13 +141,13 @@
         </Container>
       </SubComponents>
     </Container>
-    <Component class="javax.swing.JButton" name="btn_descargar_version">
+    <Component class="javax.swing.JButton" name="btn_iniciar_server">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Descargar"/>
+        <Property name="text" type="java.lang.String" value="Iniciar"/>
         <Property name="enabled" type="boolean" value="false"/>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_descargar_versionActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_iniciar_serverActionPerformed"/>
       </Events>
     </Component>
     <Component class="javax.swing.JButton" name="btn_iniciar">

@@ -77,7 +77,7 @@ public class Main extends javax.swing.JFrame{
                     public void mouseClicked(MouseEvent evt){}
                     @Override
                     public void mousePressed(MouseEvent evt){
-                        btn_descargar_version.setEnabled(true);
+                        btn_iniciar_server.setEnabled(true);
                         btn_crear_mundo.setEnabled(true);
                         btn_editar_mundo.setEnabled(false);
                         btn_iniciar.setEnabled(false);
@@ -91,13 +91,6 @@ public class Main extends javax.swing.JFrame{
                         Seleccion.folder=folder;
                         panel.setBackground(Color.decode("#b2cff0"));
                         panel.setOpaque(true);
-                        String version=config.getConfigData("version");
-                        String name_file=config_global.getDic("folder_instances")+"/"+folder+"/"+config_global.getDic("folder_server")+"/"+MessageFormat.format(config_global.getDic("file_server"),version);
-                        if(Storage.exists(name_file)){
-                            btn_descargar_version.setText("Re-Descargar");
-                        }else{
-                            btn_descargar_version.setText("Descargar");
-                        }
                         getMundos();
                     }
                     @Override
@@ -251,7 +244,7 @@ public class Main extends javax.swing.JFrame{
         btn_crear = new javax.swing.JButton();
         scroll_mundos = new javax.swing.JScrollPane();
         panel_mundos = new javax.swing.JPanel();
-        btn_descargar_version = new javax.swing.JButton();
+        btn_iniciar_server = new javax.swing.JButton();
         btn_iniciar = new javax.swing.JButton();
         btn_crear_mundo = new javax.swing.JButton();
         btn_editar_mundo = new javax.swing.JButton();
@@ -301,11 +294,11 @@ public class Main extends javax.swing.JFrame{
 
         scroll_mundos.setViewportView(panel_mundos);
 
-        btn_descargar_version.setText("Descargar");
-        btn_descargar_version.setEnabled(false);
-        btn_descargar_version.addActionListener(new java.awt.event.ActionListener() {
+        btn_iniciar_server.setText("Iniciar");
+        btn_iniciar_server.setEnabled(false);
+        btn_iniciar_server.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_descargar_versionActionPerformed(evt);
+                btn_iniciar_serverActionPerformed(evt);
             }
         });
 
@@ -356,7 +349,7 @@ public class Main extends javax.swing.JFrame{
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(scroll_mundos, javax.swing.GroupLayout.DEFAULT_SIZE, 382, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(btn_descargar_version)
+                        .addComponent(btn_iniciar_server)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btn_crear_mundo)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -376,7 +369,7 @@ public class Main extends javax.swing.JFrame{
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(btn_descargar_version)
+                            .addComponent(btn_iniciar_server)
                             .addComponent(btn_iniciar)
                             .addComponent(btn_crear_mundo)
                             .addComponent(btn_editar_mundo))
@@ -389,26 +382,20 @@ public class Main extends javax.swing.JFrame{
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btn_descargar_versionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_descargar_versionActionPerformed
-        if(!this.btn_descargar_version.getText().equals("Descargar")){
-            int op=JOptionPane.showConfirmDialog(null,"Esto volvera a descargar la versión del servidor\nSu configuración y mundos se conservarán","Volver a descargar servidor",JOptionPane.WARNING_MESSAGE);
-            if(op!=0){
-                return;
-            }
-        }
+    private void btn_iniciar_serverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_iniciar_serverActionPerformed
         String version=Seleccion.config.getConfigData("version");
-        String nombre=Seleccion.folder;
-        //String folder=this.config_global.getDic("folder_instances")+"/"+nombre+"/"+this.config_global.getDic("folder_server");
         String folder=this.config_global.getDic("folder_meta_mc");
-        //String name=MessageFormat.format(this.config_global.getDic("file_server"),version);
         String name=version+".json";
-        new Download(this,true,folder,name,this.versions.searchArray(this.versions,"id",version).getValue("url"),null).setVisible(true);
-        if(Storage.exists(folder+"/"+name)){
-            this.btn_descargar_version.setText("Re-Descargar");
-        }else{
-            this.btn_descargar_version.setText("Descargar");
+        if(!Storage.exists(folder+"/"+name)){
+            new Download(this,true,folder,name,this.versions.searchArray(this.versions,"id",version).getValue("url"),null).setVisible(true);
         }
-    }//GEN-LAST:event_btn_descargar_versionActionPerformed
+        String url=new Config(folder+"/"+name,true).getJson().getJson("downloads").getJson("server").getValue("url");
+        String folder2=this.config_global.getDic("folder_instances")+"/"+Seleccion.folder+"/"+this.config_global.getDic("folder_server");
+        String name2=MessageFormat.format(this.config_global.getDic("file_server"),version);
+        if(!Storage.exists(folder2+"/"+name2)){
+            new Download(this,true,folder2,name2,url,null).setVisible(true);
+        }
+    }//GEN-LAST:event_btn_iniciar_serverActionPerformed
 
     private void btn_crearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_crearActionPerformed
         new Instance(this,true,this.config_global).setVisible(true);
@@ -445,9 +432,9 @@ public class Main extends javax.swing.JFrame{
     private javax.swing.JButton btn_crear;
     private javax.swing.JButton btn_crear1;
     private javax.swing.JButton btn_crear_mundo;
-    private javax.swing.JButton btn_descargar_version;
     private javax.swing.JButton btn_editar_mundo;
     private javax.swing.JButton btn_iniciar;
+    private javax.swing.JButton btn_iniciar_server;
     private javax.swing.JPanel panel_mundos;
     private javax.swing.JPanel panel_servidores;
     private javax.swing.JScrollPane scroll_mundos;
