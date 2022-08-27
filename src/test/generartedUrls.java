@@ -13,7 +13,6 @@ public class generartedUrls{
     
     public generartedUrls(){
         List urls=Arrays.asList(
-                            
             new Instalacion("1.2.5","https://launcher.mojang.com/v1/objects/d8321edc9470e56b8ad5c67bbd16beba25843336/server.jar"),
             new Instalacion("1.3.1",""),
             new Instalacion("1.3.2",""),
@@ -57,7 +56,7 @@ public class generartedUrls{
             new Instalacion("1.11","https://launcher.mojang.com/v1/objects/48820c84cb1ed502cb5b2fe23b8153d5e4fa61c0/server.jar"),
             new Instalacion("1.11.1","https://launcher.mojang.com/v1/objects/48820c84cb1ed502cb5b2fe23b8153d5e4fa61c0/server.jar"),
             new Instalacion("1.11.2","https://launcher.mojang.com/v1/objects/f00c294a1576e03fddcac777c3cf4c7d404c4ba4/server.jar"),
-            new Instalacion("1.12","https://launcher.mojang.com/v1/objects/8494e844e911ea0d63878f64da9dcc21f53a3463/server.jar"),
+            new Instalacion("1.12","https://launcher.mojang.com/v1/objects/8494e844e911ea0d63878f64da9dcc21f53a3463/server.jar",new Instalacion("14.23.5.2859","https://maven.minecraftforge.net/net/minecraftforge/forge/1.12.2-14.23.5.2859/forge-1.12.2-14.23.5.2859-universal.jar")),
             new Instalacion("1.12.1","https://launcher.mojang.com/v1/objects/561c7b2d54bae80cc06b05d950633a9ac95da816/server.jar"),
             new Instalacion("1.12.2","https://launcher.mojang.com/v1/objects/886945bfb2b978778c3a0288fd7fab09d315b25f/server.jar"),
             new Instalacion("1.13","https://launcher.mojang.com/v1/objects/d0caafb8438ebd206f99930cfaecfa6c9a13dca0/server.jar"),
@@ -98,6 +97,12 @@ class Instalacion{
     public String version;
     public String url;
     public String adler32; // Comprobar integridad del archivo (próximamente)
+    public Instalacion forge;
+    public Instalacion(String version, String url, Instalacion forge){
+        this.version=version;
+        this.url=url;
+        this.forge=forge;
+    }
     public Instalacion(String version, String url){
         this.version=version;
         this.url=url;

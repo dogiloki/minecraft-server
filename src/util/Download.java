@@ -26,13 +26,11 @@ public class Download extends javax.swing.JDialog implements Runnable{
         initComponents();
         this.setResizable(false);
         this.setLocationRelativeTo(null);
-        this.setTitle(name);
-        if(!Storage.exists(folder)){
-            Storage.createFolder(folder);
-        }
-        this.folder=folder+"/"+name;
+        this.folder=folder+((name==null || name.trim().equals(""))?"":("/"+name));
         this.name=name;
         this.url=url;
+        msg=(msg==null || msg.trim().equals(" "))?this.url:msg;
+        this.setTitle(name);
         this.progreso_texto.setText(msg);
         new Thread(this).start();
     }

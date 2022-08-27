@@ -24,8 +24,12 @@ import javax.swing.JOptionPane;
 
 public class Storage{
     
+    public static final int FOLDER=0;
+    public static final int FILE=1;
+    public static final boolean CREATED=true;
+    
     // Crea una carpeta
-    public static void createFolder(String ruta){
+    public static boolean createFolder(String ruta){
         try{
             String ruta_crear="";
             for(String sub_ruta:ruta.split("/")){
@@ -35,9 +39,19 @@ public class Storage{
                     directorio.mkdir();
                 }
             }
+            return true;
         }catch(Exception ex){
             JOptionPane.showMessageDialog(null,ex,"Error",JOptionPane.ERROR_MESSAGE);
+            return false;
         }
+    }
+    
+    public static boolean isFolder(String ruta){
+        return new File(ruta).isDirectory();
+    }
+    
+    public static boolean isFile(String ruta){
+        return new File(ruta).isFile();
     }
     
     // Crear contenido en un archivo
@@ -112,10 +126,10 @@ public class Storage{
         }
         //return lineas.toArray(new String[lineas.size()]);
     }
-    public static String[] readFile(Class clase, String ruta){
+    public static String[] readFile(Class _class, String ruta){
         ArrayList<String> lineas=new ArrayList<>();
         try{
-            InputStream in=clase.getResourceAsStream("/"+ruta);
+            InputStream in=_class.getResourceAsStream("/"+ruta);
             BufferedReader bf=new BufferedReader(new InputStreamReader(in));
             String linea;
             while((linea=bf.readLine())!=null){
@@ -168,6 +182,18 @@ public class Storage{
     public static boolean exists(String ruta){
         File directorio=new File(ruta);
         return (directorio.exists());
+    }
+    
+    // Saber si existe un archivo o carpeta
+    public static boolean exists(String ruta, boolean created, int type){
+        File directorio=new File(ruta);
+        if(!directorio.exists() && created){
+            switch(type){
+                case Storage.FOLDER: return Storage.createFolder(ruta);
+                case Storage.FILE: return Storage.writeFile("",ruta);
+            }
+        }
+        return directorio.exists();
     }
     
     // Eliminar archivo

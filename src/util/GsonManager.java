@@ -31,6 +31,10 @@ public class GsonManager{
             this.object=this.parser.parse(this.json).getAsJsonObject();
         }
     }
+    
+    public boolean isArray(){
+        return this.is_array;
+    }
 
     public JsonArray getArray(){
         return this.is_array?this.array:new JsonArray();
@@ -68,9 +72,31 @@ public class GsonManager{
             return false;
         }
     }
+    
+    public String getJson(){
+        return this.json;
+    }
 
     public String getValue(String key){
         return this.object.get(key).getAsString();
+    }
+    
+    public GsonManager getJson(String key){
+        return new GsonManager(this.object.get(key).getAsJsonObject().toString());
+    }
+    
+    public GsonManager getJsonArray(String key){
+        return new GsonManager(this.object.get(key).getAsJsonArray().toString());
+    }
+    
+    public GsonManager searchArray(GsonManager jsonArray, String key, String value){
+        jsonArray.selectObject(0);
+        while(jsonArray.nextObject()){
+            if(jsonArray.getValue(key).equals(value)){
+                return jsonArray;
+            }
+        }
+        return null;
     }
 
     // Crear texto json a partir de un objeto

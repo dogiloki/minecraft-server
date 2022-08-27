@@ -1,5 +1,6 @@
 package minecraftServer;
 
+import util.Config;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Image;
@@ -16,23 +17,42 @@ import util.*;
 public class Main extends javax.swing.JFrame{
     
     private Watcher watcher;
+    private Config config_global;
+    private GsonManager versions;
     
     public Main(){
         initComponents();
         this.setLocationRelativeTo(null);
-        if(!Storage.exists(Config.folder_servidores)){
-            Storage.createFolder(Config.folder_servidores);
-        }
+        this.config_global=new Config(this.getClass(),"minecraftServer.cfg",true);
+        this.config_global.setDic("folder_instances",this.config_global.getConfigJson("folders").getValue("instances"));
+        this.config_global.setDic("folder_server",this.config_global.getConfigJson("folders").getValue("server"));
+        this.config_global.setDic("folder_worlds",this.config_global.getConfigJson("folders").getValue("worlds"));
+        this.config_global.setDic("folder_meta",this.config_global.getConfigJson("folders").getJson("metadata").getValue("meta"));
+        this.config_global.setDic("folder_meta_mc",this.config_global.getDic("folder_meta")+"/"+this.config_global.getConfigJson("folders").getJson("metadata").getValue("mc"));
+        this.config_global.setDic("folder_meta_fg",this.config_global.getDic("folder_meta")+"/"+this.config_global.getConfigJson("folders").getJson("metadata").getValue("fg"));
+        this.config_global.setDic("file_instance",this.config_global.getConfigJson("files").getValue("instance"));
+        this.config_global.setDic("file_server",this.config_global.getConfigJson("files").getValue("server"));
+        Storage.exists(this.config_global.getDic("folder_instances"),Storage.CREATED,Storage.FOLDER);
+        Storage.exists(this.config_global.getDic("folder_meta"),Storage.CREATED,Storage.FOLDER);
+        Storage.exists(this.config_global.getDic("folder_meta_mc"),Storage.CREATED,Storage.FOLDER);
+        Storage.exists(this.config_global.getDic("folder_meta_fg"),Storage.CREATED,Storage.FOLDER);
         try{
-            this.watcher=new Watcher(Config.folder_servidores,this,Function.createdArray(Main.class.getMethod("getServidores"),Main.class.getMethod("getMundos")));
+            this.watcher=new Watcher(this.config_global.getDic("folder_instances"),this,Function.createdArray(Main.class.getMethod("getInstances"),Main.class.getMethod("getMundos")));
         }catch(NoSuchMethodException ex){
             System.out.println(ex);
         }
+        String manifest_file=this.config_global.getDic("folder_meta_mc")+"/"+this.config_global.getConfigJson("downloads").getJson("version_manifest").getValue("name");
+        String manifest_url=this.config_global.getConfigJson("downloads").getJson("version_manifest").getValue("url");
+        this.config_global.setDic("manifest_file",manifest_file);
+        if(!Storage.exists(manifest_file)){
+            new Download(this,true,manifest_file,null,manifest_url,null).setVisible(true);
+        }
+        this.versions=new Config(this.config_global.getDic("manifest_file"),true).getJson().getJsonArray("versions");
         this.scroll_servidores.getVerticalScrollBar().setUnitIncrement(16);
-        this.getServidores();
+        this.getInstances();
     }
     
-    public void getServidores(){
+    public void getInstances(){
         this.panel_mundos.removeAll();
         this.panel_mundos.updateUI();
         Seleccion.panel_servidor=null;
@@ -42,8 +62,8 @@ public class Main extends javax.swing.JFrame{
         int total_columnas=(int)Math.floor(ancho_total/ancho)-1;
         int x=0, y=0, conta=0, filas=0;
         this.panel_servidores.removeAll();
-        for(String folder:Storage.listDirectory(Config.folder_servidores,true,false,null)){
-            String ruta=Config.folder_servidores+"/"+folder+"/"+Config.file_config;
+        for(String folder:Storage.listDirectory(this.config_global.getDic("folder_instances"),true,false,null)){
+            String ruta=this.config_global.getDic("folder_instances")+"/"+folder+"/"+this.config_global.getDic("file_instance");
             if(Storage.exists(ruta)){
                 Config config=new Config(ruta);
                 JPanel panel=new JPanel();
@@ -72,7 +92,7 @@ public class Main extends javax.swing.JFrame{
                         panel.setBackground(Color.decode("#b2cff0"));
                         panel.setOpaque(true);
                         String version=config.getConfigData("version");
-                        String name_file=Config.folder_servidores+"/"+folder+"/"+Config.folder_servidor+"/"+MessageFormat.format(Config.file_server,version);
+                        String name_file=config_global.getDic("folder_instances")+"/"+folder+"/"+config_global.getDic("folder_server")+"/"+MessageFormat.format(config_global.getDic("file_server"),version);
                         if(Storage.exists(name_file)){
                             btn_descargar_version.setText("Re-Descargar");
                         }else{
@@ -143,7 +163,7 @@ public class Main extends javax.swing.JFrame{
         int ancho_total=this.scroll_mundos.getWidth()-25;
         int total_columnas=(int)Math.floor(ancho_total/ancho)-1;
         int x=0, y=0, conta=0, filas=0;
-        String dir=Config.folder_servidores+"/"+Seleccion.folder+"/"+Config.folder_servidor+"/"+Config.folder_mundos;
+        String dir=this.config_global.getDic("folder_instances")+"/"+Seleccion.folder+"/"+this.config_global.getDic("folder_server")+"/"+this.config_global.getDic("folder_worlds");
         if(!Storage.exists(dir)){
             Storage.createFolder(dir);
         }
@@ -378,9 +398,11 @@ public class Main extends javax.swing.JFrame{
         }
         String version=Seleccion.config.getConfigData("version");
         String nombre=Seleccion.folder;
-        String folder=Config.folder_servidores+"/"+nombre+"/"+Config.folder_servidor;
-        String name=MessageFormat.format(Config.file_server,version);
-        new Download(this,true,folder,name,Config.getUrlVersion(version),"Conectando con los servidores de mojang...").setVisible(true);
+        //String folder=this.config_global.getDic("folder_instances")+"/"+nombre+"/"+this.config_global.getDic("folder_server");
+        String folder=this.config_global.getDic("folder_meta_mc");
+        //String name=MessageFormat.format(this.config_global.getDic("file_server"),version);
+        String name=version+".json";
+        new Download(this,true,folder,name,this.versions.searchArray(this.versions,"id",version).getValue("url"),null).setVisible(true);
         if(Storage.exists(folder+"/"+name)){
             this.btn_descargar_version.setText("Re-Descargar");
         }else{
@@ -389,7 +411,7 @@ public class Main extends javax.swing.JFrame{
     }//GEN-LAST:event_btn_descargar_versionActionPerformed
 
     private void btn_crearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_crearActionPerformed
-        new Servidor(this,true).setVisible(true);
+        new Instance(this,true,this.config_global).setVisible(true);
     }//GEN-LAST:event_btn_crearActionPerformed
 
     private void formComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentResized
