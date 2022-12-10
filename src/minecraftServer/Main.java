@@ -28,12 +28,13 @@ public class Main extends javax.swing.JFrame{
         initComponents();
         this.setLocationRelativeTo(null);
         this.config_global=new Config(this.getClass(),"minecraftServer.cfg",Config.JSON);
-        this.config_global.setDic("folder_instances",this.config_global.getConfigJson("folders").getValue("instances"));
-        this.config_global.setDic("folder_server",this.config_global.getConfigJson("folders").getValue("server"));
-        this.config_global.setDic("folder_worlds",this.config_global.getConfigJson("folders").getValue("worlds"));
-        this.config_global.setDic("folder_meta",this.config_global.getConfigJson("folders").getJson("metadata").getValue("meta"));
+        this.config_global.setDic("folder_instances",this.config_global.getConfigJson("folders").getJson("instances").getValue("folder"));
+        this.config_global.setDic("folder_server",this.config_global.getConfigJson("folders").getJson("instances").getValue("server"));
+        this.config_global.setDic("folder_worlds",this.config_global.getConfigJson("folders").getJson("instances").getValue("worlds"));
+        this.config_global.setDic("folder_meta",this.config_global.getConfigJson("folders").getJson("metadata").getValue("folder"));
         this.config_global.setDic("folder_meta_mc",this.config_global.getDic("folder_meta")+"/"+this.config_global.getConfigJson("folders").getJson("metadata").getValue("mc"));
         this.config_global.setDic("folder_meta_fg",this.config_global.getDic("folder_meta")+"/"+this.config_global.getConfigJson("folders").getJson("metadata").getValue("fg"));
+        this.config_global.setDic("folder_minecraft_server",this.config_global.getConfigJson("folders").getJson("minecraft-server").getValue("folder"));
         this.config_global.setDic("file_instance",this.config_global.getConfigJson("files").getValue("instance"));
         this.config_global.setDic("file_server",this.config_global.getConfigJson("files").getValue("server"));
         Storage.exists(this.config_global.getDic("folder_instances"),Storage.CREATED,Storage.FOLDER);
@@ -394,7 +395,7 @@ public class Main extends javax.swing.JFrame{
             new Download(this,true,folder,name,this.versions.searchArray(this.versions,"id",version).getValue("url"),null).setVisible(true);
         }
         String url=new GsonManager(folder+"/"+name,GsonManager.FILE).getJson("downloads").getJson("server").getValue("url");
-        String folder2=this.config_global.getDic("folder_instances")+"/"+Seleccion.folder+"/"+this.config_global.getDic("folder_server");
+        String folder2=this.config_global.getDic("folder_minecraft_server")+"/"+version;
         String name2=MessageFormat.format(this.config_global.getDic("file_server"),version);
         if(!Storage.exists(folder2+"/"+name2)){
             new Download(this,true,folder2,name2,url,null).setVisible(true);

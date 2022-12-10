@@ -142,7 +142,7 @@ public class Instance extends javax.swing.JDialog{
     private void btn_okActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_okActionPerformed
         String version=this.lista_versiones.getSelectedValue();
         String nombre=this.caja_nombre.getText();
-        String folder=this.config_global.getConfigJson("folders").getValue("instances")+"/"+nombre;
+        String folder=this.config_global.getConfigJson("folders").getJson("instances").getValue("folder")+"/"+nombre;
         if(nombre.equals("")){
             JOptionPane.showMessageDialog(null,"Ingrese un nombre para la instancia","Advertencia",JOptionPane.WARNING_MESSAGE);
             return;
@@ -156,7 +156,7 @@ public class Instance extends javax.swing.JDialog{
             "version="+version,
             "JavaPath=java"
         };
-        Storage.createFolder(folder+"/"+this.config_global.getConfigJson("folders").getValue("server"));
+        Storage.createFolder(folder+"/"+this.config_global.getConfigJson("folders").getJson("instances").getValue("server"));
         Storage.writeFile(lineas,folder+"/"+this.config_global.getConfigJson("files").getValue("instance"));
         dispose();
     }//GEN-LAST:event_btn_okActionPerformed

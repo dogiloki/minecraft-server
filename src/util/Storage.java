@@ -112,7 +112,7 @@ public class Storage{
     public static String[] readFile(String ruta){
         ArrayList<String> lineas=new ArrayList<>();
         try{
-            InputStreamReader directorio=new InputStreamReader(new FileInputStream(ruta),"ISO-8859-1");
+            InputStreamReader directorio=new InputStreamReader(new FileInputStream(ruta));
             BufferedReader bf=new BufferedReader(directorio);
             String linea;
             while((linea=bf.readLine())!=null){

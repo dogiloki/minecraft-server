@@ -27,6 +27,7 @@ public class Download extends javax.swing.JDialog implements Runnable{
         this.setResizable(false);
         this.setLocationRelativeTo(null);
         this.folder=folder+((name==null || name.trim().equals(""))?"":("/"+name));
+        Storage.exists(folder,Storage.CREATED,Storage.FOLDER);
         this.name=name;
         this.url=url;
         msg=(msg==null || msg.trim().equals(" "))?this.url:msg;
@@ -93,20 +94,18 @@ public class Download extends javax.swing.JDialog implements Runnable{
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(progreso, javax.swing.GroupLayout.DEFAULT_SIZE, 376, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(progreso_texto)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                    .addComponent(progreso, javax.swing.GroupLayout.DEFAULT_SIZE, 488, Short.MAX_VALUE)
+                    .addComponent(progreso_texto, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(progreso_texto)
+                .addComponent(progreso_texto, javax.swing.GroupLayout.DEFAULT_SIZE, 22, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(progreso, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(14, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         pack();
