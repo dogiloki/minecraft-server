@@ -4,6 +4,11 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ *
+ * @author dogi_
+ */
+
 public class Config{
     
     private String file;

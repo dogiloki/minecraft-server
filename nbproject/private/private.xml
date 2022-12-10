@@ -2,13 +2,6 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group>
-            <file>file:/E:/Github/Netbeans/minecraftServer/src/minecraftServer/Instance.java</file>
-            <file>file:/E:/Github/Netbeans/minecraftServer/src/minecraftServer/Main.java</file>
-            <file>file:/E:/Github/Netbeans/minecraftServer/src/util/Download.java</file>
-            <file>file:/E:/Github/Netbeans/minecraftServer/src/util/GsonManager.java</file>
-            <file>file:/E:/Github/Netbeans/minecraftServer/src/minecraftServer.cfg</file>
-            <file>file:/E:/Github/Netbeans/minecraftServer/src/util/Config.java</file>
-        </group>
+        <group/>
     </open-files>
 </project-private>

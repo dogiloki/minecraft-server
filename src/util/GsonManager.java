@@ -5,7 +5,13 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import java.io.File;
 import java.util.List;
+
+/**
+ *
+ * @author dogi_
+ */
 
 public class GsonManager{
 
@@ -16,10 +22,32 @@ public class GsonManager{
     private JsonObject object;
     private int indice;
     private boolean is_array;
+    
+    public static final int FILE=1;
 
     public GsonManager(String json){
         this.indice=0;
         this.json=json.trim();
+        this.constructer();
+    }
+    
+    public GsonManager(String dir, Class _class, int type){
+        this.indice=0;
+        switch(type){
+            case GsonManager.FILE: this.json=String.join(" ",Storage.readFile(_class,dir.trim())); break;
+        }
+        this.constructer();
+    }
+    
+    public GsonManager(String dir, int type){
+        this.indice=0;
+        switch(type){
+            case GsonManager.FILE: this.json=String.join(" ",Storage.readFile(dir.trim())); break;
+        }
+        this.constructer();
+    }
+    
+    private void constructer(){
         this.parser=new JsonParser();
         this.json=(this.json==null || this.json.equals(""))?"[]":this.json;
         this.is_array=this.json.substring(0,1).equals("[") && this.json.substring(this.json.length()-1,this.json.length()).equals("]");

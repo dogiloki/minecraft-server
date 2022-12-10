@@ -7,11 +7,15 @@ import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.text.MessageFormat;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import util.*;
 
 public class Main extends javax.swing.JFrame{
@@ -23,7 +27,7 @@ public class Main extends javax.swing.JFrame{
     public Main(){
         initComponents();
         this.setLocationRelativeTo(null);
-        this.config_global=new Config(this.getClass(),"minecraftServer.cfg",true);
+        this.config_global=new Config(this.getClass(),"minecraftServer.cfg",Config.JSON);
         this.config_global.setDic("folder_instances",this.config_global.getConfigJson("folders").getValue("instances"));
         this.config_global.setDic("folder_server",this.config_global.getConfigJson("folders").getValue("server"));
         this.config_global.setDic("folder_worlds",this.config_global.getConfigJson("folders").getValue("worlds"));
@@ -389,7 +393,7 @@ public class Main extends javax.swing.JFrame{
         if(!Storage.exists(folder+"/"+name)){
             new Download(this,true,folder,name,this.versions.searchArray(this.versions,"id",version).getValue("url"),null).setVisible(true);
         }
-        String url=new Config(folder+"/"+name,true).getJson().getJson("downloads").getJson("server").getValue("url");
+        String url=new GsonManager(folder+"/"+name,GsonManager.FILE).getJson("downloads").getJson("server").getValue("url");
         String folder2=this.config_global.getDic("folder_instances")+"/"+Seleccion.folder+"/"+this.config_global.getDic("folder_server");
         String name2=MessageFormat.format(this.config_global.getDic("file_server"),version);
         if(!Storage.exists(folder2+"/"+name2)){
@@ -423,6 +427,17 @@ public class Main extends javax.swing.JFrame{
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
+                try {
+                    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+                } catch (ClassNotFoundException ex) {
+                    Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (InstantiationException ex) {
+                    Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (IllegalAccessException ex) {
+                    Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (UnsupportedLookAndFeelException ex) {
+                    Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 new Main().setVisible(true);
             }
         });

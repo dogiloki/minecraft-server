@@ -54,7 +54,7 @@ public class Storage{
         return new File(ruta).isFile();
     }
     
-    // Crear contenido en un archivo
+    // Esciribir contenido en un archivo
     public static boolean writeFile(String[] lineas, String ruta){
         try{
             File directorio=new File(ruta);
@@ -112,7 +112,7 @@ public class Storage{
     public static String[] readFile(String ruta){
         ArrayList<String> lineas=new ArrayList<>();
         try{
-            FileReader directorio=new FileReader(ruta);
+            InputStreamReader directorio=new InputStreamReader(new FileInputStream(ruta),"ISO-8859-1");
             BufferedReader bf=new BufferedReader(directorio);
             String linea;
             while((linea=bf.readLine())!=null){
@@ -142,7 +142,7 @@ public class Storage{
         }
     }
     
-    // Obtener tamaño de archvio
+    // Obtener tamaño de archivo
     public static long getSize(String ruta){
         File directorio=new File(ruta);
         return directorio.isFile()?directorio.length():-1;
