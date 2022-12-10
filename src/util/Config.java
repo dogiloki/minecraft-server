@@ -14,6 +14,7 @@ public class Config{
     private String file;
     private Map<String,String> configurations=new HashMap<>();
     private Map<String,Integer> position=new HashMap<>();
+    private int position_end=0;
     private Map<String,String> dic=new HashMap<>();
     private GsonManager gson;
     private final boolean is_json;
@@ -71,6 +72,7 @@ public class Config{
                 String value=linea.substring(posi_value_inicio,posi_value_fin);
                 this.configurations.put(key,value);
                 this.position.put(key,contador);
+                this.position_end=contador+1;
             }
             contador++;
         }
@@ -88,7 +90,7 @@ public class Config{
         if(this.isJson()){
             
         }else{
-            int linea_num=this.position.get(key);
+            int linea_num=this.position.get(key)==null?this.position_end:this.position.get(key);
             String linea_texto=key+"="+value;
             Storage.writeFile(
                     new HashMap<Integer,String>(){

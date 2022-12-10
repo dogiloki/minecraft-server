@@ -13,6 +13,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -76,7 +77,7 @@ public class Storage{
             BufferedWriter bw=new BufferedWriter(new FileWriter(directorio));
             String linea;
             //int conta=0;
-            for(int a=0; a<texto.length; a++){
+            for(int a=0; a<texto.length || lineas.get(a)!=null; a++){
                 linea=lineas.get(a);
                 if(linea==null){
                     linea=texto[a];
@@ -264,6 +265,18 @@ public class Storage{
             return ficheros.toArray(new String[ficheros.size()]);
         }
         return null;
+    }
+    
+    // Ejecutar programa externo
+    public static boolean execute(String path){
+        try{
+            ProcessBuilder pb=new ProcessBuilder(path);
+            Process p=pb.start();
+            return p.waitFor()==0;
+        }catch(Exception ex){
+            System.out.println(ex.getMessage());
+            return false;
+        }
     }
     
     // Obtener ruta donde se ejecuta el programa

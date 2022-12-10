@@ -389,16 +389,39 @@ public class Main extends javax.swing.JFrame{
 
     private void btn_iniciar_serverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_iniciar_serverActionPerformed
         String version=Seleccion.config.getConfigData("version");
-        String folder=this.config_global.getDic("folder_meta_mc");
-        String name=version+".json";
-        if(!Storage.exists(folder+"/"+name)){
-            new Download(this,true,folder,name,this.versions.searchArray(this.versions,"id",version).getValue("url"),null).setVisible(true);
+        String java_path=Seleccion.config.getConfigData("JavaPath");
+        String folder_meta_mc=this.config_global.getDic("folder_meta_mc");
+        String folder_start=this.config_global.getDic("folder_instances")+"/"+Seleccion.folder+"/"+this.config_global.getDic("folder_server");
+        String file_start=folder_start+"/start.bat";
+        String name_json=version+".json";
+        if(!Storage.exists(folder_meta_mc+"/"+name_json)){
+            new Download(this,true,folder_meta_mc,name_json,this.versions.searchArray(this.versions,"id",version).getValue("url"),null).setVisible(true);
         }
-        String url=new GsonManager(folder+"/"+name,GsonManager.FILE).getJson("downloads").getJson("server").getValue("url");
-        String folder2=this.config_global.getDic("folder_minecraft_server")+"/"+version;
-        String name2=MessageFormat.format(this.config_global.getDic("file_server"),version);
-        if(!Storage.exists(folder2+"/"+name2)){
-            new Download(this,true,folder2,name2,url,null).setVisible(true);
+        String url=new GsonManager(folder_meta_mc+"/"+name_json,GsonManager.FILE).getJson("downloads").getJson("server").getValue("url");
+        String folder_mc_server=this.config_global.getDic("folder_minecraft_server")+"/"+version;
+        String name_jar=MessageFormat.format(this.config_global.getDic("file_server"),version);
+        String file=folder_mc_server+"/"+name_jar;
+        if(Storage.exists(folder_mc_server+"/"+name_jar)){
+            String[] lineas={
+                "cd "+folder_start,
+                java_path+" -jar ../../../"+file+" nogui"
+            };
+            if(!Storage.exists(file_start)){
+                Storage.writeFile(lineas,file_start);
+            }
+            Storage.exists(folder_start+"/server.properties",Storage.CREATED,Storage.FILE);
+            Config config_properties=new Config(folder_start+"/server.properties");
+            config_properties.setConfigData("level-name","saves/world");
+            Storage.execute(file_start);
+            Config config_eula=new Config(folder_start+"/eula.txt");
+            if(config_eula.getConfigData("eula").equals("false")){
+                int op=JOptionPane.showInternalConfirmDialog(null,"By changing the setting below to TRUE\nyou are indicating your agreement to our EULA\n( https://account.mojang.com/documents/minecraft_eula ).","EULA",JOptionPane.WARNING_MESSAGE);
+                if(op==JOptionPane.YES_OPTION){
+                    config_eula.setConfigData("eula","true");
+                }
+            }
+        }else{
+            new Download(this,true,folder_mc_server,name_jar,url,null).setVisible(true);
         }
     }//GEN-LAST:event_btn_iniciar_serverActionPerformed
 
