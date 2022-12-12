@@ -123,7 +123,7 @@ public class Storage{
             return lineas.toArray(new String[lineas.size()]);
         }catch(IOException ex){
             JOptionPane.showMessageDialog(null,ex,"Error",JOptionPane.ERROR_MESSAGE);
-            return null;
+            return new String[0];
         }
         //return lineas.toArray(new String[lineas.size()]);
     }
@@ -139,7 +139,7 @@ public class Storage{
             return lineas.toArray(new String[lineas.size()]);
         }catch(IOException ex){
             JOptionPane.showMessageDialog(null,ex,"Error",JOptionPane.ERROR_MESSAGE);
-            return null;
+            return new String[0];
         }
     }
     

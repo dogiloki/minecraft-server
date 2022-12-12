@@ -6,6 +6,7 @@
 package test;
 
 import util.Config;
+import dto.*;
 
 /**
  *
@@ -14,8 +15,8 @@ import util.Config;
 public class Test {
     
     public Test(){
-        Config config=new Config(this.getClass(),"minecraftServer.cfg",true);
-        System.out.println(config.getConfigJson("folders").getValue("instances"));
+        Instance ins=new Instance("ds");
+        System.out.println(ins.name);
     }
     
     public static void main(String[] args){
