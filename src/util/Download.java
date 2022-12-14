@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Arrays;
 
 /**
  *
@@ -26,8 +27,14 @@ public class Download extends javax.swing.JDialog implements Runnable{
         initComponents();
         this.setResizable(false);
         this.setLocationRelativeTo(null);
-        this.folder=folder+((name==null || name.trim().equals(""))?"":("/"+name));
-        Storage.exists(folder,Storage.CREATED,Storage.FOLDER);
+        if((name==null || name.trim().equals(""))){
+            String[] name_tmp=folder.split("/");
+            name=name_tmp[name_tmp.length-1];
+            name_tmp=Arrays.copyOf(name_tmp,name_tmp.length-1);
+            folder=String.join("/", name_tmp);
+            Storage.exists(folder,Storage.CREATED,Storage.FOLDER);
+        }
+        this.folder=folder+"/"+name;
         this.name=name;
         this.url=url;
         msg=(msg==null || msg.trim().equals(" "))?this.url:msg;

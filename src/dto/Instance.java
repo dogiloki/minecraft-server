@@ -5,16 +5,21 @@ package dto;
  * @author dogi_
  */
 
+import interfaces.DTO;
 import util.Config;
 import util.Storage;
 
-public class Instance {
+public class Instance implements DTO{
     
     public String name;
     public String version;
     public String java_path;
-    private String file_path;
+    public String file_path;
     private Config cfg=null;
+    
+    public Instance(){
+        
+    }
     
     // Constructor para abrir información de una instancia ya existente
     public Instance(String file_path){
@@ -23,6 +28,7 @@ public class Instance {
         this.name=this.cfg.getConfigData("name");
         this.version=this.cfg.getConfigData("version");
         this.java_path=this.cfg.getConfigData("JavaPath");
+        this.create();
     }
     
     // Constructor para crear un archivo .cfg, con la información básica de la instancia
@@ -32,9 +38,17 @@ public class Instance {
         this.version=version;
         this.java_path=java_path;
     }
+    
+    public boolean create(){
+        return Storage.exists(this.file_path,Storage.CREATED,Storage.FILE);
+    }
+    
+    public boolean delete(){
+        return Storage.deleteFile(this.file_path);
+    }
 
     // Guardar los valores en el archivo .cfg
-    public void save(){
+    public boolean save(){
         if(this.cfg==null){
             String[] datas={
                 "name="+this.name,
@@ -47,6 +61,7 @@ public class Instance {
         this.cfg.setConfigData("name",this.name);
         this.cfg.setConfigData("version",this.version);
         this.cfg.setConfigData("JavaPath",this.java_path);
+        return true;
     }
 
 }

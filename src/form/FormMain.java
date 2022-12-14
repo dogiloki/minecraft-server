@@ -1,40 +1,74 @@
 package form;
 
-
-
 /**
  *
  * @author dogi_
  */
 
-import dto.Instance;
 import java.awt.Color;
 import java.awt.Font;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+
+import dto.Instance;
+
 import util.Storage;
 import util.Config;
 import util.Design;
 import util.Function;
+import util.Watcher;
 
 public class FormMain extends javax.swing.JFrame {
     
+    private Watcher watcher;
     private ArrayList<Instance> instances=new ArrayList<>();
     private Config cfg_global;
 
     public FormMain() {
         initComponents();
         this.setLocationRelativeTo(null);
-        
+        this.dic();
         this.getInstances();
+        // Detectar cambios en carpetas
+        this.runWath();
+    }
+    
+    // Agregar valores a un diccionario
+    public void dic(){
+        // Obtener configuración del archivo central .cfg
+        this.cfg_global=new Config(this.getClass(),"minecraftServer.cfg",Config.JSON);
+        // Carpetas
+        this.cfg_global.setDic("fo_instances",this.cfg_global.getConfigJson("folders").getJson("instances").getValue("folder"));
+        this.cfg_global.setDic("fo_server",this.cfg_global.getConfigJson("folders").getJson("instances").getValue("server"));
+        this.cfg_global.setDic("fo_worlds",this.cfg_global.getConfigJson("folders").getJson("instances").getValue("worlds"));
+        this.cfg_global.setDic("fo_metadata",this.cfg_global.getConfigJson("folders").getJson("metadata").getValue("folder"));
+        this.cfg_global.setDic("fo_meta_mc",this.cfg_global.getDic("fo_metadata")+"/"+this.cfg_global.getConfigJson("folders").getJson("metadata").getValue("mc"));
+        this.cfg_global.setDic("fo_meta_fg",this.cfg_global.getDic("fo_metadata")+"/"+this.cfg_global.getConfigJson("folders").getJson("metadata").getValue("fg"));
+        this.cfg_global.setDic("fo_mc",this.cfg_global.getConfigJson("folders").getJson("minecraft-server").getValue("folder"));
+        // Archivos
+        this.cfg_global.setDic("fi_instance",this.cfg_global.getConfigJson("files").getValue("instance"));
+        this.cfg_global.setDic("fi_server",this.cfg_global.getConfigJson("files").getValue("server"));
+        this.cfg_global.setDic("fi_ver_mani",this.cfg_global.getDic("fo_meta_mc")+"/"+this.cfg_global.getConfigJson("downloads").getJson("version_manifest").getValue("name"));
+        this.cfg_global.setDic("url_ver_mani",this.cfg_global.getConfigJson("downloads").getJson("version_manifest").getValue("url"));
+    }
+    
+    public void runWath(){
+        try{
+            this.watcher=new Watcher(this.cfg_global.getDic("folder_instances"),this,Function.createdArray(FormMain.class.getMethod("getInstances"),FormMain.class.getMethod("getMundos")));
+        }catch(NoSuchMethodException ex){
+            System.out.println(ex);
+        }
     }
     
     public void getInstances(){
-        this.cfg_global=new Config(this.getClass(),"minecraftServer.cfg",Config.JSON);
-        String path_instances=this.cfg_global.getConfigJson("folders").getJson("instances").getValue("folder");
-        String file_instance=this.cfg_global.getConfigJson("files").getValue("instance");
+        String path_instances=this.cfg_global.getDic("fo_instances");
+        String file_instance=this.cfg_global.getDic("fi_instance");
         String[] folders=Storage.listDirectory(path_instances,true,true,null);
         // Valores del panel en cada instancia
         int ancho=210, alto=80;
@@ -58,7 +92,7 @@ public class FormMain extends javax.swing.JFrame {
             panel.setToolTipText(ins.name+" ( "+ins.version+" ) ");
             panel.setBorder(BorderFactory.createLineBorder(new Color(150,150,150)));
             
-            // Calculo para posicionas componentes
+            // Calculo para posicionar componentes
             if(x==0){
                 filas++;
             }
@@ -103,6 +137,12 @@ public class FormMain extends javax.swing.JFrame {
         scroll_instances = new javax.swing.JScrollPane();
         panel_instances = new javax.swing.JPanel();
         btn_crear = new javax.swing.JButton();
+        btn_iniciar_server = new javax.swing.JButton();
+        btn_iniciar = new javax.swing.JButton();
+        btn_crear_mundo = new javax.swing.JButton();
+        btn_editar_mundo = new javax.swing.JButton();
+        scroll_mundos = new javax.swing.JScrollPane();
+        panel_mundos = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -126,6 +166,51 @@ public class FormMain extends javax.swing.JFrame {
             }
         });
 
+        btn_iniciar_server.setText("Iniciar");
+        btn_iniciar_server.setEnabled(false);
+        btn_iniciar_server.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_iniciar_serverActionPerformed(evt);
+            }
+        });
+
+        btn_iniciar.setText("Iniciar");
+        btn_iniciar.setEnabled(false);
+        btn_iniciar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_iniciarActionPerformed(evt);
+            }
+        });
+
+        btn_crear_mundo.setText("Crear mundo");
+        btn_crear_mundo.setEnabled(false);
+        btn_crear_mundo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_crear_mundoActionPerformed(evt);
+            }
+        });
+
+        btn_editar_mundo.setText("Editar mundo");
+        btn_editar_mundo.setEnabled(false);
+        btn_editar_mundo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_editar_mundoActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout panel_mundosLayout = new javax.swing.GroupLayout(panel_mundos);
+        panel_mundos.setLayout(panel_mundosLayout);
+        panel_mundosLayout.setHorizontalGroup(
+            panel_mundosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 379, Short.MAX_VALUE)
+        );
+        panel_mundosLayout.setVerticalGroup(
+            panel_mundosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 414, Short.MAX_VALUE)
+        );
+
+        scroll_mundos.setViewportView(panel_mundos);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -133,9 +218,25 @@ public class FormMain extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btn_crear)
-                    .addComponent(scroll_instances, javax.swing.GroupLayout.PREFERRED_SIZE, 502, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(410, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(btn_crear)
+                        .addGap(28, 28, 28))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(scroll_instances, javax.swing.GroupLayout.PREFERRED_SIZE, 545, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(btn_iniciar_server)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(btn_crear_mundo)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btn_editar_mundo)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btn_iniciar)
+                                .addGap(28, 28, 28))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(scroll_mundos, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                                .addContainerGap())))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -143,7 +244,16 @@ public class FormMain extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(btn_crear)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(scroll_instances, javax.swing.GroupLayout.DEFAULT_SIZE, 412, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(scroll_instances)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(btn_iniciar_server)
+                            .addComponent(btn_iniciar)
+                            .addComponent(btn_crear_mundo)
+                            .addComponent(btn_editar_mundo))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(scroll_mundos)))
                 .addContainerGap())
         );
 
@@ -151,12 +261,39 @@ public class FormMain extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btn_crearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_crearActionPerformed
-        //new FormInstance(this,true,this.config_global).setVisible(true);
+        new DialogInstance(this,true,this.cfg_global).setVisible(true);
     }//GEN-LAST:event_btn_crearActionPerformed
+
+    private void btn_iniciar_serverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_iniciar_serverActionPerformed
+        
+    }//GEN-LAST:event_btn_iniciar_serverActionPerformed
+
+    private void btn_iniciarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_iniciarActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btn_iniciarActionPerformed
+
+    private void btn_crear_mundoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_crear_mundoActionPerformed
+        this.watcher.terminar=true;
+    }//GEN-LAST:event_btn_crear_mundoActionPerformed
+
+    private void btn_editar_mundoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_editar_mundoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btn_editar_mundoActionPerformed
 
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
+                try {
+                    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+                } catch (ClassNotFoundException ex) {
+                    Logger.getLogger(FormMain.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (InstantiationException ex) {
+                    Logger.getLogger(FormMain.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (IllegalAccessException ex) {
+                    Logger.getLogger(FormMain.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (UnsupportedLookAndFeelException ex) {
+                    Logger.getLogger(FormMain.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 new FormMain().setVisible(true);
             }
         });
@@ -164,7 +301,13 @@ public class FormMain extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btn_crear;
+    private javax.swing.JButton btn_crear_mundo;
+    private javax.swing.JButton btn_editar_mundo;
+    private javax.swing.JButton btn_iniciar;
+    private javax.swing.JButton btn_iniciar_server;
     private javax.swing.JPanel panel_instances;
+    private javax.swing.JPanel panel_mundos;
     private javax.swing.JScrollPane scroll_instances;
+    private javax.swing.JScrollPane scroll_mundos;
     // End of variables declaration//GEN-END:variables
 }
