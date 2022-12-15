@@ -21,7 +21,9 @@ import dto.World;
 import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.text.MessageFormat;
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 
 import util.Storage;
 import util.Config;
@@ -425,7 +427,30 @@ public class FormMain extends javax.swing.JFrame {
             new Download(this,true,fo_meta_mc,name_json,versions.searchArray(versions,"id",ins.version).getValue("url"),null).setVisible(true);
         }
         String url=new GsonManager(fo_meta_mc+"/"+name_json,GsonManager.FILE).getJson("downloads").getJson("server").getValue("url");
-        
+        String fo_minecraft=this.cfg_global.getDic("fo_mc")+"/"+ins.version;
+        String fi_minecraft=MessageFormat.format(this.cfg_global.getDic("fi_server"),ins.version);
+        String fo_server=ins.folder_ins+"/"+this.cfg_global.getDic("fo_server");
+        String fi_start=fo_server+"/start.bat";
+        if(Storage.exists(fo_minecraft+"/"+fi_minecraft)){
+            // Archivo start.bat para iniciar servidor
+            if(!Storage.exists(fi_start)){
+                String[] l={
+                    "cd "+fo_server,
+                    ins.java_path+" -jar ../../../"+fi_minecraft+" nogui"
+                };
+                Storage.writeFile(l, fi_start);
+            }
+            // Archivo eula del servidor
+            Config cfg_eula=new Config(fo_server+"/eula.txt");
+            if(cfg_eula.getConfigData("eula").equals("false")){
+                int op=JOptionPane.showInternalConfirmDialog(null,"By changing the setting below to TRUE\nyou are indicating your agreement to our EULA\n( https://account.mojang.com/documents/minecraft_eula ).","EULA",JOptionPane.WARNING_MESSAGE);
+                if(op==0){
+                    cfg_eula.setConfigData("eula","true");
+                }
+            }
+        }else{
+            new Download(this,true,fo_minecraft,fi_minecraft,url,null).setVisible(true);
+        }
     }//GEN-LAST:event_btn_iniciar_serverActionPerformed
 
     private void btn_eliminar_mundoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_eliminar_mundoActionPerformed
