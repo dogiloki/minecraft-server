@@ -11,11 +11,11 @@ import util.Storage;
 
 public class World implements DTO {
     
-    private String old_folder_path;
-    public String folder_path;
-    public String name;
-    public Properties properties;
-    public Icon icon;
+    private String old_folder_path="";
+    public String folder_path="";
+    public String name="";
+    public Properties properties=null;
+    public Icon icon=null;
 
     public World(){
         

@@ -23,7 +23,7 @@ public class Instance implements DTO{
     public JPanel panel_world=null;
     public String folder_ins="";
     public String folder_world="";
-    public World wolrd;
+    public World world;
     
     public Instance(){
         

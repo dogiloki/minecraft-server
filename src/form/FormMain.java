@@ -17,13 +17,18 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import dto.Instance;
+import dto.World;
+import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import javax.swing.ImageIcon;
 
 import util.Storage;
 import util.Config;
 import util.Design;
+import util.Download;
 import util.Function;
+import util.GsonManager;
 import util.Watcher;
 
 public class FormMain extends javax.swing.JFrame {
@@ -62,7 +67,7 @@ public class FormMain extends javax.swing.JFrame {
     }
     
     public void runWath(){
-        this.watcher=new Watcher(this.cfg_global.getDic("fo_instances"),this,FormMain.class,"getInstances");
+        this.watcher=new Watcher(this.cfg_global.getDic("fo_instances"),this,FormMain.class,"getInstances","getWorlds");
     }
     
     public void getInstances(){
@@ -103,7 +108,7 @@ public class FormMain extends javax.swing.JFrame {
                     sele_instance=ins;
                     sele_instance.panel_ins.setBackground(Color.decode("#b2cff0"));
                     sele_instance.panel_ins.setOpaque(true);
-                    //getWorlds()
+                    getWorlds();
                 }
                 @Override
                 public void mouseReleased(MouseEvent evt){ }
@@ -128,7 +133,7 @@ public class FormMain extends javax.swing.JFrame {
             ins.panel_world=null;
             ins.folder_ins=folder;
             ins.folder_world="";
-            ins.wolrd=null;
+            ins.world=null;
             this.instances.add(ins);
             
             // Calculo para posicionar componentes
@@ -169,6 +174,111 @@ public class FormMain extends javax.swing.JFrame {
         this.panel_instances.setPreferredSize(Function.createDimencion(ancho_total,filas*alto));
     }
     
+    public void getWorlds(){
+        this.panel_worlds.removeAll();
+        this.panel_worlds.updateUI();
+        if(this.sele_instance==null){
+            return;
+        }
+        String path_worlds=this.sele_instance.folder_ins+"/"+this.cfg_global.getDic("fo_server")+"/"+this.cfg_global.getDic("fo_worlds");
+        Storage.exists("path_worlds",Storage.CREATED,Storage.FOLDER);
+        String[] folders=Storage.listDirectory(path_worlds,true,true,null);
+        // Valores del panel en cada instancia
+        int ancho=170, alto=170;
+        int ancho_total=this.scroll_mundos.getWidth()-25;
+        int total_columnas=(int)Math.floorDiv(ancho_total, ancho)-1;
+        int x=0, y=0, count=0, filas=0;
+        if(folders==null || folders.length<=0){
+            return;
+        }
+        for(String folder:folders){
+            // Obtener datos de la World
+            World world=new World(folder);
+            
+            // Panel principal
+            JPanel panel=new JPanel();
+            panel.setLayout(null);
+            panel.setBounds(x,y,ancho,alto);
+            panel.setOpaque(false);
+            panel.setToolTipText(folder);
+            panel.setBorder(BorderFactory.createLineBorder(new Color(150,150,150)));
+            panel.addMouseListener(new MouseListener(){
+                @Override
+                public void mouseClicked(MouseEvent evt){}
+                @Override
+                public void mousePressed(MouseEvent evt){
+                    btn_iniciar_server.setEnabled(true);
+                    btn_crear_mundo.setEnabled(true);
+                    btn_editar_mundo.setEnabled(true);
+                    btn_eliminar_mundo.setEnabled(true);
+                    if(sele_instance.panel_world!=null){
+                        sele_instance.panel_world.setBackground(null);
+                        sele_instance.panel_world.setOpaque(false);
+                    }
+                    sele_instance.world=world;
+                    sele_instance.panel_world=panel;
+                    sele_instance.panel_world.setBackground(Color.decode("#b2cff0"));
+                    sele_instance.panel_world.setOpaque(true);
+                }
+                @Override
+                public void mouseReleased(MouseEvent evt){ }
+                @Override
+                public void mouseEntered(MouseEvent evt){
+                    if(sele_instance!=null && sele_instance.panel_world!=panel){
+                        panel.setBackground(new Color(200,200,200));
+                        panel.setOpaque(true);
+                    }
+                }
+                @Override
+                public void mouseExited(MouseEvent evt){
+                    if(sele_instance!=null && sele_instance.panel_world!=panel){
+                        panel.setBackground(null);
+                        panel.setOpaque(false);
+                    }
+                }
+            });
+            
+            // Calculo para posicionar componentes
+            if(x==0){
+                filas++;
+            }
+            if(count<total_columnas){
+                x+=ancho;
+                count++;
+            }else{
+                y+=alto;
+                x=0;
+                count=0;
+            }
+            
+            // Compoente Versión
+            JLabel label_icon=new JLabel();
+            label_icon.setBounds(0,0,ancho,(alto/7)*5);
+            label_icon.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+            // Datos del World
+            world.icon=new ImageIcon(new ImageIcon(path_worlds+"/"+folder+"/icon.png").getImage().getScaledInstance(label_icon.getWidth()-30, label_icon.getHeight()-10,Image.SCALE_DEFAULT));
+            // Agregar icon al panel
+            label_icon.setIcon(world.icon);
+            panel.add(label_icon);
+            
+            // Compoente Nombre
+            JLabel label_nombre=new JLabel(folder);
+            label_nombre.setBounds(0,(alto/7)*5,ancho,alto/7);
+            label_nombre.setFont(new Font("arial",Font.PLAIN,16));
+            label_nombre.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+            panel.add(label_nombre);
+            
+            // Diseño
+            Design.margen(panel,10);
+            
+            // Agregar a la GUI
+            this.panel_worlds.add(panel);
+        }
+        // Adaptar panel de las instancias
+        this.panel_worlds.updateUI();
+        this.panel_worlds.setPreferredSize(Function.createDimencion(ancho_total,filas*alto));
+    }
+    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -177,23 +287,25 @@ public class FormMain extends javax.swing.JFrame {
         panel_instances = new javax.swing.JPanel();
         btn_crear = new javax.swing.JButton();
         btn_iniciar_server = new javax.swing.JButton();
-        btn_iniciar = new javax.swing.JButton();
+        btn_eliminar_mundo = new javax.swing.JButton();
         btn_crear_mundo = new javax.swing.JButton();
         btn_editar_mundo = new javax.swing.JButton();
         scroll_mundos = new javax.swing.JScrollPane();
-        panel_mundos = new javax.swing.JPanel();
+        panel_worlds = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        scroll_instances.setPreferredSize(new java.awt.Dimension(918, 445));
 
         javax.swing.GroupLayout panel_instancesLayout = new javax.swing.GroupLayout(panel_instances);
         panel_instances.setLayout(panel_instancesLayout);
         panel_instancesLayout.setHorizontalGroup(
             panel_instancesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 915, Short.MAX_VALUE)
+            .addGap(0, 542, Short.MAX_VALUE)
         );
         panel_instancesLayout.setVerticalGroup(
             panel_instancesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 439, Short.MAX_VALUE)
+            .addGap(0, 444, Short.MAX_VALUE)
         );
 
         scroll_instances.setViewportView(panel_instances);
@@ -213,11 +325,11 @@ public class FormMain extends javax.swing.JFrame {
             }
         });
 
-        btn_iniciar.setText("Iniciar");
-        btn_iniciar.setEnabled(false);
-        btn_iniciar.addActionListener(new java.awt.event.ActionListener() {
+        btn_eliminar_mundo.setText("Eliminar mundo");
+        btn_eliminar_mundo.setEnabled(false);
+        btn_eliminar_mundo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_iniciarActionPerformed(evt);
+                btn_eliminar_mundoActionPerformed(evt);
             }
         });
 
@@ -237,18 +349,18 @@ public class FormMain extends javax.swing.JFrame {
             }
         });
 
-        javax.swing.GroupLayout panel_mundosLayout = new javax.swing.GroupLayout(panel_mundos);
-        panel_mundos.setLayout(panel_mundosLayout);
-        panel_mundosLayout.setHorizontalGroup(
-            panel_mundosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 379, Short.MAX_VALUE)
+        javax.swing.GroupLayout panel_worldsLayout = new javax.swing.GroupLayout(panel_worlds);
+        panel_worlds.setLayout(panel_worldsLayout);
+        panel_worldsLayout.setHorizontalGroup(
+            panel_worldsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 353, Short.MAX_VALUE)
         );
-        panel_mundosLayout.setVerticalGroup(
-            panel_mundosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        panel_worldsLayout.setVerticalGroup(
+            panel_worldsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 414, Short.MAX_VALUE)
         );
 
-        scroll_mundos.setViewportView(panel_mundos);
+        scroll_mundos.setViewportView(panel_worlds);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -266,16 +378,14 @@ public class FormMain extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(btn_iniciar_server)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 28, Short.MAX_VALUE)
                                 .addComponent(btn_crear_mundo)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(btn_editar_mundo)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btn_iniciar)
-                                .addGap(28, 28, 28))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(scroll_mundos, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                                .addContainerGap())))))
+                                .addComponent(btn_eliminar_mundo))
+                            .addComponent(scroll_mundos, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                        .addContainerGap())))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -284,11 +394,11 @@ public class FormMain extends javax.swing.JFrame {
                 .addComponent(btn_crear)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(scroll_instances)
+                    .addComponent(scroll_instances, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(btn_iniciar_server)
-                            .addComponent(btn_iniciar)
+                            .addComponent(btn_eliminar_mundo)
                             .addComponent(btn_crear_mundo)
                             .addComponent(btn_editar_mundo))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -304,15 +414,26 @@ public class FormMain extends javax.swing.JFrame {
     }//GEN-LAST:event_btn_crearActionPerformed
 
     private void btn_iniciar_serverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_iniciar_serverActionPerformed
+        Instance ins=this.sele_instance;
+        if(!Storage.exists(this.cfg_global.getDic("fi_ver_mani"))){
+            new Download(null,true,this.cfg_global.getDic("fi_ver_mani"),null,this.cfg_global.getDic("url_ver_mani"),null).setVisible(true);
+        }
+        GsonManager versions=new Config(this.cfg_global.getDic("fi_ver_mani"),true).getJson().getJsonArray("versions");
+        String name_json=ins.version+".json";
+        String fo_meta_mc=this.cfg_global.getDic("fo_meta_mc");
+        if(!Storage.exists(fo_meta_mc+"/"+name_json)){
+            new Download(this,true,fo_meta_mc,name_json,versions.searchArray(versions,"id",ins.version).getValue("url"),null).setVisible(true);
+        }
+        String url=new GsonManager(fo_meta_mc+"/"+name_json,GsonManager.FILE).getJson("downloads").getJson("server").getValue("url");
         
     }//GEN-LAST:event_btn_iniciar_serverActionPerformed
 
-    private void btn_iniciarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_iniciarActionPerformed
+    private void btn_eliminar_mundoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_eliminar_mundoActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_btn_iniciarActionPerformed
+    }//GEN-LAST:event_btn_eliminar_mundoActionPerformed
 
     private void btn_crear_mundoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_crear_mundoActionPerformed
-        this.watcher.terminar=true;
+        
     }//GEN-LAST:event_btn_crear_mundoActionPerformed
 
     private void btn_editar_mundoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_editar_mundoActionPerformed
@@ -342,10 +463,10 @@ public class FormMain extends javax.swing.JFrame {
     private javax.swing.JButton btn_crear;
     private javax.swing.JButton btn_crear_mundo;
     private javax.swing.JButton btn_editar_mundo;
-    private javax.swing.JButton btn_iniciar;
+    private javax.swing.JButton btn_eliminar_mundo;
     private javax.swing.JButton btn_iniciar_server;
     private javax.swing.JPanel panel_instances;
-    private javax.swing.JPanel panel_mundos;
+    private javax.swing.JPanel panel_worlds;
     private javax.swing.JScrollPane scroll_instances;
     private javax.swing.JScrollPane scroll_mundos;
     // End of variables declaration//GEN-END:variables
