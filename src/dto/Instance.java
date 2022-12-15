@@ -6,6 +6,7 @@ package dto;
  */
 
 import interfaces.DTO;
+import javax.swing.JPanel;
 import util.Config;
 import util.Storage;
 
@@ -16,6 +17,13 @@ public class Instance implements DTO{
     public String java_path;
     public String file_path;
     private Config cfg=null;
+    
+    // Atributos para manejo en la interfaz
+    public JPanel panel_ins=null;
+    public JPanel panel_world=null;
+    public String folder_ins="";
+    public String folder_world="";
+    public World wolrd;
     
     public Instance(){
         

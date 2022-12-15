@@ -17,6 +17,8 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import dto.Instance;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 import util.Storage;
 import util.Config;
@@ -28,6 +30,7 @@ public class FormMain extends javax.swing.JFrame {
     
     private Watcher watcher;
     private ArrayList<Instance> instances=new ArrayList<>();
+    private Instance sele_instance=null;
     private Config cfg_global;
 
     public FormMain() {
@@ -80,7 +83,6 @@ public class FormMain extends javax.swing.JFrame {
             }
             // Obtener datos de la instancia
             Instance ins=new Instance(folder+"/"+file_instance);
-            this.instances.add(ins);
             
             // Panel principal
             JPanel panel=new JPanel();
@@ -89,6 +91,45 @@ public class FormMain extends javax.swing.JFrame {
             panel.setOpaque(false);
             panel.setToolTipText(ins.name+" ( "+ins.version+" ) ");
             panel.setBorder(BorderFactory.createLineBorder(new Color(150,150,150)));
+            panel.addMouseListener(new MouseListener(){
+                @Override
+                public void mouseClicked(MouseEvent evt){}
+                @Override
+                public void mousePressed(MouseEvent evt){
+                    if(sele_instance!=null){
+                        sele_instance.panel_ins.setBackground(null);
+                        sele_instance.panel_ins.setOpaque(false);
+                    }
+                    sele_instance=ins;
+                    sele_instance.panel_ins.setBackground(Color.decode("#b2cff0"));
+                    sele_instance.panel_ins.setOpaque(true);
+                    //getWorlds()
+                }
+                @Override
+                public void mouseReleased(MouseEvent evt){ }
+                @Override
+                public void mouseEntered(MouseEvent evt){
+                    if(sele_instance!=null && sele_instance.panel_ins!=panel){
+                        panel.setBackground(new Color(200,200,200));
+                        panel.setOpaque(true);
+                    }
+                }
+                @Override
+                public void mouseExited(MouseEvent evt){
+                    if(sele_instance!=null && sele_instance.panel_ins!=panel){
+                        panel.setBackground(null);
+                        panel.setOpaque(false);
+                    }
+                }
+            });
+            
+            // Almacena instancias
+            ins.panel_ins=panel;
+            ins.panel_world=null;
+            ins.folder_ins=folder;
+            ins.folder_world="";
+            ins.wolrd=null;
+            this.instances.add(ins);
             
             // Calculo para posicionar componentes
             if(x==0){
