@@ -70,7 +70,7 @@ public class Watcher implements Runnable{
                     if(this.methods!=null){
                         for(Method method:this.methods){
                             try{
-                                method.invoke(this.object);
+                                method.invoke(this.context);
                             }catch(Exception ex){
                                 System.out.println(ex);
                             }
