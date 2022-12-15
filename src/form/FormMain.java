@@ -59,14 +59,12 @@ public class FormMain extends javax.swing.JFrame {
     }
     
     public void runWath(){
-        try{
-            this.watcher=new Watcher(this.cfg_global.getDic("folder_instances"),this,Function.createdArray(FormMain.class.getMethod("getInstances"),FormMain.class.getMethod("getMundos")));
-        }catch(NoSuchMethodException ex){
-            System.out.println(ex);
-        }
+        this.watcher=new Watcher(this.cfg_global.getDic("fo_instances"),this,FormMain.class,"getInstances");
     }
     
     public void getInstances(){
+        this.panel_instances.removeAll();
+        this.scroll_instances.updateUI();
         String path_instances=this.cfg_global.getDic("fo_instances");
         String file_instance=this.cfg_global.getDic("fi_instance");
         String[] folders=Storage.listDirectory(path_instances,true,true,null);

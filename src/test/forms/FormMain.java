@@ -42,7 +42,7 @@ public class FormMain extends javax.swing.JFrame{
         Storage.exists(this.config_global.getDic("folder_meta_mc"),Storage.CREATED,Storage.FOLDER);
         Storage.exists(this.config_global.getDic("folder_meta_fg"),Storage.CREATED,Storage.FOLDER);
         try{
-            this.watcher=new Watcher(this.config_global.getDic("folder_instances"),this,Function.createdArray(FormMain.class.getMethod("getInstances"),FormMain.class.getMethod("getMundos")));
+            this.watcher=new Watcher(this.config_global.getDic("folder_instances"),FormMain.class,FormMain.class.getMethod("getInstances"),FormMain.class.getMethod("getMundos"));
         }catch(NoSuchMethodException ex){
             System.out.println(ex);
         }

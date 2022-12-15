@@ -19,16 +19,36 @@ import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
 
 public class Watcher implements Runnable{
     
-    public Path directorio;
-    public Method[] methods;
-    public Object object;
+    public Path directorio=null;
+    public Method[] methods=null;
+    public String[] str_methods=null;
+    public Class object=null;
+    public Object context=null;
     public boolean terminar=false;
     
-    public Watcher(String ruta, Object object, Method[] methods){
+    public Watcher(String ruta, Object context, Method... methods){
+        this.methods(methods);
+        this.watcher(ruta,context,null);
+    }
+    
+    public Watcher(String ruta, Object context, Class object, String... methods){
+        this.methods(methods);
+        this.watcher(ruta,context,object);
+    }
+    
+    private void watcher(String ruta, Object context, Class object){
         this.directorio=Paths.get(ruta);
+        this.context=context;
         this.object=object;
-        this.methods=methods;
         new Thread(this).start();
+    }
+    
+    private void methods(Method[] methods){
+        this.methods=methods;
+    }
+    
+    private void methods(String[] methods){
+        this.str_methods=methods;
     }
     
     @Override
@@ -47,11 +67,21 @@ public class Watcher implements Runnable{
             while(key!=null && !this.terminar){
                 key.pollEvents().forEach((evt)->{
                     // Algún evento ya detectado
-                    for(Method method:this.methods){
-                        try{
-                            method.invoke(this.object);
-                        }catch(Exception ex){
-                            System.out.println(ex);
+                    if(this.methods!=null){
+                        for(Method method:this.methods){
+                            try{
+                                method.invoke(this.object);
+                            }catch(Exception ex){
+                                System.out.println(ex);
+                            }
+                        }
+                    }else{
+                        for(String method:this.str_methods){
+                            try{
+                                this.object.getMethod(method).invoke(this.context);
+                            }catch(Exception ex){
+                                System.out.println(ex);
+                            }
                         }
                     }
                 });
