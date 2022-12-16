@@ -183,7 +183,7 @@ public class FormMain extends javax.swing.JFrame {
             return;
         }
         String path_worlds=this.sele_instance.folder_ins+"/"+this.cfg_global.getDic("fo_server")+"/"+this.cfg_global.getDic("fo_worlds");
-        Storage.exists("path_worlds",Storage.CREATED,Storage.FOLDER);
+        Storage.exists(path_worlds,Storage.CREATED,Storage.FOLDER);
         String[] folders=Storage.listDirectory(path_worlds,true,true,null);
         // Valores del panel en cada instancia
         int ancho=170, alto=170;
@@ -195,7 +195,7 @@ public class FormMain extends javax.swing.JFrame {
         }
         for(String folder:folders){
             // Obtener datos de la World
-            World world=new World(folder);
+            World world=new World(path_worlds+"/"+folder);
             
             // Panel principal
             JPanel panel=new JPanel();
@@ -252,6 +252,9 @@ public class FormMain extends javax.swing.JFrame {
                 x=0;
                 count=0;
             }
+            
+            // Datos del World
+            world.name=folder;
             
             // Compoente Versión
             JLabel label_icon=new JLabel();
@@ -375,12 +378,12 @@ public class FormMain extends javax.swing.JFrame {
                         .addComponent(btn_crear)
                         .addGap(28, 28, 28))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(scroll_instances, javax.swing.GroupLayout.PREFERRED_SIZE, 545, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(scroll_instances, javax.swing.GroupLayout.DEFAULT_SIZE, 545, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(btn_iniciar_server)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 28, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(btn_crear_mundo)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(btn_editar_mundo)

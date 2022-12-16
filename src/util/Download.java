@@ -32,8 +32,8 @@ public class Download extends javax.swing.JDialog implements Runnable{
             name=name_tmp[name_tmp.length-1];
             name_tmp=Arrays.copyOf(name_tmp,name_tmp.length-1);
             folder=String.join("/", name_tmp);
-            Storage.exists(folder,Storage.CREATED,Storage.FOLDER);
         }
+        Storage.exists(folder,Storage.CREATED,Storage.FOLDER);
         this.folder=folder+"/"+name;
         this.name=name;
         this.url=url;

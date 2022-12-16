@@ -23,7 +23,7 @@ public class World implements DTO {
     
     // Constructor para obtener la información de un mundo
     public World(String folder_path){
-        
+        this.old_folder_path=folder_path;
     }
     
     public boolean create(){
