@@ -412,7 +412,7 @@ public class FormMain extends javax.swing.JFrame{
             Storage.exists(folder_start+"/server.properties",Storage.CREATED,Storage.FILE);
             Config config_properties=new Config(folder_start+"/server.properties");
             config_properties.setConfigData("level-name","saves/world");
-            Storage.execute(file_start);
+            //Storage.execute(file_start,false);
             Config config_eula=new Config(folder_start+"/eula.txt");
             if(config_eula.getConfigData("eula").equals("false")){
                 int op=JOptionPane.showInternalConfirmDialog(null,"By changing the setting below to TRUE\nyou are indicating your agreement to our EULA\n( https://account.mojang.com/documents/minecraft_eula ).","EULA",JOptionPane.WARNING_MESSAGE);

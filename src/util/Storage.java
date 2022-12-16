@@ -265,18 +265,6 @@ public class Storage{
         return null;
     }
     
-    // Ejecutar programa externo
-    public static boolean execute(String path){
-        try{
-            ProcessBuilder pb=new ProcessBuilder(path);
-            Process p=pb.start();
-            return p.waitFor()==0;
-        }catch(Exception ex){
-            System.out.println(ex.getMessage());
-            return false;
-        }
-    }
-    
     // Obtener ruta donde se ejecuta el programa
     public static String getDir(){
         return new File("").getAbsolutePath().replace("\\","/");

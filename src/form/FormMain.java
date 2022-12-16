@@ -39,6 +39,7 @@ public class FormMain extends javax.swing.JFrame {
     private ArrayList<Instance> instances=new ArrayList<>();
     private Instance sele_instance=null;
     private Config cfg_global;
+    private Process p;
 
     public FormMain() {
         initComponents();
@@ -299,6 +300,11 @@ public class FormMain extends javax.swing.JFrame {
         panel_worlds = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         scroll_instances.setPreferredSize(new java.awt.Dimension(918, 445));
 
@@ -436,10 +442,11 @@ public class FormMain extends javax.swing.JFrame {
         String fi_start=fo_server+"/start.bat";
         if(Storage.exists(fo_minecraft+"/"+fi_minecraft)){
             // Archivo start.bat para iniciar servidor
-            if(!Storage.exists(fi_start)){
+            if(!Storage.exists(fi_start) || 1==1){
                 String[] l={
-                    "cd "+fo_server,
-                    ins.java_path+" -jar ../../../"+fi_minecraft+" nogui"
+                    //"cd "+fo_server,
+                    "start cmd /c \"cd "+fo_server+" && "+ins.java_path+" -jar "+Storage.getDir()+"/"+fo_minecraft+"/"+fi_minecraft+" nogui\""
+                    //ins.java_path+" -jar ../../../"+fi_minecraft+" nogui"
                 };
                 Storage.writeFile(l, fi_start);
             }
@@ -450,6 +457,12 @@ public class FormMain extends javax.swing.JFrame {
                 if(op==0){
                     cfg_eula.setConfigData("eula","true");
                 }
+            }
+            try{
+                this.p=Runtime.getRuntime().exec(fi_start);
+            }catch(Exception ex){
+                ex.printStackTrace();
+                return;
             }
         }else{
             new Download(this,true,fo_minecraft,fi_minecraft,url,null).setVisible(true);
@@ -467,6 +480,10 @@ public class FormMain extends javax.swing.JFrame {
     private void btn_editar_mundoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_editar_mundoActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_btn_editar_mundoActionPerformed
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        this.p.destroy();
+    }//GEN-LAST:event_formWindowClosing
 
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
