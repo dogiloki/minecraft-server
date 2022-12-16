@@ -16,6 +16,7 @@ public class Instance implements DAO{
     public String version;
     public String java_path;
     public String file_path;
+    public Properties properties=null;
     private Config cfg=null;
     
     // Atributos para manejo en la interfaz
@@ -57,6 +58,9 @@ public class Instance implements DAO{
 
     // Guardar los valores en el archivo .cfg
     public boolean save(){
+        if(this.properties!=null){
+            this.properties.save();
+        }
         if(this.cfg==null){
             String[] datas={
                 "name="+this.name,

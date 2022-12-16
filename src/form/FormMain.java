@@ -92,8 +92,8 @@ public class FormMain extends javax.swing.JFrame {
         int ancho_total=this.scroll_instances.getWidth()-25;
         int total_columnas=(int)(Math.floorDiv(ancho_total,ancho))-1;
         int x=0, y=0, count=0, filas=0;
-        for(String folder:folders){
-            folder=path_instances+"/"+folder;
+        for(String folder_tmp:folders){
+            String folder=path_instances+"/"+folder_tmp;
             if(!Storage.exists(folder+"/"+file_instance)){
                 continue;
             }
@@ -119,6 +119,11 @@ public class FormMain extends javax.swing.JFrame {
                     sele_instance=ins;
                     sele_instance.panel_ins.setBackground(Color.decode("#b2cff0"));
                     sele_instance.panel_ins.setOpaque(true);
+                    // Propiedades de la instancia
+                    Properties proper=new Properties(folder+"/"+cfg_global.getDic("fo_server")+"/server.properties");
+                    proper.save();
+                    sele_instance.properties=proper;
+                    getProperties();
                     getWorlds();
                 }
                 @Override
@@ -227,6 +232,12 @@ public class FormMain extends javax.swing.JFrame {
                         sele_instance.panel_world.setOpaque(false);
                     }
                     sele_instance.world=world;
+                    sele_instance.folder_world=cfg_global.getDic("fo_worlds")+"/"+folder;
+                    
+                    // Propiedades
+                    sele_instance.properties.level_name=sele_instance.folder_world;
+                    sele_instance.properties.save();
+                    
                     sele_instance.panel_world=panel;
                     sele_instance.panel_world.setBackground(Color.decode("#b2cff0"));
                     sele_instance.panel_world.setOpaque(true);
@@ -293,6 +304,45 @@ public class FormMain extends javax.swing.JFrame {
         this.panel_worlds.setPreferredSize(Function.createDimencion(ancho_total,filas*alto));
     }
     
+    public void getProperties(){
+        if(this.sele_instance==null || this.sele_instance.properties==null){
+            return;
+        }
+        
+        Properties proper=this.sele_instance.properties;
+        
+        this.max_players.setText(proper.max_players);
+        
+        this.gamemode.removeAllItems();
+        this.gamemode.addItem(Properties.PEACEFUL);
+        this.gamemode.addItem(Properties.EASY);
+        this.gamemode.addItem(Properties.NORMAL);
+        this.gamemode.addItem(Properties.HARD);
+        this.gamemode.setSelectedItem(proper.gamemode);
+        
+        this.difficulty.removeAllItems();
+        this.difficulty.addItem(Properties.SPECTATOR);
+        this.difficulty.addItem(Properties.ADVENTURE);
+        this.difficulty.addItem(Properties.CREATIVE);
+        this.difficulty.addItem(Properties.SURVIVAL);
+        this.difficulty.setSelectedItem(proper.difficulty);
+        
+        this.white_list.setSelected(proper.white_list.equals("true"));
+        this.online_mode.setSelected(proper.online_mode.equals("true"));
+        this.pvp.setSelected(proper.pvp.equals("true"));
+        this.enable_command_block.setSelected(proper.enable_command_block.equals("true"));
+        this.allow_flight.setSelected(proper.allow_flight.equals("true"));
+        this.spawn_animals.setSelected(proper.spawn_animals.equals("true"));
+        this.spawn_mosters.setSelected(proper.spawn_mosters.equals("true"));
+        this.spawn_npcs.setSelected(proper.spawn_npcs.equals("true"));
+        this.allow_nether.setSelected(proper.allow_nether.equals("true"));
+        this.force_gamemode.setSelected(proper.force_gamemode.equals("true"));
+        this.spawn_protection.setText(proper.spawn_protection);
+        this.require_resorce_pack.setSelected(proper.require_resorce_pack.equals("true"));
+        this.resource_pack.setText(proper.resource_pack);
+        this.resource_pack_promp.setText(proper.resource_pack_promp);
+    }
+    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -306,7 +356,37 @@ public class FormMain extends javax.swing.JFrame {
         btn_editar_mundo = new javax.swing.JButton();
         scroll_mundos = new javax.swing.JScrollPane();
         panel_worlds = new javax.swing.JPanel();
-        jTabbedPane1 = new javax.swing.JTabbedPane();
+        jPanel1 = new javax.swing.JPanel();
+        jPanel2 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        max_players = new javax.swing.JTextField();
+        jPanel3 = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
+        gamemode = new javax.swing.JComboBox<>();
+        jPanel4 = new javax.swing.JPanel();
+        jLabel3 = new javax.swing.JLabel();
+        difficulty = new javax.swing.JComboBox<>();
+        jPanel6 = new javax.swing.JPanel();
+        jLabel5 = new javax.swing.JLabel();
+        spawn_protection = new javax.swing.JTextField();
+        jPanel7 = new javax.swing.JPanel();
+        jLabel6 = new javax.swing.JLabel();
+        resource_pack = new javax.swing.JTextField();
+        jPanel8 = new javax.swing.JPanel();
+        jLabel7 = new javax.swing.JLabel();
+        resource_pack_promp = new javax.swing.JTextField();
+        white_list = new javax.swing.JCheckBox();
+        online_mode = new javax.swing.JCheckBox();
+        pvp = new javax.swing.JCheckBox();
+        allow_flight = new javax.swing.JCheckBox();
+        enable_command_block = new javax.swing.JCheckBox();
+        spawn_animals = new javax.swing.JCheckBox();
+        spawn_mosters = new javax.swing.JCheckBox();
+        spawn_npcs = new javax.swing.JCheckBox();
+        force_gamemode = new javax.swing.JCheckBox();
+        require_resorce_pack = new javax.swing.JCheckBox();
+        allow_nether = new javax.swing.JCheckBox();
+        btn_reset_properties = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -321,7 +401,7 @@ public class FormMain extends javax.swing.JFrame {
         panel_instances.setLayout(panel_instancesLayout);
         panel_instancesLayout.setHorizontalGroup(
             panel_instancesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 542, Short.MAX_VALUE)
+            .addGap(0, 790, Short.MAX_VALUE)
         );
         panel_instancesLayout.setVerticalGroup(
             panel_instancesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -373,7 +453,7 @@ public class FormMain extends javax.swing.JFrame {
         panel_worlds.setLayout(panel_worldsLayout);
         panel_worldsLayout.setHorizontalGroup(
             panel_worldsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 353, Short.MAX_VALUE)
+            .addGap(0, 728, Short.MAX_VALUE)
         );
         panel_worldsLayout.setVerticalGroup(
             panel_worldsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -381,6 +461,273 @@ public class FormMain extends javax.swing.JFrame {
         );
 
         scroll_mundos.setViewportView(panel_worlds);
+
+        jLabel1.setText("Máximo de jugadores");
+
+        max_players.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                max_playersKeyReleased(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addGap(0, 20, Short.MAX_VALUE))
+                    .addComponent(max_players))
+                .addContainerGap())
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(max_players, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        jLabel2.setText("Modo de juego");
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addGap(0, 107, Short.MAX_VALUE))
+                    .addComponent(gamemode, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(gamemode, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        jLabel3.setText("Dificultad");
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addComponent(jLabel3)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(difficulty, 0, 188, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(difficulty, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+
+        jLabel5.setText("Protección de spawn");
+
+        javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
+        jPanel6.setLayout(jPanel6Layout);
+        jPanel6Layout.setHorizontalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel6Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addComponent(jLabel5)
+                        .addGap(0, 23, Short.MAX_VALUE))
+                    .addComponent(spawn_protection))
+                .addContainerGap())
+        );
+        jPanel6Layout.setVerticalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel6Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel5)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(spawn_protection, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        jLabel6.setText("Paquete de recursos");
+
+        javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
+        jPanel7.setLayout(jPanel7Layout);
+        jPanel7Layout.setHorizontalGroup(
+            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel7Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel7Layout.createSequentialGroup()
+                        .addComponent(jLabel6)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(resource_pack))
+                .addContainerGap())
+        );
+        jPanel7Layout.setVerticalGroup(
+            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel7Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel6)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(resource_pack, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        jLabel7.setText("Mensaje de paquete de recursos");
+
+        javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
+        jPanel8.setLayout(jPanel8Layout);
+        jPanel8Layout.setHorizontalGroup(
+            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel8Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel8Layout.createSequentialGroup()
+                        .addComponent(jLabel7)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(resource_pack_promp))
+                .addContainerGap())
+        );
+        jPanel8Layout.setVerticalGroup(
+            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel8Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel7)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(resource_pack_promp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        white_list.setText("Lista blanca");
+
+        online_mode.setText("Juego original");
+
+        pvp.setText("PVP");
+
+        allow_flight.setText("Volar");
+
+        enable_command_block.setText("Bloques de comandos");
+
+        spawn_animals.setText("Animales");
+
+        spawn_mosters.setText("Mostruos");
+
+        spawn_npcs.setText("Aldeanos");
+
+        force_gamemode.setText("Forzar modo de juego");
+
+        require_resorce_pack.setText("Paquete de recursos requerido");
+
+        allow_nether.setText("Inframundo");
+
+        btn_reset_properties.setText("Restaurar configuración");
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(white_list)
+                        .addGap(18, 18, 18)
+                        .addComponent(online_mode)
+                        .addGap(18, 18, 18)
+                        .addComponent(pvp)
+                        .addGap(18, 18, 18)
+                        .addComponent(allow_flight))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(enable_command_block)
+                        .addGap(18, 18, 18)
+                        .addComponent(force_gamemode))
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                            .addComponent(require_resorce_pack)
+                            .addGap(18, 18, 18)
+                            .addComponent(btn_reset_properties, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addComponent(spawn_npcs)
+                            .addGap(18, 18, 18)
+                            .addComponent(spawn_animals)
+                            .addGap(18, 18, 18)
+                            .addComponent(spawn_mosters)
+                            .addGap(18, 18, 18)
+                            .addComponent(allow_nether)))))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jPanel6, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(2, 2, 2))
+                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(white_list)
+                            .addComponent(online_mode)
+                            .addComponent(pvp)
+                            .addComponent(allow_flight))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(enable_command_block)
+                            .addComponent(force_gamemode))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(spawn_npcs)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 2, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(spawn_animals)
+                                    .addComponent(spawn_mosters)
+                                    .addComponent(allow_nether))))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(require_resorce_pack)
+                            .addComponent(btn_reset_properties)))))
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -391,12 +738,11 @@ public class FormMain extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(btn_crear)
-                        .addGap(28, 798, Short.MAX_VALUE))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jTabbedPane1)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(scroll_instances, javax.swing.GroupLayout.DEFAULT_SIZE, 546, Short.MAX_VALUE)
+                                .addComponent(scroll_instances, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(layout.createSequentialGroup()
@@ -407,7 +753,10 @@ public class FormMain extends javax.swing.JFrame {
                                         .addComponent(btn_editar_mundo)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addComponent(btn_eliminar_mundo))
-                                    .addComponent(scroll_mundos, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))))
+                                    .addComponent(scroll_mundos, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE)))
                         .addContainerGap())))
         );
         layout.setVerticalGroup(
@@ -416,7 +765,7 @@ public class FormMain extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(btn_crear)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(btn_iniciar_server)
@@ -424,11 +773,11 @@ public class FormMain extends javax.swing.JFrame {
                             .addComponent(btn_crear_mundo)
                             .addComponent(btn_editar_mundo))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(scroll_mundos, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                    .addComponent(scroll_instances, javax.swing.GroupLayout.PREFERRED_SIZE, 303, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(scroll_mundos, javax.swing.GroupLayout.DEFAULT_SIZE, 247, Short.MAX_VALUE))
+                    .addComponent(scroll_instances, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 249, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(14, 14, 14))
         );
 
         pack();
@@ -469,10 +818,6 @@ public class FormMain extends javax.swing.JFrame {
                     cfg_eula.save();
                 }
             }
-            // Propiedades del servidor en ejecución
-            Properties proper=new Properties(fo_server+"/server.properties");
-            proper.spawn_protection="5";
-            proper.save();
             /*try{
                 ProcessBuilder pb=new ProcessBuilder();
                 this.p=pb.command("cmd","/c","start "+text_bat[0]).directory(new File(fo_server)).start();
@@ -502,6 +847,13 @@ public class FormMain extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_formWindowClosing
 
+    private void max_playersKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_max_playersKeyReleased
+        if(this.sele_instance!=null && this.sele_instance.properties!=null){
+            this.sele_instance.properties.max_players=this.max_players.getText();
+            this.sele_instance.properties.save();
+        }
+    }//GEN-LAST:event_max_playersKeyReleased
+
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
@@ -522,15 +874,45 @@ public class FormMain extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JCheckBox allow_flight;
+    private javax.swing.JCheckBox allow_nether;
     private javax.swing.JButton btn_crear;
     private javax.swing.JButton btn_crear_mundo;
     private javax.swing.JButton btn_editar_mundo;
     private javax.swing.JButton btn_eliminar_mundo;
     private javax.swing.JButton btn_iniciar_server;
-    private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JButton btn_reset_properties;
+    private javax.swing.JComboBox<String> difficulty;
+    private javax.swing.JCheckBox enable_command_block;
+    private javax.swing.JCheckBox force_gamemode;
+    private javax.swing.JComboBox<String> gamemode;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel6;
+    private javax.swing.JPanel jPanel7;
+    private javax.swing.JPanel jPanel8;
+    private javax.swing.JTextField max_players;
+    private javax.swing.JCheckBox online_mode;
     private javax.swing.JPanel panel_instances;
     private javax.swing.JPanel panel_worlds;
+    private javax.swing.JCheckBox pvp;
+    private javax.swing.JCheckBox require_resorce_pack;
+    private javax.swing.JTextField resource_pack;
+    private javax.swing.JTextField resource_pack_promp;
     private javax.swing.JScrollPane scroll_instances;
     private javax.swing.JScrollPane scroll_mundos;
+    private javax.swing.JCheckBox spawn_animals;
+    private javax.swing.JCheckBox spawn_mosters;
+    private javax.swing.JCheckBox spawn_npcs;
+    private javax.swing.JTextField spawn_protection;
+    private javax.swing.JCheckBox white_list;
     // End of variables declaration//GEN-END:variables
 }

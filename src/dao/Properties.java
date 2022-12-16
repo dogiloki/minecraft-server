@@ -20,11 +20,14 @@ public class Properties implements DAO{
     
     public Properties(String file_path){
         this.file_path=file_path;
+        this.create();
+        this.setters();
         this.save();
     }
     
     public Properties(Config cfg){
         this.cfg=cfg;
+        this.setters();
     }
     
     // Valores aceptados en el archivo .properties
@@ -42,8 +45,8 @@ public class Properties implements DAO{
     final public static String HARD="hard";
     
     // Clave valor, del archivo .properties
-    public String level_name="saves/world";
-    public String max_players="true";
+    public String level_name="";
+    public String max_players="28";
     public String gamemode=Properties.SURVIVAL;
     public String difficulty=Properties.NORMAL;
     public String white_list="false";
@@ -61,8 +64,25 @@ public class Properties implements DAO{
     public String resource_pack="";
     public String resource_pack_promp="";
     
-    public String toString(){
-        return "";
+    private void setters(){
+        this.level_name=this.cfg.getConfigData("level-name");
+        this.max_players=this.cfg.getConfigData("max-players");
+        this.gamemode=this.cfg.getConfigData("gamemode");
+        this.difficulty=this.cfg.getConfigData("difficulty");
+        this.white_list=this.cfg.getConfigData("white-list");
+        this.online_mode=this.cfg.getConfigData("online-mode");
+        this.pvp=this.cfg.getConfigData("pvp");
+        this.enable_command_block=this.cfg.getConfigData("enable-command-block");
+        this.allow_flight=this.cfg.getConfigData("allow-flight");
+        this.spawn_animals=this.cfg.getConfigData("spawn-animals");
+        this.spawn_mosters=this.cfg.getConfigData("spawn-mosters");
+        this.spawn_npcs=this.cfg.getConfigData("spawn-npcs");
+        this.allow_nether=this.cfg.getConfigData("allow-nether");
+        this.force_gamemode=this.cfg.getConfigData("force-gamemode");
+        this.spawn_protection=this.cfg.getConfigData("spawn-protection");
+        this.require_resorce_pack=this.cfg.getConfigData("require-resorce-pack");
+        this.resource_pack=this.cfg.getConfigData("resource-pack");
+        this.resource_pack_promp=this.cfg.getConfigData("resource-pack-promp");
     }
 
     public boolean create(){
@@ -85,6 +105,9 @@ public class Properties implements DAO{
         this.cfg.setConfigData("difficulty", this.difficulty);
         this.cfg.setConfigData("white-list", this.white_list);
         this.cfg.setConfigData("online-mode", this.online_mode);
+        this.cfg.setConfigData("pvp", this.pvp);
+        this.cfg.setConfigData("enable-command-block", this.enable_command_block);
+        this.cfg.setConfigData("allow-flight", this.allow_flight);
         this.cfg.setConfigData("spawn-animals", this.spawn_animals);
         this.cfg.setConfigData("spawn-mosters", this.spawn_mosters);
         this.cfg.setConfigData("spawn-npcs", this.spawn_npcs);
