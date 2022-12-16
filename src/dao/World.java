@@ -1,15 +1,15 @@
-package dto;
+package dao;
 
 /**
  *
  * @author dogi_
  */
 
-import interfaces.DTO;
 import javax.swing.Icon;
 import util.Storage;
+import interfaces.DAO;
 
-public class World implements DTO {
+public class World implements DAO {
     
     private String old_folder_path="";
     public String folder_path="";

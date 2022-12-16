@@ -5,6 +5,10 @@ package form;
  * @author dogi_
  */
 
+import dao.Instance;
+import dao.Properties;
+import dao.World;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.util.ArrayList;
@@ -15,13 +19,17 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
-
-import dto.Instance;
-import dto.World;
 import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.text.MessageFormat;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
@@ -38,8 +46,8 @@ public class FormMain extends javax.swing.JFrame {
     private Watcher watcher;
     private ArrayList<Instance> instances=new ArrayList<>();
     private Instance sele_instance=null;
-    private Config cfg_global;
-    private Process p;
+    private Config cfg_global=null;
+    private Process p=null;
 
     public FormMain() {
         initComponents();
@@ -298,6 +306,7 @@ public class FormMain extends javax.swing.JFrame {
         btn_editar_mundo = new javax.swing.JButton();
         scroll_mundos = new javax.swing.JScrollPane();
         panel_worlds = new javax.swing.JPanel();
+        jTabbedPane1 = new javax.swing.JTabbedPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -382,20 +391,23 @@ public class FormMain extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(btn_crear)
-                        .addGap(28, 28, 28))
+                        .addGap(28, 798, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(scroll_instances, javax.swing.GroupLayout.DEFAULT_SIZE, 545, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jTabbedPane1)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(btn_iniciar_server)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(btn_crear_mundo)
+                                .addComponent(scroll_instances, javax.swing.GroupLayout.DEFAULT_SIZE, 546, Short.MAX_VALUE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btn_editar_mundo)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btn_eliminar_mundo))
-                            .addComponent(scroll_mundos, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(btn_iniciar_server)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(btn_crear_mundo)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(btn_editar_mundo)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(btn_eliminar_mundo))
+                                    .addComponent(scroll_mundos, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))))
                         .addContainerGap())))
         );
         layout.setVerticalGroup(
@@ -404,8 +416,7 @@ public class FormMain extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(btn_crear)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(scroll_instances, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(btn_iniciar_server)
@@ -413,7 +424,10 @@ public class FormMain extends javax.swing.JFrame {
                             .addComponent(btn_crear_mundo)
                             .addComponent(btn_editar_mundo))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(scroll_mundos)))
+                        .addComponent(scroll_mundos, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                    .addComponent(scroll_instances, javax.swing.GroupLayout.PREFERRED_SIZE, 303, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 249, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -442,13 +456,9 @@ public class FormMain extends javax.swing.JFrame {
         String fi_start=fo_server+"/start.bat";
         if(Storage.exists(fo_minecraft+"/"+fi_minecraft)){
             // Archivo start.bat para iniciar servidor
-            if(!Storage.exists(fi_start) || 1==1){
-                String[] l={
-                    //"cd "+fo_server,
-                    "start cmd /c \"cd "+fo_server+" && "+ins.java_path+" -jar "+Storage.getDir()+"/"+fo_minecraft+"/"+fi_minecraft+" nogui\""
-                    //ins.java_path+" -jar ../../../"+fi_minecraft+" nogui"
-                };
-                Storage.writeFile(l, fi_start);
+            String[] text_bat={ins.java_path+" -jar ../../../"+fo_minecraft+"/"+fi_minecraft+" nogui"};
+            if(!Storage.exists(fi_start)){
+                Storage.writeFile(text_bat, fi_start);
             }
             // Archivo eula del servidor
             Config cfg_eula=new Config(fo_server+"/eula.txt");
@@ -456,14 +466,19 @@ public class FormMain extends javax.swing.JFrame {
                 int op=JOptionPane.showInternalConfirmDialog(null,"By changing the setting below to TRUE\nyou are indicating your agreement to our EULA\n( https://account.mojang.com/documents/minecraft_eula ).","EULA",JOptionPane.WARNING_MESSAGE);
                 if(op==0){
                     cfg_eula.setConfigData("eula","true");
+                    cfg_eula.save();
                 }
             }
-            try{
-                this.p=Runtime.getRuntime().exec(fi_start);
+            // Propiedades del servidor en ejecución
+            Properties proper=new Properties(fo_server+"/server.properties");
+            proper.spawn_protection="5";
+            proper.save();
+            /*try{
+                ProcessBuilder pb=new ProcessBuilder();
+                this.p=pb.command("cmd","/c","start "+text_bat[0]).directory(new File(fo_server)).start();
             }catch(Exception ex){
                 ex.printStackTrace();
-                return;
-            }
+            }*/
         }else{
             new Download(this,true,fo_minecraft,fi_minecraft,url,null).setVisible(true);
         }
@@ -482,7 +497,9 @@ public class FormMain extends javax.swing.JFrame {
     }//GEN-LAST:event_btn_editar_mundoActionPerformed
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
-        this.p.destroy();
+        if(this.p!=null){
+            this.p.destroy();
+        }
     }//GEN-LAST:event_formWindowClosing
 
     public static void main(String args[]) {
@@ -510,6 +527,7 @@ public class FormMain extends javax.swing.JFrame {
     private javax.swing.JButton btn_editar_mundo;
     private javax.swing.JButton btn_eliminar_mundo;
     private javax.swing.JButton btn_iniciar_server;
+    private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JPanel panel_instances;
     private javax.swing.JPanel panel_worlds;
     private javax.swing.JScrollPane scroll_instances;

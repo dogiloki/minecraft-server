@@ -5,7 +5,7 @@ package interfaces;
  * @author dogi_
  */
 
-public interface DTO {
+public interface DAO {
     
     public boolean create();
     public boolean delete();

@@ -1,16 +1,16 @@
-package dto;
+package dao;
 
 /**
  *
  * @author dogi_
  */
 
-import interfaces.DTO;
 import javax.swing.JPanel;
 import util.Config;
 import util.Storage;
+import interfaces.DAO;
 
-public class Instance implements DTO{
+public class Instance implements DAO{
     
     public String name;
     public String version;
@@ -69,6 +69,7 @@ public class Instance implements DTO{
         this.cfg.setConfigData("name",this.name);
         this.cfg.setConfigData("version",this.version);
         this.cfg.setConfigData("JavaPath",this.java_path);
+        this.cfg.save();
         return true;
     }
 

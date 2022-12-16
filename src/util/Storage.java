@@ -74,18 +74,13 @@ public class Storage{
             File directorio=new File(ruta);
             BufferedWriter bw=new BufferedWriter(new FileWriter(directorio));
             String linea;
-            //int conta=0;
             for(int a=0; a<texto.length || lineas.get(a)!=null; a++){
                 linea=lineas.get(a);
                 if(linea==null){
                     linea=texto[a];
                 }else{
-                    //conta++;
+                    bw.write(linea+"\n");
                 }
-                if(linea!=null){
-                    bw.write((a<texto.length-1)?(linea+"\n"):(linea));
-                }
-                //a=conta>=lineas.size()?texto.length:a;
             }
             bw.close();
             return true;

@@ -64,7 +64,7 @@ public class Config{
         for(String linea:text){
             int posi_key_inicio=0;
             int posi_key_fin=linea.indexOf("=");
-            boolean is_comment=(linea.length()<=0?" ":linea).trim().substring(0,1).equals("#");
+            boolean is_comment=(linea.length()<=0?"#":linea).trim().substring(0,1).equals("#");
             if(posi_key_fin>=0 && !is_comment){
                 int posi_value_inicio=posi_key_fin+1;
                 int posi_value_fin=linea.length();
@@ -91,13 +91,26 @@ public class Config{
             
         }else{
             int linea_num=this.position.get(key)==null?this.position_end:this.position.get(key);
-            String linea_texto=key+"="+value;
-            Storage.writeFile(
-                    new HashMap<Integer,String>(){
-                        {put(linea_num,linea_texto);}
-                    },this.file
-            );
+            if(this.position.get(key)==null){
+                this.position.put(key,this.position_end);
+                this.position_end++;
+            }
             this.configurations.put(key,value);
+        }
+    }
+    
+    public void save(){
+        if(this.isJson()){
+            
+        }else{
+            Map<Integer,String> lineas=new HashMap<>();
+            for(String key:this.configurations.keySet()){
+                String value=this.getConfigData(key);
+                String linea_texto=key+"="+value;
+                int linea_num=this.position.get(key);
+                lineas.put(linea_num, linea_texto);
+            }
+            Storage.writeFile(lineas,this.file);
         }
     }
     

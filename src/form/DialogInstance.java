@@ -8,7 +8,7 @@ package form;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 
-import dto.Instance;
+import dao.Instance;
 
 import util.Config;
 import util.Download;

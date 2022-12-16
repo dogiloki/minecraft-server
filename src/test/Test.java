@@ -5,8 +5,8 @@
  */
 package test;
 
+import dao.Instance;
 import util.Config;
-import dto.*;
 
 /**
  *

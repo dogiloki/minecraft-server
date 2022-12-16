@@ -9,7 +9,7 @@ import javax.swing.JOptionPane;
 import util.Function;
 import util.GsonManager;
 import util.Storage;
-import dto.Instance;
+import dao.Instance;
 
 public class FormInstance extends javax.swing.JDialog{
     
