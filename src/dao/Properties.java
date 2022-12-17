@@ -84,6 +84,27 @@ public class Properties implements DAO{
         this.resource_pack=this.cfg.getConfigData("resource-pack");
         this.resource_pack_promp=this.cfg.getConfigData("resource-pack-promp");
     }
+    
+    public void reset(){
+        this.level_name="";
+        this.max_players="28";
+        this.gamemode=Properties.SURVIVAL;
+        this.difficulty=Properties.NORMAL;
+        this.white_list="false";
+        this.online_mode="true";
+        this.pvp="true";
+        this.enable_command_block="true";
+        this.allow_flight="true";
+        this.spawn_animals="true";
+        this.spawn_mosters="true";
+        this.spawn_npcs="true";
+        this.allow_nether="true";
+        this.force_gamemode="false";
+        this.spawn_protection="8";
+        this.require_resorce_pack="false";
+        this.resource_pack="";
+        this.resource_pack_promp="";
+    }
 
     public boolean create(){
         Storage.exists(this.file_path,Storage.CREATED,Storage.FILE);

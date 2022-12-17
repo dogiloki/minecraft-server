@@ -20,6 +20,7 @@ import javax.swing.JPanel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import java.awt.Image;
+import java.awt.event.ItemEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.BufferedReader;
@@ -113,10 +114,14 @@ public class FormMain extends javax.swing.JFrame {
                 @Override
                 public void mousePressed(MouseEvent evt){
                     if(sele_instance!=null){
+                        if(sele_instance.panel_ins==panel){
+                            return;
+                        }
                         sele_instance.panel_ins.setBackground(null);
                         sele_instance.panel_ins.setOpaque(false);
                     }
                     sele_instance=ins;
+                    sele_instance.panel_ins=panel;
                     sele_instance.panel_ins.setBackground(Color.decode("#b2cff0"));
                     sele_instance.panel_ins.setOpaque(true);
                     // Propiedades de la instancia
@@ -223,14 +228,17 @@ public class FormMain extends javax.swing.JFrame {
                 public void mouseClicked(MouseEvent evt){}
                 @Override
                 public void mousePressed(MouseEvent evt){
+                    if(sele_instance.panel_world!=null){
+                        if(sele_instance.panel_world==panel){
+                            return;
+                        }
+                        sele_instance.panel_world.setBackground(null);
+                        sele_instance.panel_world.setOpaque(false);
+                    }
                     btn_iniciar_server.setEnabled(true);
                     btn_crear_mundo.setEnabled(true);
                     btn_editar_mundo.setEnabled(true);
                     btn_eliminar_mundo.setEnabled(true);
-                    if(sele_instance.panel_world!=null){
-                        sele_instance.panel_world.setBackground(null);
-                        sele_instance.panel_world.setOpaque(false);
-                    }
                     sele_instance.world=world;
                     sele_instance.folder_world=cfg_global.getDic("fo_worlds")+"/"+folder;
                     
@@ -311,22 +319,22 @@ public class FormMain extends javax.swing.JFrame {
         
         Properties proper=this.sele_instance.properties;
         
-        this.max_players.setText(proper.max_players);
+        if(this.gamemode.getItemCount()<=0){
+            this.gamemode.addItem(Properties.SPECTATOR);
+            this.gamemode.addItem(Properties.ADVENTURE);
+            this.gamemode.addItem(Properties.CREATIVE);
+            this.gamemode.addItem(Properties.SURVIVAL);
+        }
+        if(this.difficulty.getItemCount()<=0){
+            this.difficulty.addItem(Properties.PEACEFUL);
+            this.difficulty.addItem(Properties.EASY);
+            this.difficulty.addItem(Properties.NORMAL);
+            this.difficulty.addItem(Properties.HARD);
+        }
         
-        this.gamemode.removeAllItems();
-        this.gamemode.addItem(Properties.PEACEFUL);
-        this.gamemode.addItem(Properties.EASY);
-        this.gamemode.addItem(Properties.NORMAL);
-        this.gamemode.addItem(Properties.HARD);
         this.gamemode.setSelectedItem(proper.gamemode);
-        
-        this.difficulty.removeAllItems();
-        this.difficulty.addItem(Properties.SPECTATOR);
-        this.difficulty.addItem(Properties.ADVENTURE);
-        this.difficulty.addItem(Properties.CREATIVE);
-        this.difficulty.addItem(Properties.SURVIVAL);
         this.difficulty.setSelectedItem(proper.difficulty);
-        
+        this.max_players.setText(proper.max_players);
         this.white_list.setSelected(proper.white_list.equals("true"));
         this.online_mode.setSelected(proper.online_mode.equals("true"));
         this.pvp.setSelected(proper.pvp.equals("true"));
@@ -356,7 +364,7 @@ public class FormMain extends javax.swing.JFrame {
         btn_editar_mundo = new javax.swing.JButton();
         scroll_mundos = new javax.swing.JScrollPane();
         panel_worlds = new javax.swing.JPanel();
-        jPanel1 = new javax.swing.JPanel();
+        panel_properties = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         max_players = new javax.swing.JTextField();
@@ -495,6 +503,12 @@ public class FormMain extends javax.swing.JFrame {
 
         jLabel2.setText("Modo de juego");
 
+        gamemode.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                gamemodeItemStateChanged(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -519,6 +533,12 @@ public class FormMain extends javax.swing.JFrame {
         );
 
         jLabel3.setText("Dificultad");
+
+        difficulty.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                difficultyItemStateChanged(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -545,6 +565,12 @@ public class FormMain extends javax.swing.JFrame {
 
         jLabel5.setText("Protección de spawn");
 
+        spawn_protection.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                spawn_protectionKeyReleased(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
         jPanel6Layout.setHorizontalGroup(
@@ -569,6 +595,12 @@ public class FormMain extends javax.swing.JFrame {
         );
 
         jLabel6.setText("Paquete de recursos");
+
+        resource_pack.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                resource_packKeyReleased(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
         jPanel7.setLayout(jPanel7Layout);
@@ -595,6 +627,12 @@ public class FormMain extends javax.swing.JFrame {
 
         jLabel7.setText("Mensaje de paquete de recursos");
 
+        resource_pack_promp.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                resource_pack_prompKeyReleased(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
         jPanel8.setLayout(jPanel8Layout);
         jPanel8Layout.setHorizontalGroup(
@@ -619,49 +657,109 @@ public class FormMain extends javax.swing.JFrame {
         );
 
         white_list.setText("Lista blanca");
+        white_list.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                white_listItemStateChanged(evt);
+            }
+        });
 
         online_mode.setText("Juego original");
+        online_mode.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                online_modeItemStateChanged(evt);
+            }
+        });
 
         pvp.setText("PVP");
+        pvp.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                pvpItemStateChanged(evt);
+            }
+        });
 
         allow_flight.setText("Volar");
+        allow_flight.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                allow_flightItemStateChanged(evt);
+            }
+        });
 
         enable_command_block.setText("Bloques de comandos");
+        enable_command_block.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                enable_command_blockItemStateChanged(evt);
+            }
+        });
 
         spawn_animals.setText("Animales");
+        spawn_animals.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                spawn_animalsItemStateChanged(evt);
+            }
+        });
 
         spawn_mosters.setText("Mostruos");
+        spawn_mosters.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                spawn_mostersItemStateChanged(evt);
+            }
+        });
 
         spawn_npcs.setText("Aldeanos");
+        spawn_npcs.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                spawn_npcsItemStateChanged(evt);
+            }
+        });
 
         force_gamemode.setText("Forzar modo de juego");
+        force_gamemode.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                force_gamemodeItemStateChanged(evt);
+            }
+        });
 
         require_resorce_pack.setText("Paquete de recursos requerido");
+        require_resorce_pack.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                require_resorce_packItemStateChanged(evt);
+            }
+        });
 
         allow_nether.setText("Inframundo");
+        allow_nether.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                allow_netherItemStateChanged(evt);
+            }
+        });
 
         btn_reset_properties.setText("Restaurar configuración");
+        btn_reset_properties.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_reset_propertiesActionPerformed(evt);
+            }
+        });
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        javax.swing.GroupLayout panel_propertiesLayout = new javax.swing.GroupLayout(panel_properties);
+        panel_properties.setLayout(panel_propertiesLayout);
+        panel_propertiesLayout.setHorizontalGroup(
+            panel_propertiesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panel_propertiesLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGroup(panel_propertiesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panel_propertiesLayout.createSequentialGroup()
                         .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGroup(panel_propertiesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panel_propertiesLayout.createSequentialGroup()
                         .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
+                    .addGroup(panel_propertiesLayout.createSequentialGroup()
                         .addComponent(white_list)
                         .addGap(18, 18, 18)
                         .addComponent(online_mode)
@@ -669,16 +767,16 @@ public class FormMain extends javax.swing.JFrame {
                         .addComponent(pvp)
                         .addGap(18, 18, 18)
                         .addComponent(allow_flight))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
+                    .addGroup(panel_propertiesLayout.createSequentialGroup()
                         .addComponent(enable_command_block)
                         .addGap(18, 18, 18)
                         .addComponent(force_gamemode))
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                    .addGroup(panel_propertiesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panel_propertiesLayout.createSequentialGroup()
                             .addComponent(require_resorce_pack)
                             .addGap(18, 18, 18)
                             .addComponent(btn_reset_properties, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(panel_propertiesLayout.createSequentialGroup()
                             .addComponent(spawn_npcs)
                             .addGap(18, 18, 18)
                             .addComponent(spawn_animals)
@@ -687,44 +785,44 @@ public class FormMain extends javax.swing.JFrame {
                             .addGap(18, 18, 18)
                             .addComponent(allow_nether)))))
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+        panel_propertiesLayout.setVerticalGroup(
+            panel_propertiesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panel_propertiesLayout.createSequentialGroup()
+                .addGroup(panel_propertiesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panel_propertiesLayout.createSequentialGroup()
+                        .addGroup(panel_propertiesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jPanel6, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(2, 2, 2))
                     .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(panel_propertiesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addGroup(panel_propertiesLayout.createSequentialGroup()
+                        .addGroup(panel_propertiesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(white_list)
                             .addComponent(online_mode)
                             .addComponent(pvp)
                             .addComponent(allow_flight))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addGroup(panel_propertiesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(enable_command_block)
                             .addComponent(force_gamemode))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(panel_propertiesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panel_propertiesLayout.createSequentialGroup()
+                        .addGroup(panel_propertiesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(spawn_npcs)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addGroup(panel_propertiesLayout.createSequentialGroup()
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 2, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addGroup(panel_propertiesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                     .addComponent(spawn_animals)
                                     .addComponent(spawn_mosters)
                                     .addComponent(allow_nether))))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addGroup(panel_propertiesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(require_resorce_pack)
                             .addComponent(btn_reset_properties)))))
         );
@@ -755,7 +853,7 @@ public class FormMain extends javax.swing.JFrame {
                                         .addComponent(btn_eliminar_mundo))
                                     .addComponent(scroll_mundos, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(panel_properties, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(0, 0, Short.MAX_VALUE)))
                         .addContainerGap())))
         );
@@ -776,8 +874,8 @@ public class FormMain extends javax.swing.JFrame {
                         .addComponent(scroll_mundos, javax.swing.GroupLayout.DEFAULT_SIZE, 247, Short.MAX_VALUE))
                     .addComponent(scroll_instances, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(14, 14, 14))
+                .addComponent(panel_properties, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         pack();
@@ -818,12 +916,12 @@ public class FormMain extends javax.swing.JFrame {
                     cfg_eula.save();
                 }
             }
-            /*try{
+            try{
                 ProcessBuilder pb=new ProcessBuilder();
                 this.p=pb.command("cmd","/c","start "+text_bat[0]).directory(new File(fo_server)).start();
             }catch(Exception ex){
                 ex.printStackTrace();
-            }*/
+            }
         }else{
             new Download(this,true,fo_minecraft,fi_minecraft,url,null).setVisible(true);
         }
@@ -853,6 +951,126 @@ public class FormMain extends javax.swing.JFrame {
             this.sele_instance.properties.save();
         }
     }//GEN-LAST:event_max_playersKeyReleased
+
+    private void spawn_protectionKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_spawn_protectionKeyReleased
+        if(this.sele_instance!=null && this.sele_instance.properties!=null){
+            this.sele_instance.properties.spawn_protection=this.spawn_protection.getText();
+            this.sele_instance.properties.save();
+        }
+    }//GEN-LAST:event_spawn_protectionKeyReleased
+
+    private void gamemodeItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_gamemodeItemStateChanged
+        if(this.sele_instance!=null && this.sele_instance.properties!=null && evt.getStateChange()==ItemEvent.DESELECTED){
+            this.sele_instance.properties.gamemode=this.gamemode.getSelectedItem().toString();
+            this.sele_instance.properties.save();
+        }
+    }//GEN-LAST:event_gamemodeItemStateChanged
+
+    private void difficultyItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_difficultyItemStateChanged
+        if(this.sele_instance!=null && this.sele_instance.properties!=null && evt.getStateChange()==ItemEvent.DESELECTED){
+            this.sele_instance.properties.difficulty=this.difficulty.getSelectedItem().toString();
+            this.sele_instance.properties.save();
+        }
+    }//GEN-LAST:event_difficultyItemStateChanged
+
+    private void resource_packKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_resource_packKeyReleased
+        if(this.sele_instance!=null && this.sele_instance.properties!=null){
+            this.sele_instance.properties.resource_pack=this.resource_pack.getText();
+            this.sele_instance.properties.save();
+        }
+    }//GEN-LAST:event_resource_packKeyReleased
+
+    private void resource_pack_prompKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_resource_pack_prompKeyReleased
+        if(this.sele_instance!=null && this.sele_instance.properties!=null){
+            this.sele_instance.properties.resource_pack_promp=this.resource_pack_promp.getText();
+            this.sele_instance.properties.save();
+        }
+    }//GEN-LAST:event_resource_pack_prompKeyReleased
+
+    private void white_listItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_white_listItemStateChanged
+        if(this.sele_instance!=null && this.sele_instance.properties!=null){
+            this.sele_instance.properties.white_list=this.white_list.isSelected()?"true":"false";
+            this.sele_instance.properties.save();
+        }
+    }//GEN-LAST:event_white_listItemStateChanged
+
+    private void online_modeItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_online_modeItemStateChanged
+        if(this.sele_instance!=null && this.sele_instance.properties!=null){
+            this.sele_instance.properties.online_mode=this.online_mode.isSelected()?"true":"false";
+            this.sele_instance.properties.save();
+        }
+    }//GEN-LAST:event_online_modeItemStateChanged
+
+    private void pvpItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_pvpItemStateChanged
+        if(this.sele_instance!=null && this.sele_instance.properties!=null){
+            this.sele_instance.properties.pvp=this.pvp.isSelected()?"true":"false";
+            this.sele_instance.properties.save();
+        }
+    }//GEN-LAST:event_pvpItemStateChanged
+
+    private void allow_flightItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_allow_flightItemStateChanged
+        if(this.sele_instance!=null && this.sele_instance.properties!=null){
+            this.sele_instance.properties.allow_flight=this.allow_flight.isSelected()?"true":"false";
+            this.sele_instance.properties.save();
+        }
+    }//GEN-LAST:event_allow_flightItemStateChanged
+
+    private void enable_command_blockItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_enable_command_blockItemStateChanged
+        if(this.sele_instance!=null && this.sele_instance.properties!=null){
+            this.sele_instance.properties.enable_command_block=this.enable_command_block.isSelected()?"true":"false";
+            this.sele_instance.properties.save();
+        }
+    }//GEN-LAST:event_enable_command_blockItemStateChanged
+
+    private void force_gamemodeItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_force_gamemodeItemStateChanged
+        if(this.sele_instance!=null && this.sele_instance.properties!=null){
+            this.sele_instance.properties.force_gamemode=this.force_gamemode.isSelected()?"true":"false";
+            this.sele_instance.properties.save();
+        }
+    }//GEN-LAST:event_force_gamemodeItemStateChanged
+
+    private void spawn_npcsItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_spawn_npcsItemStateChanged
+        if(this.sele_instance!=null && this.sele_instance.properties!=null){
+            this.sele_instance.properties.spawn_npcs=this.spawn_npcs.isSelected()?"true":"false";
+            this.sele_instance.properties.save();
+        }
+    }//GEN-LAST:event_spawn_npcsItemStateChanged
+
+    private void spawn_animalsItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_spawn_animalsItemStateChanged
+        if(this.sele_instance!=null && this.sele_instance.properties!=null){
+            this.sele_instance.properties.spawn_animals=this.spawn_animals.isSelected()?"true":"false";
+            this.sele_instance.properties.save();
+        }
+    }//GEN-LAST:event_spawn_animalsItemStateChanged
+
+    private void spawn_mostersItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_spawn_mostersItemStateChanged
+        if(this.sele_instance!=null && this.sele_instance.properties!=null){
+            this.sele_instance.properties.spawn_mosters=this.spawn_mosters.isSelected()?"true":"false";
+            this.sele_instance.properties.save();
+        }
+    }//GEN-LAST:event_spawn_mostersItemStateChanged
+
+    private void allow_netherItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_allow_netherItemStateChanged
+        if(this.sele_instance!=null && this.sele_instance.properties!=null){
+            this.sele_instance.properties.allow_nether=this.allow_nether.isSelected()?"true":"false";
+            this.sele_instance.properties.save();
+        }
+    }//GEN-LAST:event_allow_netherItemStateChanged
+
+    private void require_resorce_packItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_require_resorce_packItemStateChanged
+        if(this.sele_instance!=null && this.sele_instance.properties!=null){
+            this.sele_instance.properties.require_resorce_pack=this.require_resorce_pack.isSelected()?"true":"false";
+            this.sele_instance.properties.save();
+        }
+    }//GEN-LAST:event_require_resorce_packItemStateChanged
+
+    private void btn_reset_propertiesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_reset_propertiesActionPerformed
+        if(this.sele_instance!=null && this.sele_instance.properties!=null){
+            this.sele_instance.properties.reset();
+            this.sele_instance.properties.save();
+            this.getProperties();
+        }
+    }//GEN-LAST:event_btn_reset_propertiesActionPerformed
 
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -892,7 +1110,6 @@ public class FormMain extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
@@ -902,6 +1119,7 @@ public class FormMain extends javax.swing.JFrame {
     private javax.swing.JTextField max_players;
     private javax.swing.JCheckBox online_mode;
     private javax.swing.JPanel panel_instances;
+    private javax.swing.JPanel panel_properties;
     private javax.swing.JPanel panel_worlds;
     private javax.swing.JCheckBox pvp;
     private javax.swing.JCheckBox require_resorce_pack;

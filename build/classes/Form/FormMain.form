@@ -52,7 +52,7 @@
                               </Group>
                           </Group>
                           <Group type="102" attributes="0">
-                              <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
+                              <Component id="panel_properties" min="-2" max="-2" attributes="0"/>
                               <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                           </Group>
                       </Group>
@@ -82,8 +82,8 @@
                   <Component id="scroll_instances" pref="0" max="32767" attributes="0"/>
               </Group>
               <EmptySpace min="-2" max="-2" attributes="0"/>
-              <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
-              <EmptySpace min="-2" pref="14" max="-2" attributes="0"/>
+              <Component id="panel_properties" min="-2" max="-2" attributes="0"/>
+              <EmptySpace min="-2" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -180,7 +180,7 @@
         </Container>
       </SubComponents>
     </Container>
-    <Container class="javax.swing.JPanel" name="jPanel1">
+    <Container class="javax.swing.JPanel" name="panel_properties">
 
       <Layout>
         <DimensionLayout dim="0">
@@ -380,6 +380,9 @@
                   <StringArray count="0"/>
                 </Property>
               </Properties>
+              <Events>
+                <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="gamemodeItemStateChanged"/>
+              </Events>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
               </AuxValues>
@@ -428,6 +431,9 @@
                   <StringArray count="0"/>
                 </Property>
               </Properties>
+              <Events>
+                <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="difficultyItemStateChanged"/>
+              </Events>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
               </AuxValues>
@@ -471,6 +477,9 @@
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="spawn_protection">
+              <Events>
+                <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="spawn_protectionKeyReleased"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>
@@ -511,6 +520,9 @@
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="resource_pack">
+              <Events>
+                <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="resource_packKeyReleased"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>
@@ -551,6 +563,9 @@
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="resource_pack_promp">
+              <Events>
+                <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="resource_pack_prompKeyReleased"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>
@@ -558,61 +573,97 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="Lista blanca"/>
           </Properties>
+          <Events>
+            <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="white_listItemStateChanged"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JCheckBox" name="online_mode">
           <Properties>
             <Property name="text" type="java.lang.String" value="Juego original"/>
           </Properties>
+          <Events>
+            <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="online_modeItemStateChanged"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JCheckBox" name="pvp">
           <Properties>
             <Property name="text" type="java.lang.String" value="PVP"/>
           </Properties>
+          <Events>
+            <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="pvpItemStateChanged"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JCheckBox" name="allow_flight">
           <Properties>
             <Property name="text" type="java.lang.String" value="Volar"/>
           </Properties>
+          <Events>
+            <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="allow_flightItemStateChanged"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JCheckBox" name="enable_command_block">
           <Properties>
             <Property name="text" type="java.lang.String" value="Bloques de comandos"/>
           </Properties>
+          <Events>
+            <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="enable_command_blockItemStateChanged"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JCheckBox" name="spawn_animals">
           <Properties>
             <Property name="text" type="java.lang.String" value="Animales"/>
           </Properties>
+          <Events>
+            <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="spawn_animalsItemStateChanged"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JCheckBox" name="spawn_mosters">
           <Properties>
             <Property name="text" type="java.lang.String" value="Mostruos"/>
           </Properties>
+          <Events>
+            <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="spawn_mostersItemStateChanged"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JCheckBox" name="spawn_npcs">
           <Properties>
             <Property name="text" type="java.lang.String" value="Aldeanos"/>
           </Properties>
+          <Events>
+            <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="spawn_npcsItemStateChanged"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JCheckBox" name="force_gamemode">
           <Properties>
             <Property name="text" type="java.lang.String" value="Forzar modo de juego"/>
           </Properties>
+          <Events>
+            <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="force_gamemodeItemStateChanged"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JCheckBox" name="require_resorce_pack">
           <Properties>
             <Property name="text" type="java.lang.String" value="Paquete de recursos requerido"/>
           </Properties>
+          <Events>
+            <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="require_resorce_packItemStateChanged"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JCheckBox" name="allow_nether">
           <Properties>
             <Property name="text" type="java.lang.String" value="Inframundo"/>
           </Properties>
+          <Events>
+            <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="allow_netherItemStateChanged"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JButton" name="btn_reset_properties">
           <Properties>
             <Property name="text" type="java.lang.String" value="Restaurar configuraci&#xf3;n"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_reset_propertiesActionPerformed"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>
