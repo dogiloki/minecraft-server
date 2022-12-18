@@ -67,7 +67,7 @@ public class FormMain extends javax.swing.JFrame{
         int total_columnas=(int)Math.floor(ancho_total/ancho)-1;
         int x=0, y=0, conta=0, filas=0;
         this.panel_servidores.removeAll();
-        for(String folder:Storage.listDirectory(this.config_global.getDic("folder_instances"),true,false,null)){
+        for(String folder:Storage.listDirectory(this.config_global.getDic("folder_instances"),Storage.FOLDER)){
             String ruta=this.config_global.getDic("folder_instances")+"/"+folder+"/"+this.config_global.getDic("file_instance");
             if(Storage.exists(ruta)){
                 Config config=new Config(ruta);
@@ -165,7 +165,7 @@ public class FormMain extends javax.swing.JFrame{
         if(!Storage.exists(dir)){
             Storage.createFolder(dir);
         }
-        for(String folder:Storage.listDirectory(dir,true,false,null)){
+        for(String folder:Storage.listDirectory(dir,Storage.FOLDER)){
                 JPanel panel=new JPanel();
                 panel.setLayout(null);
                 panel.setBounds(x,y,ancho,alto);

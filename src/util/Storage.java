@@ -1,5 +1,6 @@
 package util;
 
+import java.awt.Frame;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -25,6 +26,7 @@ public class Storage{
     
     public static final int FOLDER=0;
     public static final int FILE=1;
+    public static final int ALL=2;
     public static final boolean CREATED=true;
     
     // Crea una carpeta
@@ -149,26 +151,60 @@ public class Storage{
         return directorio_old.renameTo(directorio_new);
     }
     
-    // Copiar archivos de un lugar a otro
-    public static void copyFile(String ruta_old, String ruta_new){
-        File directorio_old=new File(ruta_old);
-        File directorio_new=new File(ruta_new);
-        if(directorio_old.exists()){
-            try{
-                InputStream in=new FileInputStream(directorio_old);
-                OutputStream out=new FileOutputStream(directorio_new);
-                byte[] buf=new byte[1024];
-                int len;
-                while((len=in.read(buf))>0){
-                    out.write(buf,0,len);
-                }
-                in.close();
-                out.close();
-            }catch(IOException ex){
-                JOptionPane.showMessageDialog(null,ex,"Error",JOptionPane.ERROR_MESSAGE);
+    // Copiar un archivo de un lugar a otro
+    public static void copyFile(String ruta_old, String ruta_new) throws Exception{
+        File directory_old=new File(ruta_old);
+        File directory_new=new File(ruta_new);
+        if(!directory_old.exists()){
+            throw new Exception("No existe "+ruta_old);
+        }else
+        if(!directory_old.isFile()){
+            throw new Exception(ruta_old+" no es un archivo");
+        }
+        try{
+            InputStream in=new FileInputStream(directory_old);
+            OutputStream out=new FileOutputStream(directory_new);
+            byte[] buf=new byte[1024];
+            int len;
+            while((len=in.read(buf))>0){
+                out.write(buf,0,len);
             }
-        }else{
-            JOptionPane.showMessageDialog(null,"No existe "+ruta_old,"Error",JOptionPane.ERROR_MESSAGE);
+            in.close();
+            out.close();
+        }catch(IOException ex){
+            throw new Exception(ex.getMessage());
+        }
+    }
+    
+    // Copiar todo un directorio / folder
+    public static void copyDirectory(String path_old, String path_new) throws Exception{
+        Storage._copyDirectory(path_old,path_new,null);
+    }
+    public static void copyDirectory(String path_old, String path_new, Frame context) throws Exception{
+        Storage._copyDirectory(path_old,path_new,context);
+    }
+    
+    private static void _copyDirectory(String path_old, String path_new, Frame context) throws Exception{
+        File directory_old=new File(path_old);
+        File directory_new=new File(path_new);
+        if(!directory_old.exists()){
+            throw new Exception("No existe "+path_old);
+        }else
+        if(directory_old.isDirectory()){
+            directory_new.mkdir();
+        }
+        try{
+            String[] directoris=Storage.listDirectory(path_old);
+            for(String directory:directoris){
+                if(Storage.isFolder(path_old+"/"+directory)){
+                    Storage._copyDirectory(path_old+"/"+directory, path_new+"/"+directory,context);
+                }else
+                if(Storage.isFile(path_old+"/"+directory)){
+                    Storage.copyFile(path_old+"/"+directory, path_new+"/"+directory);
+                }
+            }
+        }catch(Exception ex){
+            throw new Exception(ex.getMessage());
         }
     }
     
@@ -205,7 +241,7 @@ public class Storage{
     }
     
     // Seleccion de archivos
-    public static String selectFile(JFrame frame,String directorio_actual){ 
+    public static String selectFile(JFrame frame, String directorio_actual){ 
         JFileChooser chooser=new JFileChooser(directorio_actual);
         chooser.setMultiSelectionEnabled(false);
         chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
@@ -218,7 +254,7 @@ public class Storage{
     }
     
     // Seleccion de carpetas
-    public static String selectFolder(JFrame frame,String directorio_actual){ 
+    public static String selectFolder(JFrame frame, String directorio_actual){ 
         JFileChooser chooser=new JFileChooser(directorio_actual);
         chooser.setMultiSelectionEnabled(false);
         chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -231,7 +267,22 @@ public class Storage{
     }
     
     // Enlistar archivos y/o carpetas
-    public static String[] listDirectory(String ruta, boolean folders, boolean files, String[] exceptions){
+    public static String[] listDirectory(String ruta){
+        return Storage._listDirectory(ruta,Storage.ALL,null);
+    }
+    public static String[] listDirectory(String ruta, int type){
+        return Storage._listDirectory(ruta,type,null);
+    }
+    public static String[] listDirectory(String ruta, String[] exceptions){
+        return Storage._listDirectory(ruta,Storage.ALL,exceptions);
+    }
+    public static String[] listDirectory(String ruta, int type, String[] exceptions){
+        return Storage._listDirectory(ruta,type,exceptions);
+    }
+    public static String[] listDirectory(String ruta, String[] exceptions, int type){
+        return Storage._listDirectory(ruta,type,exceptions);
+    }
+    private static String[] _listDirectory(String ruta, int type, String[] exceptions){
         if(exceptions==null){
             exceptions=new String[0];
         }
@@ -244,12 +295,12 @@ public class Storage{
                 for(int a=0; a<exceptions.length; a++){
                     fichero=fichero.replaceAll(exceptions[a],"");
                 }
-                if(folders){
+                if(type==Storage.FOLDER || type==Storage.ALL){
                     if(file_temp.isDirectory()){
                         ficheros.add(fichero);
                     }
                 }
-                if(files){
+                if(type==Storage.FILE || type==Storage.ALL){
                     if(file_temp.isFile()){
                         ficheros.add(fichero);
                     }

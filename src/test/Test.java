@@ -7,6 +7,7 @@ package test;
 
 import dao.Instance;
 import util.Config;
+import util.Storage;
 
 /**
  *
@@ -15,8 +16,11 @@ import util.Config;
 public class Test {
     
     public Test(){
-        Instance ins=new Instance("ds");
-        System.out.println(ins.name);
+        try{
+            Storage.copyDirectory("instances","instances2");
+        }catch(Exception ex){
+            ex.printStackTrace();
+        }
     }
     
     public static void main(String[] args){

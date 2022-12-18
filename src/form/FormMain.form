@@ -42,11 +42,11 @@
                                   <Group type="102" attributes="0">
                                       <Component id="btn_iniciar_server" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace max="32767" attributes="0"/>
-                                      <Component id="btn_crear_mundo" min="-2" max="-2" attributes="0"/>
+                                      <Component id="btn_crear_world" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="btn_editar_mundo" min="-2" max="-2" attributes="0"/>
+                                      <Component id="btn_import_world" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="btn_eliminar_mundo" min="-2" max="-2" attributes="0"/>
+                                      <Component id="btn_eliminar_world" min="-2" max="-2" attributes="0"/>
                                   </Group>
                                   <Component id="scroll_mundos" pref="0" max="32767" attributes="0"/>
                               </Group>
@@ -72,9 +72,9 @@
                   <Group type="102" attributes="0">
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="btn_iniciar_server" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="btn_eliminar_mundo" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="btn_crear_mundo" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="btn_editar_mundo" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="btn_eliminar_world" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="btn_crear_world" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="btn_import_world" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
                       <Component id="scroll_mundos" pref="247" max="32767" attributes="0"/>
@@ -132,31 +132,31 @@
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_iniciar_serverActionPerformed"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JButton" name="btn_eliminar_mundo">
+    <Component class="javax.swing.JButton" name="btn_eliminar_world">
       <Properties>
         <Property name="text" type="java.lang.String" value="Eliminar mundo"/>
         <Property name="enabled" type="boolean" value="false"/>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_eliminar_mundoActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_eliminar_worldActionPerformed"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JButton" name="btn_crear_mundo">
+    <Component class="javax.swing.JButton" name="btn_crear_world">
       <Properties>
         <Property name="text" type="java.lang.String" value="Crear mundo"/>
         <Property name="enabled" type="boolean" value="false"/>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_crear_mundoActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_crear_worldActionPerformed"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JButton" name="btn_editar_mundo">
+    <Component class="javax.swing.JButton" name="btn_import_world">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Editar mundo"/>
+        <Property name="text" type="java.lang.String" value="Importar mundo"/>
         <Property name="enabled" type="boolean" value="false"/>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_editar_mundoActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_import_worldActionPerformed"/>
       </Events>
     </Component>
     <Container class="javax.swing.JScrollPane" name="scroll_mundos">

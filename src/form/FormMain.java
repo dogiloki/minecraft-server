@@ -87,7 +87,7 @@ public class FormMain extends javax.swing.JFrame {
         this.scroll_instances.updateUI();
         String path_instances=this.cfg_global.getDic("fo_instances");
         String file_instance=this.cfg_global.getDic("fi_instance");
-        String[] folders=Storage.listDirectory(path_instances,true,true,null);
+        String[] folders=Storage.listDirectory(path_instances);
         // Valores del panel en cada instancia
         int ancho=210, alto=80;
         int ancho_total=this.scroll_instances.getWidth()-25;
@@ -120,6 +120,7 @@ public class FormMain extends javax.swing.JFrame {
                         sele_instance.panel_ins.setBackground(null);
                         sele_instance.panel_ins.setOpaque(false);
                     }
+                    btn_import_world.setEnabled(true);
                     sele_instance=ins;
                     sele_instance.panel_ins=panel;
                     sele_instance.panel_ins.setBackground(Color.decode("#b2cff0"));
@@ -203,7 +204,7 @@ public class FormMain extends javax.swing.JFrame {
         }
         String path_worlds=this.sele_instance.folder_ins+"/"+this.cfg_global.getDic("fo_server")+"/"+this.cfg_global.getDic("fo_worlds");
         Storage.exists(path_worlds,Storage.CREATED,Storage.FOLDER);
-        String[] folders=Storage.listDirectory(path_worlds,true,true,null);
+        String[] folders=Storage.listDirectory(path_worlds);
         // Valores del panel en cada instancia
         int ancho=170, alto=170;
         int ancho_total=this.scroll_mundos.getWidth()-25;
@@ -236,9 +237,8 @@ public class FormMain extends javax.swing.JFrame {
                         sele_instance.panel_world.setOpaque(false);
                     }
                     btn_iniciar_server.setEnabled(true);
-                    btn_crear_mundo.setEnabled(true);
-                    btn_editar_mundo.setEnabled(true);
-                    btn_eliminar_mundo.setEnabled(true);
+                    btn_crear_world.setEnabled(true);
+                    btn_eliminar_world.setEnabled(true);
                     sele_instance.world=world;
                     sele_instance.folder_world=cfg_global.getDic("fo_worlds")+"/"+folder;
                     
@@ -359,9 +359,9 @@ public class FormMain extends javax.swing.JFrame {
         panel_instances = new javax.swing.JPanel();
         btn_crear = new javax.swing.JButton();
         btn_iniciar_server = new javax.swing.JButton();
-        btn_eliminar_mundo = new javax.swing.JButton();
-        btn_crear_mundo = new javax.swing.JButton();
-        btn_editar_mundo = new javax.swing.JButton();
+        btn_eliminar_world = new javax.swing.JButton();
+        btn_crear_world = new javax.swing.JButton();
+        btn_import_world = new javax.swing.JButton();
         scroll_mundos = new javax.swing.JScrollPane();
         panel_worlds = new javax.swing.JPanel();
         panel_properties = new javax.swing.JPanel();
@@ -433,27 +433,27 @@ public class FormMain extends javax.swing.JFrame {
             }
         });
 
-        btn_eliminar_mundo.setText("Eliminar mundo");
-        btn_eliminar_mundo.setEnabled(false);
-        btn_eliminar_mundo.addActionListener(new java.awt.event.ActionListener() {
+        btn_eliminar_world.setText("Eliminar mundo");
+        btn_eliminar_world.setEnabled(false);
+        btn_eliminar_world.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_eliminar_mundoActionPerformed(evt);
+                btn_eliminar_worldActionPerformed(evt);
             }
         });
 
-        btn_crear_mundo.setText("Crear mundo");
-        btn_crear_mundo.setEnabled(false);
-        btn_crear_mundo.addActionListener(new java.awt.event.ActionListener() {
+        btn_crear_world.setText("Crear mundo");
+        btn_crear_world.setEnabled(false);
+        btn_crear_world.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_crear_mundoActionPerformed(evt);
+                btn_crear_worldActionPerformed(evt);
             }
         });
 
-        btn_editar_mundo.setText("Editar mundo");
-        btn_editar_mundo.setEnabled(false);
-        btn_editar_mundo.addActionListener(new java.awt.event.ActionListener() {
+        btn_import_world.setText("Importar mundo");
+        btn_import_world.setEnabled(false);
+        btn_import_world.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_editar_mundoActionPerformed(evt);
+                btn_import_worldActionPerformed(evt);
             }
         });
 
@@ -846,11 +846,11 @@ public class FormMain extends javax.swing.JFrame {
                                     .addGroup(layout.createSequentialGroup()
                                         .addComponent(btn_iniciar_server)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(btn_crear_mundo)
+                                        .addComponent(btn_crear_world)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(btn_editar_mundo)
+                                        .addComponent(btn_import_world)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(btn_eliminar_mundo))
+                                        .addComponent(btn_eliminar_world))
                                     .addComponent(scroll_mundos, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(panel_properties, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -867,9 +867,9 @@ public class FormMain extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(btn_iniciar_server)
-                            .addComponent(btn_eliminar_mundo)
-                            .addComponent(btn_crear_mundo)
-                            .addComponent(btn_editar_mundo))
+                            .addComponent(btn_eliminar_world)
+                            .addComponent(btn_crear_world)
+                            .addComponent(btn_import_world))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(scroll_mundos, javax.swing.GroupLayout.DEFAULT_SIZE, 247, Short.MAX_VALUE))
                     .addComponent(scroll_instances, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
@@ -927,17 +927,22 @@ public class FormMain extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btn_iniciar_serverActionPerformed
 
-    private void btn_eliminar_mundoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_eliminar_mundoActionPerformed
+    private void btn_eliminar_worldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_eliminar_worldActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_btn_eliminar_mundoActionPerformed
+    }//GEN-LAST:event_btn_eliminar_worldActionPerformed
 
-    private void btn_crear_mundoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_crear_mundoActionPerformed
+    private void btn_crear_worldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_crear_worldActionPerformed
         
-    }//GEN-LAST:event_btn_crear_mundoActionPerformed
+    }//GEN-LAST:event_btn_crear_worldActionPerformed
 
-    private void btn_editar_mundoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_editar_mundoActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btn_editar_mundoActionPerformed
+    private void btn_import_worldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_import_worldActionPerformed
+        if(this.sele_instance==null || this.sele_instance.folder_ins.equals("")){
+            return;
+        }
+        String path_world_old=Storage.selectFolder(this,"");
+        String path_world_new=this.sele_instance.folder_ins+"/"+this.cfg_global.getDic("fo_server")+"/"+this.cfg_global.getDic("fo_worlds")+"/import";
+        new DialogCopy(this,true,path_world_old,path_world_new,"Importado con exito!!!").setVisible(true);
+    }//GEN-LAST:event_btn_import_worldActionPerformed
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         if(this.p!=null){
@@ -1095,9 +1100,9 @@ public class FormMain extends javax.swing.JFrame {
     private javax.swing.JCheckBox allow_flight;
     private javax.swing.JCheckBox allow_nether;
     private javax.swing.JButton btn_crear;
-    private javax.swing.JButton btn_crear_mundo;
-    private javax.swing.JButton btn_editar_mundo;
-    private javax.swing.JButton btn_eliminar_mundo;
+    private javax.swing.JButton btn_crear_world;
+    private javax.swing.JButton btn_eliminar_world;
+    private javax.swing.JButton btn_import_world;
     private javax.swing.JButton btn_iniciar_server;
     private javax.swing.JButton btn_reset_properties;
     private javax.swing.JComboBox<String> difficulty;
