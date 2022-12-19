@@ -128,7 +128,7 @@ public class DialogCopy extends javax.swing.JDialog implements Runnable{
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextArea text_info;
-    private javax.swing.JLabel text_path;
+    public javax.swing.JLabel text_path;
     private javax.swing.JLabel text_path_new;
     private javax.swing.JLabel text_path_old;
     // End of variables declaration//GEN-END:variables

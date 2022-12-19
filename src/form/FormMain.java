@@ -23,14 +23,8 @@ import java.awt.Image;
 import java.awt.event.ItemEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.text.MessageFormat;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
@@ -120,6 +114,7 @@ public class FormMain extends javax.swing.JFrame {
                         sele_instance.panel_ins.setBackground(null);
                         sele_instance.panel_ins.setOpaque(false);
                     }
+                    btn_crear_world.setEnabled(true);
                     btn_import_world.setEnabled(true);
                     sele_instance=ins;
                     sele_instance.panel_ins=panel;
@@ -186,7 +181,7 @@ public class FormMain extends javax.swing.JFrame {
             panel.add(label_nombre);
             
             // Diseño
-            Design.margen(panel,10);
+            //Design.margen(panel,10);
             
             // Agregar a la GUI
             this.panel_instances.add(panel);
@@ -237,7 +232,6 @@ public class FormMain extends javax.swing.JFrame {
                         sele_instance.panel_world.setOpaque(false);
                     }
                     btn_iniciar_server.setEnabled(true);
-                    btn_crear_world.setEnabled(true);
                     btn_eliminar_world.setEnabled(true);
                     sele_instance.world=world;
                     sele_instance.folder_world=cfg_global.getDic("fo_worlds")+"/"+folder;
@@ -302,7 +296,7 @@ public class FormMain extends javax.swing.JFrame {
             panel.add(label_nombre);
             
             // Diseño
-            Design.margen(panel,10);
+            //Design.margen(panel,10);
             
             // Agregar a la GUI
             this.panel_worlds.add(panel);
@@ -355,15 +349,6 @@ public class FormMain extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        scroll_instances = new javax.swing.JScrollPane();
-        panel_instances = new javax.swing.JPanel();
-        btn_crear = new javax.swing.JButton();
-        btn_iniciar_server = new javax.swing.JButton();
-        btn_eliminar_world = new javax.swing.JButton();
-        btn_crear_world = new javax.swing.JButton();
-        btn_import_world = new javax.swing.JButton();
-        scroll_mundos = new javax.swing.JScrollPane();
-        panel_worlds = new javax.swing.JPanel();
         panel_properties = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
@@ -395,6 +380,20 @@ public class FormMain extends javax.swing.JFrame {
         require_resorce_pack = new javax.swing.JCheckBox();
         allow_nether = new javax.swing.JCheckBox();
         btn_reset_properties = new javax.swing.JButton();
+        jSplitPane1 = new javax.swing.JSplitPane();
+        jPanel5 = new javax.swing.JPanel();
+        btn_iniciar_server = new javax.swing.JButton();
+        btn_crear_world = new javax.swing.JButton();
+        btn_import_world = new javax.swing.JButton();
+        btn_eliminar_world = new javax.swing.JButton();
+        scroll_mundos = new javax.swing.JScrollPane();
+        panel_worlds = new javax.swing.JPanel();
+        jPanel1 = new javax.swing.JPanel();
+        btn_crear = new javax.swing.JButton();
+        btn_edit = new javax.swing.JButton();
+        btn_delete = new javax.swing.JButton();
+        scroll_instances = new javax.swing.JScrollPane();
+        panel_instances = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -402,73 +401,6 @@ public class FormMain extends javax.swing.JFrame {
                 formWindowClosing(evt);
             }
         });
-
-        scroll_instances.setPreferredSize(new java.awt.Dimension(918, 445));
-
-        javax.swing.GroupLayout panel_instancesLayout = new javax.swing.GroupLayout(panel_instances);
-        panel_instances.setLayout(panel_instancesLayout);
-        panel_instancesLayout.setHorizontalGroup(
-            panel_instancesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 790, Short.MAX_VALUE)
-        );
-        panel_instancesLayout.setVerticalGroup(
-            panel_instancesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 444, Short.MAX_VALUE)
-        );
-
-        scroll_instances.setViewportView(panel_instances);
-
-        btn_crear.setText("Crear instancia");
-        btn_crear.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_crearActionPerformed(evt);
-            }
-        });
-
-        btn_iniciar_server.setText("Iniciar");
-        btn_iniciar_server.setEnabled(false);
-        btn_iniciar_server.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_iniciar_serverActionPerformed(evt);
-            }
-        });
-
-        btn_eliminar_world.setText("Eliminar mundo");
-        btn_eliminar_world.setEnabled(false);
-        btn_eliminar_world.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_eliminar_worldActionPerformed(evt);
-            }
-        });
-
-        btn_crear_world.setText("Crear mundo");
-        btn_crear_world.setEnabled(false);
-        btn_crear_world.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_crear_worldActionPerformed(evt);
-            }
-        });
-
-        btn_import_world.setText("Importar mundo");
-        btn_import_world.setEnabled(false);
-        btn_import_world.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_import_worldActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout panel_worldsLayout = new javax.swing.GroupLayout(panel_worlds);
-        panel_worlds.setLayout(panel_worldsLayout);
-        panel_worldsLayout.setHorizontalGroup(
-            panel_worldsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 728, Short.MAX_VALUE)
-        );
-        panel_worldsLayout.setVerticalGroup(
-            panel_worldsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 414, Short.MAX_VALUE)
-        );
-
-        scroll_mundos.setViewportView(panel_worlds);
 
         jLabel1.setText("Máximo de jugadores");
 
@@ -487,7 +419,7 @@ public class FormMain extends javax.swing.JFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jLabel1)
-                        .addGap(0, 20, Short.MAX_VALUE))
+                        .addGap(0, 0, Short.MAX_VALUE))
                     .addComponent(max_players))
                 .addContainerGap())
         );
@@ -518,7 +450,7 @@ public class FormMain extends javax.swing.JFrame {
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(jLabel2)
-                        .addGap(0, 107, Short.MAX_VALUE))
+                        .addGap(0, 0, Short.MAX_VALUE))
                     .addComponent(gamemode, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -550,7 +482,7 @@ public class FormMain extends javax.swing.JFrame {
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addComponent(jLabel3)
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(difficulty, 0, 188, Short.MAX_VALUE))
+                    .addComponent(difficulty, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
@@ -580,7 +512,7 @@ public class FormMain extends javax.swing.JFrame {
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel6Layout.createSequentialGroup()
                         .addComponent(jLabel5)
-                        .addGap(0, 23, Short.MAX_VALUE))
+                        .addGap(0, 0, Short.MAX_VALUE))
                     .addComponent(spawn_protection))
                 .addContainerGap())
         );
@@ -827,52 +759,167 @@ public class FormMain extends javax.swing.JFrame {
                             .addComponent(btn_reset_properties)))))
         );
 
+        jSplitPane1.setBorder(null);
+
+        btn_iniciar_server.setText("Iniciar");
+        btn_iniciar_server.setEnabled(false);
+        btn_iniciar_server.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_iniciar_serverActionPerformed(evt);
+            }
+        });
+
+        btn_crear_world.setText("Crear mundo");
+        btn_crear_world.setEnabled(false);
+        btn_crear_world.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_crear_worldActionPerformed(evt);
+            }
+        });
+
+        btn_import_world.setText("Importar mundo");
+        btn_import_world.setEnabled(false);
+        btn_import_world.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_import_worldActionPerformed(evt);
+            }
+        });
+
+        btn_eliminar_world.setText("Eliminar mundo");
+        btn_eliminar_world.setEnabled(false);
+        btn_eliminar_world.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_eliminar_worldActionPerformed(evt);
+            }
+        });
+
+        scroll_mundos.setBorder(null);
+
+        panel_worlds.setPreferredSize(new java.awt.Dimension(0, 0));
+
+        javax.swing.GroupLayout panel_worldsLayout = new javax.swing.GroupLayout(panel_worlds);
+        panel_worlds.setLayout(panel_worldsLayout);
+        panel_worldsLayout.setHorizontalGroup(
+            panel_worldsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 489, Short.MAX_VALUE)
+        );
+        panel_worldsLayout.setVerticalGroup(
+            panel_worldsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 324, Short.MAX_VALUE)
+        );
+
+        scroll_mundos.setViewportView(panel_worlds);
+
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addComponent(btn_iniciar_server)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 147, Short.MAX_VALUE)
+                        .addComponent(btn_crear_world)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btn_import_world)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btn_eliminar_world))
+                    .addComponent(scroll_mundos, javax.swing.GroupLayout.Alignment.TRAILING)))
+        );
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btn_iniciar_server)
+                    .addComponent(btn_crear_world)
+                    .addComponent(btn_import_world)
+                    .addComponent(btn_eliminar_world))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(scroll_mundos, javax.swing.GroupLayout.DEFAULT_SIZE, 324, Short.MAX_VALUE))
+        );
+
+        jSplitPane1.setRightComponent(jPanel5);
+
+        btn_crear.setText("Crear instancia");
+        btn_crear.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_crearActionPerformed(evt);
+            }
+        });
+
+        btn_edit.setText("MOD");
+        btn_edit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_editActionPerformed(evt);
+            }
+        });
+
+        btn_delete.setText("DEL");
+        btn_delete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_deleteActionPerformed(evt);
+            }
+        });
+
+        scroll_instances.setBorder(null);
+        scroll_instances.setPreferredSize(new java.awt.Dimension(0, 0));
+
+        panel_instances.setPreferredSize(new java.awt.Dimension(0, 0));
+
+        javax.swing.GroupLayout panel_instancesLayout = new javax.swing.GroupLayout(panel_instances);
+        panel_instances.setLayout(panel_instancesLayout);
+        panel_instancesLayout.setHorizontalGroup(
+            panel_instancesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 183, Short.MAX_VALUE)
+        );
+        panel_instancesLayout.setVerticalGroup(
+            panel_instancesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 324, Short.MAX_VALUE)
+        );
+
+        scroll_instances.setViewportView(panel_instances);
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addComponent(btn_crear)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btn_edit)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btn_delete))
+            .addComponent(scroll_instances, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btn_crear)
+                    .addComponent(btn_edit)
+                    .addComponent(btn_delete))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(scroll_instances, javax.swing.GroupLayout.DEFAULT_SIZE, 324, Short.MAX_VALUE))
+        );
+
+        jSplitPane1.setLeftComponent(jPanel1);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(btn_crear)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(scroll_instances, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(btn_iniciar_server)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(btn_crear_world)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(btn_import_world)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(btn_eliminar_world))
-                                    .addComponent(scroll_mundos, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(panel_properties, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, Short.MAX_VALUE)))
-                        .addContainerGap())))
+                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 688, Short.MAX_VALUE)
+                .addContainerGap())
+            .addComponent(panel_properties, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(btn_crear)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(btn_iniciar_server)
-                            .addComponent(btn_eliminar_world)
-                            .addComponent(btn_crear_world)
-                            .addComponent(btn_import_world))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(scroll_mundos, javax.swing.GroupLayout.DEFAULT_SIZE, 247, Short.MAX_VALUE))
-                    .addComponent(scroll_instances, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                .addComponent(jSplitPane1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(panel_properties, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -907,20 +954,23 @@ public class FormMain extends javax.swing.JFrame {
             if(!Storage.exists(fi_start)){
                 Storage.writeFile(text_bat, fi_start);
             }
-            // Archivo eula del servidor
-            Config cfg_eula=new Config(fo_server+"/eula.txt");
-            if(cfg_eula.getConfigData("eula").equals("false")){
-                int op=JOptionPane.showInternalConfirmDialog(null,"By changing the setting below to TRUE\nyou are indicating your agreement to our EULA\n( https://account.mojang.com/documents/minecraft_eula ).","EULA",JOptionPane.WARNING_MESSAGE);
-                if(op==0){
-                    cfg_eula.setConfigData("eula","true");
-                    cfg_eula.save();
-                }
-            }
+            // Iniciar servidor
             try{
                 ProcessBuilder pb=new ProcessBuilder();
                 this.p=pb.command("cmd","/c","start "+text_bat[0]).directory(new File(fo_server)).start();
             }catch(Exception ex){
                 ex.printStackTrace();
+            }
+            // Archivo eula del servidor
+            if(Storage.exists(fo_server+"/eula.txt")){
+                Config cfg_eula=new Config(fo_server+"/eula.txt");
+                if(cfg_eula.getConfigData("eula").equals("false")){
+                    int op=JOptionPane.showInternalConfirmDialog(null,"By changing the setting below to TRUE\nyou are indicating your agreement to our EULA\n( https://account.mojang.com/documents/minecraft_eula ).","EULA",JOptionPane.WARNING_MESSAGE);
+                    if(op==0){
+                        cfg_eula.setConfigData("eula","true");
+                        cfg_eula.save();
+                    }
+                }
             }
         }else{
             new Download(this,true,fo_minecraft,fi_minecraft,url,null).setVisible(true);
@@ -928,11 +978,21 @@ public class FormMain extends javax.swing.JFrame {
     }//GEN-LAST:event_btn_iniciar_serverActionPerformed
 
     private void btn_eliminar_worldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_eliminar_worldActionPerformed
-        // TODO add your handling code here:
+        
     }//GEN-LAST:event_btn_eliminar_worldActionPerformed
 
     private void btn_crear_worldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_crear_worldActionPerformed
-        
+        String name_world=JOptionPane.showInputDialog("Ingrese nombre mundo");
+        String folder_world=this.sele_instance.folder_ins+"/"+this.cfg_global.getDic("fo_server")+"/"+this.cfg_global.getDic("fo_worlds")+"/"+name_world;
+        if(name_world==null || name_world.trim().equals("")){
+            return;
+        }
+        if(Storage.exists(folder_world)){
+            JOptionPane.showMessageDialog(null, "El mundo "+name_world+" ya existe","Avertencia",JOptionPane.WARNING_MESSAGE);
+        }else{
+            Storage.createFolder(folder_world);
+        }
+        this.getWorlds();
     }//GEN-LAST:event_btn_crear_worldActionPerformed
 
     private void btn_import_worldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_import_worldActionPerformed
@@ -940,8 +1000,11 @@ public class FormMain extends javax.swing.JFrame {
             return;
         }
         String path_world_old=Storage.selectFolder(this,"");
-        String path_world_new=this.sele_instance.folder_ins+"/"+this.cfg_global.getDic("fo_server")+"/"+this.cfg_global.getDic("fo_worlds")+"/import";
+        String[] array_world_old=path_world_old.replace("\\","/").split("/");
+        String name_world_new=JOptionPane.showInputDialog("Ingrese nombre mundo",array_world_old[array_world_old.length-1]);
+        String path_world_new=this.sele_instance.folder_ins+"/"+this.cfg_global.getDic("fo_server")+"/"+this.cfg_global.getDic("fo_worlds")+"/"+name_world_new;
         new DialogCopy(this,true,path_world_old,path_world_new,"Importado con exito!!!").setVisible(true);
+        this.getWorlds();
     }//GEN-LAST:event_btn_import_worldActionPerformed
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
@@ -1077,6 +1140,14 @@ public class FormMain extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btn_reset_propertiesActionPerformed
 
+    private void btn_editActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_editActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btn_editActionPerformed
+
+    private void btn_deleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_deleteActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btn_deleteActionPerformed
+
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
@@ -1101,6 +1172,8 @@ public class FormMain extends javax.swing.JFrame {
     private javax.swing.JCheckBox allow_nether;
     private javax.swing.JButton btn_crear;
     private javax.swing.JButton btn_crear_world;
+    private javax.swing.JButton btn_delete;
+    private javax.swing.JButton btn_edit;
     private javax.swing.JButton btn_eliminar_world;
     private javax.swing.JButton btn_import_world;
     private javax.swing.JButton btn_iniciar_server;
@@ -1115,12 +1188,15 @@ public class FormMain extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
+    private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JTextField max_players;
     private javax.swing.JCheckBox online_mode;
     private javax.swing.JPanel panel_instances;
