@@ -80,9 +80,8 @@ public class Storage{
                 linea=lineas.get(a);
                 if(linea==null){
                     linea=texto[a];
-                }else{
-                    bw.write(linea+"\n");
                 }
+                bw.write(linea+(a<texto.length-1 || lineas.get(a-1)!=null?"\n":""));
             }
             bw.close();
             return true;
@@ -138,10 +137,30 @@ public class Storage{
         }
     }
     
-    // Obtener tamaño de archivo
-    public static long getSize(String ruta){
-        File directorio=new File(ruta);
-        return directorio.isFile()?directorio.length():-1;
+    // Obtener tamaño de un directorio
+    public static long getSize(String path){
+        return Storage._getSize(path,0);
+    }
+    private static long _getSize(String path, long size){
+        File directory=new File(path);
+        if(directory.isDirectory()){
+            String[] directories=Storage.listDirectory(path);
+            for(String path_:directories){
+                File direct=new File(path+"/"+path_);
+                if(direct.isDirectory()){
+                    size=Storage._getSize(direct.getPath(), size);
+                }else
+                if(direct.isFile()){
+                    size+=direct.length();
+                }
+            }
+        }else
+        if(directory.isFile()){
+            size+=directory.length();
+        }else{
+            size=-1;
+        }
+        return size;
     }
     
     // Cambiar el nombre a archivos o carpetas

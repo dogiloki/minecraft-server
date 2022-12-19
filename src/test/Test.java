@@ -17,7 +17,7 @@ public class Test {
     
     public Test(){
         try{
-            Storage.copyDirectory("instances","instances2");
+            System.out.println(Storage.getSize("e:\\Documentos"));
         }catch(Exception ex){
             ex.printStackTrace();
         }
