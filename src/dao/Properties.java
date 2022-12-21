@@ -21,7 +21,7 @@ public class Properties implements DAO{
     public Properties(String file_path){
         this.file_path=file_path;
         this.create();
-        this.save();
+        this.setters();
     }
     
     public Properties(Config cfg){

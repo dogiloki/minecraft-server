@@ -445,14 +445,8 @@ public class FormMain extends javax.swing.JFrame {
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(gamemode, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
+            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(gamemode, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -481,9 +475,8 @@ public class FormMain extends javax.swing.JFrame {
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addComponent(jLabel3)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(difficulty, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(difficulty, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -688,23 +681,11 @@ public class FormMain extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(panel_propertiesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(panel_propertiesLayout.createSequentialGroup()
-                        .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(panel_propertiesLayout.createSequentialGroup()
-                        .addComponent(white_list)
-                        .addGap(18, 18, 18)
-                        .addComponent(online_mode)
-                        .addGap(18, 18, 18)
-                        .addComponent(pvp)
-                        .addGap(18, 18, 18)
-                        .addComponent(allow_flight))
-                    .addGroup(panel_propertiesLayout.createSequentialGroup()
                         .addComponent(enable_command_block)
                         .addGap(18, 18, 18)
                         .addComponent(force_gamemode))
                     .addGroup(panel_propertiesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panel_propertiesLayout.createSequentialGroup()
+                        .addGroup(panel_propertiesLayout.createSequentialGroup()
                             .addComponent(require_resorce_pack)
                             .addGap(18, 18, 18)
                             .addComponent(btn_reset_properties, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -715,7 +696,20 @@ public class FormMain extends javax.swing.JFrame {
                             .addGap(18, 18, 18)
                             .addComponent(spawn_mosters)
                             .addGap(18, 18, 18)
-                            .addComponent(allow_nether)))))
+                            .addComponent(allow_nether)))
+                    .addGroup(panel_propertiesLayout.createSequentialGroup()
+                        .addComponent(white_list)
+                        .addGap(18, 18, 18)
+                        .addComponent(online_mode)
+                        .addGap(18, 18, 18)
+                        .addComponent(pvp)
+                        .addGap(18, 18, 18)
+                        .addComponent(allow_flight))
+                    .addGroup(panel_propertiesLayout.createSequentialGroup()
+                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         panel_propertiesLayout.setVerticalGroup(
             panel_propertiesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -863,7 +857,6 @@ public class FormMain extends javax.swing.JFrame {
         });
 
         scroll_instances.setBorder(null);
-        scroll_instances.setPreferredSize(new java.awt.Dimension(0, 0));
 
         panel_instances.setPreferredSize(new java.awt.Dimension(0, 0));
 
@@ -890,7 +883,7 @@ public class FormMain extends javax.swing.JFrame {
                 .addComponent(btn_edit)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btn_delete))
-            .addComponent(scroll_instances, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(scroll_instances)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -911,7 +904,7 @@ public class FormMain extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 688, Short.MAX_VALUE)
+                .addComponent(jSplitPane1)
                 .addContainerGap())
             .addComponent(panel_properties, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
@@ -943,7 +936,7 @@ public class FormMain extends javax.swing.JFrame {
         if(!Storage.exists(fo_meta_mc+"/"+name_json)){
             new Download(this,true,fo_meta_mc,name_json,versions.searchArray(versions,"id",ins.version).getValue("url"),null).setVisible(true);
         }
-        String url=new GsonManager(fo_meta_mc+"/"+name_json,GsonManager.FILE).getJson("downloads").getJson("server").getValue("url");
+        String url=new GsonManager(fo_meta_mc+"/"+name_json,GsonManager.FILE).getJson("downloads").getJson("client").getValue("url");
         String fo_minecraft=this.cfg_global.getDic("fo_mc")+"/"+ins.version;
         String fi_minecraft=MessageFormat.format(this.cfg_global.getDic("fi_server"),ins.version);
         String fo_server=ins.folder_ins+"/"+this.cfg_global.getDic("fo_server");
