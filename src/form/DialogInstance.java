@@ -269,7 +269,6 @@ public class DialogInstance extends javax.swing.JDialog {
         ins.file_path=folder+"/"+this.cfg_global.getDic("fi_instance");
         ins.name=name;
         ins.version=version;
-        ins.java_path="java";
         ins.save();
         dispose();
     }//GEN-LAST:event_btn_okActionPerformed

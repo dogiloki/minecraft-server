@@ -153,7 +153,7 @@ public class FormInstance extends javax.swing.JDialog{
             return;
         }
         Storage.createFolder(folder+"/"+this.config_global.getConfigJson("folders").getJson("instances").getValue("server"));
-        Instance ins=new Instance(folder+"/"+this.config_global.getConfigJson("files").getValue("instance"),nombre,version,"java");
+        Instance ins=new Instance(folder+"/"+this.config_global.getConfigJson("files").getValue("instance"));
         ins.save();
         dispose();
     }//GEN-LAST:event_btn_okActionPerformed

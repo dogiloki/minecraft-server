@@ -10,7 +10,7 @@ import java.text.DecimalFormat;
  * @author dogi_
  */
 
-public class Function{
+public class Function<T>{
     
     //  Convertir bytes en KB, MB, GB y TB
     public static String convertSize(long bytes){
@@ -31,6 +31,16 @@ public class Function{
             return new DecimalFormat("#.##").format(teras)+" TB";
         }else
         return "";
+    }
+    
+    // Asignar el primer valor diferente a nulo, dentro de un array
+    public T set(T... values){
+        for(T value:values){
+            if(value!=null){
+                return value;
+            }
+        }
+        return null;
     }
     
     // Crea un array Method
