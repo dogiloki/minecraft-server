@@ -10,6 +10,7 @@ import dao.Properties;
 import dao.World;
 
 import java.awt.Color;
+import java.awt.Desktop;
 import java.awt.Font;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -115,7 +116,7 @@ public class FormMain extends javax.swing.JFrame {
                         sele_instance.panel_ins.setOpaque(false);
                     }
                     btn_crear_world.setEnabled(true);
-                    btn_import_world.setEnabled(true);
+                    btn_folder_worlds.setEnabled(true);
                     sele_instance=ins;
                     sele_instance.panel_ins=panel;
                     sele_instance.panel_ins.setBackground(Color.decode("#b2cff0"));
@@ -384,7 +385,7 @@ public class FormMain extends javax.swing.JFrame {
         jPanel5 = new javax.swing.JPanel();
         btn_iniciar_server = new javax.swing.JButton();
         btn_crear_world = new javax.swing.JButton();
-        btn_import_world = new javax.swing.JButton();
+        btn_folder_worlds = new javax.swing.JButton();
         btn_eliminar_world = new javax.swing.JButton();
         scroll_mundos = new javax.swing.JScrollPane();
         panel_worlds = new javax.swing.JPanel();
@@ -771,11 +772,11 @@ public class FormMain extends javax.swing.JFrame {
             }
         });
 
-        btn_import_world.setText("Importar mundo");
-        btn_import_world.setEnabled(false);
-        btn_import_world.addActionListener(new java.awt.event.ActionListener() {
+        btn_folder_worlds.setText("Carpeta de mundos");
+        btn_folder_worlds.setEnabled(false);
+        btn_folder_worlds.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_import_worldActionPerformed(evt);
+                btn_folder_worldsActionPerformed(evt);
             }
         });
 
@@ -813,10 +814,10 @@ public class FormMain extends javax.swing.JFrame {
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel5Layout.createSequentialGroup()
                         .addComponent(btn_iniciar_server)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 147, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 125, Short.MAX_VALUE)
                         .addComponent(btn_crear_world)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btn_import_world)
+                        .addComponent(btn_folder_worlds)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btn_eliminar_world))
                     .addComponent(scroll_mundos, javax.swing.GroupLayout.Alignment.TRAILING)))
@@ -827,7 +828,7 @@ public class FormMain extends javax.swing.JFrame {
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btn_iniciar_server)
                     .addComponent(btn_crear_world)
-                    .addComponent(btn_import_world)
+                    .addComponent(btn_folder_worlds)
                     .addComponent(btn_eliminar_world))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(scroll_mundos, javax.swing.GroupLayout.DEFAULT_SIZE, 324, Short.MAX_VALUE))
@@ -936,7 +937,7 @@ public class FormMain extends javax.swing.JFrame {
         if(!Storage.exists(fo_meta_mc+"/"+name_json)){
             new Download(this,true,fo_meta_mc,name_json,versions.searchArray(versions,"id",ins.version).getValue("url"),null).setVisible(true);
         }
-        String url=new GsonManager(fo_meta_mc+"/"+name_json,GsonManager.FILE).getJson("downloads").getJson("client").getValue("url");
+        String url=new GsonManager(fo_meta_mc+"/"+name_json,GsonManager.FILE).getJson("downloads").getJson("server").getValue("url");
         String fo_minecraft=this.cfg_global.getDic("fo_mc")+"/"+ins.version;
         String fi_minecraft=MessageFormat.format(this.cfg_global.getDic("fi_server"),ins.version);
         String fo_server=ins.folder_ins+"/"+this.cfg_global.getDic("fo_server");
@@ -988,17 +989,22 @@ public class FormMain extends javax.swing.JFrame {
         this.getWorlds();
     }//GEN-LAST:event_btn_crear_worldActionPerformed
 
-    private void btn_import_worldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_import_worldActionPerformed
+    private void btn_folder_worldsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_folder_worldsActionPerformed
         if(this.sele_instance==null || this.sele_instance.folder_ins.equals("")){
             return;
         }
-        String path_world_old=Storage.selectFolder(this,"");
+        try{
+            Desktop.getDesktop().open(new File(Storage.getDir()+"/"+this.sele_instance.folder_ins+"/"+this.cfg_global.getDic("fo_server")+"/"+this.cfg_global.getDic("fo_worlds")));
+        }catch(Exception ex){
+            JOptionPane.showMessageDialog(null,ex.getMessage(),"Error",JOptionPane.ERROR_MESSAGE);
+        }
+        /*String path_world_old=Storage.selectFolder(this,"");
         String[] array_world_old=path_world_old.replace("\\","/").split("/");
         String name_world_new=JOptionPane.showInputDialog("Ingrese nombre mundo",array_world_old[array_world_old.length-1]);
         String path_world_new=this.sele_instance.folder_ins+"/"+this.cfg_global.getDic("fo_server")+"/"+this.cfg_global.getDic("fo_worlds")+"/"+name_world_new;
         new DialogCopy(this,true,path_world_old,path_world_new,"Importado con exito!!!").setVisible(true);
-        this.getWorlds();
-    }//GEN-LAST:event_btn_import_worldActionPerformed
+        this.getWorlds();*/
+    }//GEN-LAST:event_btn_folder_worldsActionPerformed
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         if(this.p!=null){
@@ -1168,7 +1174,7 @@ public class FormMain extends javax.swing.JFrame {
     private javax.swing.JButton btn_delete;
     private javax.swing.JButton btn_edit;
     private javax.swing.JButton btn_eliminar_world;
-    private javax.swing.JButton btn_import_world;
+    private javax.swing.JButton btn_folder_worlds;
     private javax.swing.JButton btn_iniciar_server;
     private javax.swing.JButton btn_reset_properties;
     private javax.swing.JComboBox<String> difficulty;

@@ -27,7 +27,7 @@ public class GsonManager{
 
     public GsonManager(String json){
         this.indice=0;
-        this.json=json.trim();
+        this.json=json==null || json.trim().equals("")?null:json.trim();
         this.constructer();
     }
     
@@ -48,6 +48,10 @@ public class GsonManager{
     }
     
     private void constructer(){
+        if(this.json==null){
+            this.object=new JsonObject();
+            return;
+        }
         this.parser=new JsonParser();
         this.json=(this.json==null || this.json.equals(""))?"[]":this.json;
         this.is_array=this.json.substring(0,1).equals("[") && this.json.substring(this.json.length()-1,this.json.length()).equals("]");
@@ -106,15 +110,27 @@ public class GsonManager{
     }
 
     public String getValue(String key){
-        return this.object.get(key).getAsString();
+        JsonElement object=this.object.get(key);
+        if(object==null){
+            return null;
+        }
+        return object.getAsString();
     }
     
     public GsonManager getJson(String key){
-        return new GsonManager(this.object.get(key).getAsJsonObject().toString());
+        JsonElement object=this.object.get(key);
+        if(object==null){
+            return new GsonManager(null);
+        }
+        return new GsonManager(object.getAsJsonObject().toString());
     }
     
     public GsonManager getJsonArray(String key){
-        return new GsonManager(this.object.get(key).getAsJsonArray().toString());
+        JsonElement object=this.object.get(key);
+        if(object==null){
+            return new GsonManager(null);
+        }
+        return new GsonManager(object.getAsJsonArray().toString());
     }
     
     public GsonManager searchArray(GsonManager jsonArray, String key, String value){

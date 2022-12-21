@@ -549,10 +549,10 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="btn_iniciar_server" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="147" max="32767" attributes="0"/>
+                              <EmptySpace pref="125" max="32767" attributes="0"/>
                               <Component id="btn_crear_world" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="btn_import_world" min="-2" max="-2" attributes="0"/>
+                              <Component id="btn_folder_worlds" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="btn_eliminar_world" min="-2" max="-2" attributes="0"/>
                           </Group>
@@ -567,7 +567,7 @@
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="btn_iniciar_server" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="btn_crear_world" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="btn_import_world" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="btn_folder_worlds" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="btn_eliminar_world" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
@@ -595,13 +595,13 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_crear_worldActionPerformed"/>
               </Events>
             </Component>
-            <Component class="javax.swing.JButton" name="btn_import_world">
+            <Component class="javax.swing.JButton" name="btn_folder_worlds">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Importar mundo"/>
+                <Property name="text" type="java.lang.String" value="Carpeta de mundos"/>
                 <Property name="enabled" type="boolean" value="false"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_import_worldActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_folder_worldsActionPerformed"/>
               </Events>
             </Component>
             <Component class="javax.swing.JButton" name="btn_eliminar_world">
