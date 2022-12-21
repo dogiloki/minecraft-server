@@ -1,5 +1,6 @@
 package util;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -49,16 +50,16 @@ public class Download extends javax.swing.JDialog implements Runnable{
         try{
             URLConnection con=new URL(this.url).openConnection();
             con.connect();
-            this.in=con.getInputStream();
-            this.out=new FileOutputStream(file);
+            this.in=new BufferedInputStream(con.getInputStream());
+            this.out=new FileOutputStream(file,true);
             int tamano=con.getContentLength();
-            //this.progreso.setMaximum((int)tamano);
+            this.progreso.setMaximum(100);
             int b=0;
             while(b!=-1){
                 if(this.eliminar){
                     this.in.close();
                     this.out.close();
-                    Storage.deleteFile(this.folder);
+                    //Storage.deleteFile(this.folder);
                     b=-1;
                 }else{
                     b=in.read();

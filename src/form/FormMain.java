@@ -25,6 +25,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
+import static java.lang.Long.parseLong;
 import java.text.MessageFormat;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
@@ -937,12 +938,14 @@ public class FormMain extends javax.swing.JFrame {
         if(!Storage.exists(fo_meta_mc+"/"+name_json)){
             new Download(this,true,fo_meta_mc,name_json,versions.searchArray(versions,"id",ins.version).getValue("url"),null).setVisible(true);
         }
-        String url=new GsonManager(fo_meta_mc+"/"+name_json,GsonManager.FILE).getJson("downloads").getJson("server").getValue("url");
+        GsonManager json=new GsonManager(fo_meta_mc+"/"+name_json,GsonManager.FILE);
+        String url=json.getJson("downloads").getJson("server").getValue("url");
         String fo_minecraft=this.cfg_global.getDic("fo_mc")+"/"+ins.version;
         String fi_minecraft=MessageFormat.format(this.cfg_global.getDic("fi_server"),ins.version);
         String fo_server=ins.folder_ins+"/"+this.cfg_global.getDic("fo_server");
         String fi_start=fo_server+"/start.bat";
-        if(Storage.exists(fo_minecraft+"/"+fi_minecraft)){
+        long fi_minecraft_size=parseLong(json.getJson("downloads").getJson("server").getValue("size"));
+        if(Storage.exists(fo_minecraft+"/"+fi_minecraft) && fi_minecraft_size==Storage.getSize(fo_minecraft+"/"+fi_minecraft)){
             // Archivo start.bat para iniciar servidor
             String[] text_bat={ins.java_path+" -jar ../../../"+fo_minecraft+"/"+fi_minecraft+" nogui"};
             if(!Storage.exists(fi_start)){
