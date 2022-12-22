@@ -9,6 +9,7 @@ import javax.swing.JPanel;
 import util.Config;
 import util.Storage;
 import interfaces.DAO;
+import java.util.Optional;
 import util.Function;
 
 public class Instance implements DAO{
@@ -50,12 +51,12 @@ public class Instance implements DAO{
     }
     
     public void setters(){
-        Function funt=new Function<String>();
-        this.name=(String)funt.set(this.cfg.getConfigData("name"),this.name);
-        this.version=(String)funt.set(this.cfg.getConfigData("version"),this.version);
-        this.java_path=(String)funt.set(this.cfg.getConfigData("java.path"),this.java_path);
-        this.memory_min=(String)funt.set(this.cfg.getConfigData("memory.min"),this.memory_min);
-        this.memory_max=(String)funt.set(this.cfg.getConfigData("memory.max"),this.memory_max);
+        Function<String> funt=new Function<>();
+        this.name=funt.set(this.cfg.getConfigData("name"),this.name);
+        this.version=funt.set(this.cfg.getConfigData("version"),this.version);
+        this.java_path=funt.set(this.cfg.getConfigData("java.path"),this.java_path);
+        this.memory_min=funt.set(this.cfg.getConfigData("memory.min"),this.memory_min);
+        this.memory_max=funt.set(this.cfg.getConfigData("memory.max"),this.memory_max);
     }
     
     public void reset(){

@@ -8,6 +8,7 @@ package dao;
 import util.Config;
 import util.Storage;
 import interfaces.DAO;
+import util.Function;
 
 public class Properties implements DAO{
     
@@ -66,24 +67,25 @@ public class Properties implements DAO{
     }
     
     private void setters(){
-        this.level_name=this.cfg.getConfigData("level-name");
-        this.max_players=this.cfg.getConfigData("max-players");
-        this.gamemode=this.cfg.getConfigData("gamemode");
-        this.difficulty=this.cfg.getConfigData("difficulty");
-        this.white_list=this.cfg.getConfigData("white-list");
-        this.online_mode=this.cfg.getConfigData("online-mode");
-        this.pvp=this.cfg.getConfigData("pvp");
-        this.enable_command_block=this.cfg.getConfigData("enable-command-block");
-        this.allow_flight=this.cfg.getConfigData("allow-flight");
-        this.spawn_animals=this.cfg.getConfigData("spawn-animals");
-        this.spawn_mosters=this.cfg.getConfigData("spawn-mosters");
-        this.spawn_npcs=this.cfg.getConfigData("spawn-npcs");
-        this.allow_nether=this.cfg.getConfigData("allow-nether");
-        this.force_gamemode=this.cfg.getConfigData("force-gamemode");
-        this.spawn_protection=this.cfg.getConfigData("spawn-protection");
-        this.require_resorce_pack=this.cfg.getConfigData("require-resorce-pack");
-        this.resource_pack=this.cfg.getConfigData("resource-pack");
-        this.resource_pack_promp=this.cfg.getConfigData("resource-pack-promp");
+        Function<String> funt=new Function<>();
+        this.level_name=funt.set(this.cfg.getConfigData("level-name"),this.level_name);
+        this.max_players=funt.set(this.cfg.getConfigData("max-players"),this.max_players);
+        this.gamemode=funt.set(this.cfg.getConfigData("gamemode"),this.gamemode);
+        this.difficulty=funt.set(this.cfg.getConfigData("difficulty"),this.difficulty);
+        this.white_list=funt.set(this.cfg.getConfigData("white-list"),this.white_list);
+        this.online_mode=funt.set(this.cfg.getConfigData("online-mode"),this.online_mode);
+        this.pvp=funt.set(this.cfg.getConfigData("pvp"),this.pvp);
+        this.enable_command_block=funt.set(this.cfg.getConfigData("enable-command-block"),this.enable_command_block);
+        this.allow_flight=funt.set(this.cfg.getConfigData("allow-flight"),this.allow_flight);
+        this.spawn_animals=funt.set(this.cfg.getConfigData("spawn-animals"),this.spawn_animals);
+        this.spawn_mosters=funt.set(this.cfg.getConfigData("spawn-mosters"),this.spawn_mosters);
+        this.spawn_npcs=funt.set(this.cfg.getConfigData("spawn-npcs"),this.spawn_npcs);
+        this.allow_nether=funt.set(this.cfg.getConfigData("allow-nether"),this.allow_nether);
+        this.force_gamemode=funt.set(this.cfg.getConfigData("force-gamemode"),this.force_gamemode);
+        this.spawn_protection=funt.set(this.cfg.getConfigData("spawn-protection"),this.spawn_protection);
+        this.require_resorce_pack=funt.set(this.cfg.getConfigData("require-resorce-pack"),this.require_resorce_pack);
+        this.resource_pack=funt.set(this.cfg.getConfigData("resource-pack"),this.resource_pack);
+        this.resource_pack_promp=funt.set(this.cfg.getConfigData("resource-pack-promp"),this.resource_pack_promp);
     }
     
     public void reset(){
