@@ -49,6 +49,26 @@ public class Properties implements DAO{
     public String resource_pack;
     public String resource_pack_promp;
     
+    // Atributos por default
+    final public static String LEVEL_NAME="";
+    final public static String MAX_PLAYERS="28";
+    final public static String GAMEMODE=Properties.SURVIVAL;
+    final public static String DIFFICULTY=Properties.NORMAL;
+    final public static String WHITE_LIST="false";
+    final public static String ONLINE_MODE="true";
+    final public static String PVP="true";
+    final public static String ENABLED_COMMAND_BLOCK="true";
+    final public static String ALLOW_FLIGHT="true";
+    final public static String SPAWN_ANIMALES="true";
+    final public static String SPAWN_MOSTERS="true";
+    final public static String SPAWN_NPCS="true";
+    final public static String ALLOW_NETHER="true";
+    final public static String FORCE_GAMEMODE="false";
+    final public static String SPAWN_PROTECTION="8";
+    final public static String REQUIRE_RESORCE_PACK="false";
+    final public static String RESOURCE_PACK="";
+    final public static String RESOURCE_PACK_PROMP="";
+    
     public Properties(){
         
     }
@@ -89,24 +109,24 @@ public class Properties implements DAO{
     }
     
     public void reset(){
-        this.level_name="";
-        this.max_players="28";
-        this.gamemode=Properties.SURVIVAL;
+        this.level_name=Properties.LEVEL_NAME;
+        this.max_players=Properties.MAX_PLAYERS;
+        this.gamemode=Properties.GAMEMODE;
         this.difficulty=Properties.NORMAL;
-        this.white_list="false";
-        this.online_mode="true";
-        this.pvp="true";
-        this.enable_command_block="true";
-        this.allow_flight="true";
-        this.spawn_animals="true";
-        this.spawn_mosters="true";
-        this.spawn_npcs="true";
-        this.allow_nether="true";
-        this.force_gamemode="false";
-        this.spawn_protection="8";
-        this.require_resorce_pack="false";
-        this.resource_pack="";
-        this.resource_pack_promp="";
+        this.white_list=Properties.WHITE_LIST;
+        this.online_mode=Properties.ONLINE_MODE;
+        this.pvp=Properties.PVP;
+        this.enable_command_block=Properties.ENABLED_COMMAND_BLOCK;
+        this.allow_flight=Properties.ALLOW_FLIGHT;
+        this.spawn_animals=Properties.SPAWN_ANIMALES;
+        this.spawn_mosters=Properties.SPAWN_MOSTERS;
+        this.spawn_npcs=Properties.SPAWN_NPCS;
+        this.allow_nether=Properties.ALLOW_NETHER;
+        this.force_gamemode=Properties.FORCE_GAMEMODE;
+        this.spawn_protection=Properties.SPAWN_PROTECTION;
+        this.require_resorce_pack=Properties.REQUIRE_RESORCE_PACK;
+        this.resource_pack=Properties.RESOURCE_PACK;
+        this.resource_pack_promp=Properties.RESOURCE_PACK_PROMP;
     }
 
     public boolean create(){

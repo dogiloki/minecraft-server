@@ -9,7 +9,6 @@ import javax.swing.JPanel;
 import util.Config;
 import util.Storage;
 import interfaces.DAO;
-import java.util.Optional;
 import util.Function;
 
 public class Instance implements DAO{
@@ -24,6 +23,10 @@ public class Instance implements DAO{
     public String memory_min;
     public String memory_max;
     
+    // Atributos por default
+    final public static String JAVA_PATH="java";
+    final public static String MEMORY_MIN="1024M";
+    final public static String MEMORY_MAX="2045M";
     
     // Atributos para manejo en la interfaz
     public JPanel panel_ins=null;
@@ -60,9 +63,9 @@ public class Instance implements DAO{
     }
     
     public void reset(){
-        this.java_path="java";
-        this.memory_min="1024M";
-        this.memory_max="2045M";
+        this.java_path=Instance.JAVA_PATH;
+        this.memory_min=Instance.MEMORY_MIN;
+        this.memory_max=Instance.MEMORY_MAX;
     }
     
     public boolean create(){

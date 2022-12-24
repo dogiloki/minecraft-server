@@ -692,6 +692,7 @@
             <Component class="javax.swing.JButton" name="btn_edit">
               <Properties>
                 <Property name="text" type="java.lang.String" value="MOD"/>
+                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_editActionPerformed"/>
@@ -700,6 +701,7 @@
             <Component class="javax.swing.JButton" name="btn_delete">
               <Properties>
                 <Property name="text" type="java.lang.String" value="DEL"/>
+                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_deleteActionPerformed"/>

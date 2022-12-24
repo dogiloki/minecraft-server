@@ -118,6 +118,10 @@ public class FormMain extends javax.swing.JFrame {
                     }
                     btn_crear_world.setEnabled(true);
                     btn_folder_worlds.setEnabled(true);
+                    btn_iniciar_server.setEnabled(false);
+                    btn_eliminar_world.setEnabled(false);
+                    btn_edit.setEnabled(true);
+                    btn_delete.setEnabled(true);
                     sele_instance=ins;
                     sele_instance.panel_ins=panel;
                     sele_instance.panel_ins.setBackground(Color.decode("#b2cff0"));
@@ -845,6 +849,7 @@ public class FormMain extends javax.swing.JFrame {
         });
 
         btn_edit.setText("MOD");
+        btn_edit.setEnabled(false);
         btn_edit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_editActionPerformed(evt);
@@ -852,6 +857,7 @@ public class FormMain extends javax.swing.JFrame {
         });
 
         btn_delete.setText("DEL");
+        btn_delete.setEnabled(false);
         btn_delete.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_deleteActionPerformed(evt);
@@ -924,7 +930,7 @@ public class FormMain extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btn_crearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_crearActionPerformed
-        new DialogInstance(this,true,this.cfg_global).setVisible(true);
+        new DialogInstance(this,true,this.cfg_global,null).setVisible(true);
     }//GEN-LAST:event_btn_crearActionPerformed
 
     private void btn_iniciar_serverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_iniciar_serverActionPerformed
@@ -1143,7 +1149,7 @@ public class FormMain extends javax.swing.JFrame {
     }//GEN-LAST:event_btn_reset_propertiesActionPerformed
 
     private void btn_editActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_editActionPerformed
-        // TODO add your handling code here:
+        new DialogInstance(this,true,this.cfg_global,this.sele_instance).setVisible(true);
     }//GEN-LAST:event_btn_editActionPerformed
 
     private void btn_deleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_deleteActionPerformed
