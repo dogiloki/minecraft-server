@@ -266,7 +266,6 @@ public class Storage{
             String[] directories=Storage.listDirectory(path);
             for(String directory:directories){
                 direct=new File(path+"/"+directory);
-                System.out.println(direct.getPath());
                 if(direct.isFile()){
                     direct.delete();
                     continue;

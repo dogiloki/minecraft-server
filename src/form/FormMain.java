@@ -979,7 +979,15 @@ public class FormMain extends javax.swing.JFrame {
     }//GEN-LAST:event_btn_iniciar_serverActionPerformed
 
     private void btn_eliminar_worldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_eliminar_worldActionPerformed
-        
+        if(this.sele_instance!=null && this.sele_instance.folder_world!=null){
+            try{
+                String folder=this.sele_instance.folder_ins+"/"+this.cfg_global.getDic("fo_server")+"/"+this.sele_instance.folder_world;
+                Storage.deleteFolder(folder);
+            }catch(Exception ex){
+               JOptionPane.showMessageDialog(null, ex.getMessage(),"Error",JOptionPane.ERROR_MESSAGE); 
+            }
+            this.getWorlds();
+        }
     }//GEN-LAST:event_btn_eliminar_worldActionPerformed
 
     private void btn_crear_worldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_crear_worldActionPerformed
