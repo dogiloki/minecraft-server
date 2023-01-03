@@ -17,9 +17,9 @@ public class Test {
     
     public Test(){
         try{
-            System.out.println(Storage.getSize("e:\\Documentos"));
+            Storage.deleteFolder("instances - copia");
         }catch(Exception ex){
-            ex.printStackTrace();
+            System.out.println(ex.getMessage());
         }
     }
     

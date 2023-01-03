@@ -75,7 +75,7 @@ public class DialogInstance extends javax.swing.JDialog {
         jLabel2 = new javax.swing.JLabel();
         caja_path_java = new javax.swing.JTextField();
         btn_reset_path_java = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        btn_path_java_explore = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         caja_memory_max = new javax.swing.JTextField();
@@ -121,7 +121,12 @@ public class DialogInstance extends javax.swing.JDialog {
             }
         });
 
-        jButton2.setText("Examinar");
+        btn_path_java_explore.setText("Examinar");
+        btn_path_java_explore.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_path_java_exploreActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -139,7 +144,7 @@ public class DialogInstance extends javax.swing.JDialog {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addComponent(caja_path_java)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton2)))
+                        .addComponent(btn_path_java_explore)))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -150,7 +155,7 @@ public class DialogInstance extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(caja_path_java, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton2))
+                    .addComponent(btn_path_java_explore))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btn_reset_path_java)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -281,7 +286,7 @@ public class DialogInstance extends javax.swing.JDialog {
     private void btn_okActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_okActionPerformed
         String version=this.lista_versiones.getSelectedValue();
         String name=this.caja_nombre.getText();
-        String folder=this.cfg_global.getDic("fo_instances")+"/"+name;
+        String folder=this.ins==null?this.cfg_global.getDic("fo_instances")+"/"+name:this.ins.folder_ins;
         if(name.equals("")){
             JOptionPane.showMessageDialog(null,"Ingrese un nombre para la instancia","Advertencia",JOptionPane.WARNING_MESSAGE);
             return;
@@ -311,6 +316,13 @@ public class DialogInstance extends javax.swing.JDialog {
         this.caja_memory_max.setText(Instance.MEMORY_MAX);
     }//GEN-LAST:event_btn_reset_memoryActionPerformed
 
+    private void btn_path_java_exploreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_path_java_exploreActionPerformed
+        String path_java=Storage.selectFile("");
+        if(path_java!=null && !path_java.trim().equals("")){
+            this.caja_path_java.setText(path_java);
+        }
+    }//GEN-LAST:event_btn_path_java_exploreActionPerformed
+
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
@@ -329,6 +341,7 @@ public class DialogInstance extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btn_cancelar;
     private javax.swing.JButton btn_ok;
+    private javax.swing.JButton btn_path_java_explore;
     private javax.swing.JButton btn_reset_memory;
     private javax.swing.JButton btn_reset_path_java;
     private javax.swing.JTextField caja_memory_max;
@@ -338,7 +351,6 @@ public class DialogInstance extends javax.swing.JDialog {
     private javax.swing.JTabbedPane content;
     private javax.swing.JPanel content_config;
     private javax.swing.JPanel content_version;
-    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

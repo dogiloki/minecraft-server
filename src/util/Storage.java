@@ -81,7 +81,7 @@ public class Storage{
                 if(linea==null){
                     linea=texto[a];
                 }
-                bw.write(linea+(a<texto.length-1 || lineas.get(a-1)!=null?"\n":""));
+                bw.write(linea+(a<texto.length-1 || lineas.get(a-1)!=null || texto.length<=1?"\n":""));
             }
             bw.close();
             return true;
@@ -213,8 +213,8 @@ public class Storage{
             directory_new.mkdir();
         }
         try{
-            String[] directoris=Storage.listDirectory(path_old);
-            for(String directory:directoris){
+            String[] directories=Storage.listDirectory(path_old);
+            for(String directory:directories){
                 if(Storage.isFolder(path_old+"/"+directory)){
                     Storage._copyDirectory(path_old+"/"+directory, path_new+"/"+directory,context);
                 }else
@@ -254,14 +254,48 @@ public class Storage{
             }
             return directorio.delete();
         }catch(Exception ex){
-            JOptionPane.showMessageDialog(null,ex,"Error",JOptionPane.ERROR_MESSAGE);
+            ex.printStackTrace();
         }
         return false;
     }
     
+    // Eliminar folder
+    public static void deleteFolder(String path) throws Exception{
+        try{
+            File direct;
+            String[] directories=Storage.listDirectory(path);
+            for(String directory:directories){
+                direct=new File(path+"/"+directory);
+                System.out.println(direct.getPath());
+                if(direct.isFile()){
+                    direct.delete();
+                    continue;
+                }
+                Storage.deleteFolder(direct.getPath());
+                direct.delete();
+            }
+            direct=new File(path);
+            if(direct.isFile()){
+                return;
+            }
+            String[] list=direct.list();
+            if(list==null || list.length<=0){
+                direct.delete();
+            }
+        }catch(Exception ex){
+            throw new Exception(ex.getMessage());
+        }
+    }
+    
     // Seleccion de archivos
-    public static String selectFile(JFrame frame, String directorio_actual){ 
-        JFileChooser chooser=new JFileChooser(directorio_actual);
+    public static String selectFile(JFrame frame, String path_current){ 
+        return Storage._selectFile(frame,path_current);
+    }
+    public static String selectFile(String path_current){ 
+        return Storage._selectFile(null,path_current);
+    }
+    private static String _selectFile(JFrame frame, String path_current){ 
+        JFileChooser chooser=new JFileChooser(path_current);
         chooser.setMultiSelectionEnabled(false);
         chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         chooser.showOpenDialog(frame);
@@ -273,8 +307,14 @@ public class Storage{
     }
     
     // Seleccion de carpetas
-    public static String selectFolder(JFrame frame, String directorio_actual){ 
-        JFileChooser chooser=new JFileChooser(directorio_actual);
+    public static String selectFolder(JFrame frame, String path_current){ 
+        return Storage._selectFolder(frame,path_current);
+    }
+    public static String selectFolder(String path_current){ 
+        return Storage._selectFolder(null,path_current);
+    }
+    private static String _selectFolder(JFrame frame, String path_current){ 
+        JFileChooser chooser=new JFileChooser(path_current);
         chooser.setMultiSelectionEnabled(false);
         chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         chooser.showOpenDialog(frame);
