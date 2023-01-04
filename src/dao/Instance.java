@@ -13,7 +13,7 @@ import util.Function;
 
 public class Instance implements DAO{
     
-    public String file_path;
+    public String file_path=null;
     private Config cfg=null;
     public Properties properties=null;
     
@@ -36,7 +36,7 @@ public class Instance implements DAO{
     public World world;
     
     public Instance(){
-        
+        this.reset();
     }
     
     // Constructor para abrir información de una instancia ya existente

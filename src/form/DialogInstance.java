@@ -28,10 +28,10 @@ public class DialogInstance extends javax.swing.JDialog {
         this.cfg_global=cfg_global;
         this.ins=ins;
         this.getVersion();
-        if(this.ins!=null){
-            this.caja_nombre.setText(this.ins.name);
-            this.getConfig();
+        if(this.ins==null){
+            this.ins=new Instance();
         }
+        this.getConfig();
     }
     
     public void getVersion(){
@@ -55,6 +55,7 @@ public class DialogInstance extends javax.swing.JDialog {
     }
     
     public void getConfig(){
+        this.caja_nombre.setText(this.ins.name);
         this.caja_path_java.setText(this.ins.java_path);
         this.caja_memory_min.setText(this.ins.memory_min);
         this.caja_memory_max.setText(this.ins.memory_max);
@@ -286,7 +287,7 @@ public class DialogInstance extends javax.swing.JDialog {
     private void btn_okActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_okActionPerformed
         String version=this.lista_versiones.getSelectedValue();
         String name=this.caja_nombre.getText();
-        String folder=this.ins==null?this.cfg_global.getDic("fo_instances")+"/"+name:this.ins.folder_ins;
+        String folder=this.ins.file_path==null?this.cfg_global.getDic("fo_instances")+"/"+name:this.ins.folder_ins;
         if(name.equals("")){
             JOptionPane.showMessageDialog(null,"Ingrese un nombre para la instancia","Advertencia",JOptionPane.WARNING_MESSAGE);
             return;

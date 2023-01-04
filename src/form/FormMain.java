@@ -953,12 +953,12 @@ public class FormMain extends javax.swing.JFrame {
         long fi_minecraft_size=parseLong(json.getJson("downloads").getJson("server").getValue("size"));
         if(Storage.exists(fo_minecraft+"/"+fi_minecraft) && fi_minecraft_size==Storage.getSize(fo_minecraft+"/"+fi_minecraft)){
             // Archivo start.bat para iniciar servidor
-            String[] text_bat={""+ins.java_path+" -jar -Xmx"+ins.memory_max+" -Xms"+ins.memory_max+" ../../../"+fo_minecraft+"/"+fi_minecraft+" nogui"};
+            String[] text_bat={"\""+ins.java_path+"\" -jar -Xmx"+ins.memory_max+" -Xms"+ins.memory_max+" ../../../"+fo_minecraft+"/"+fi_minecraft+" nogui"};
             Storage.writeFile(text_bat, fi_start);
             // Iniciar servidor
             try{
                 ProcessBuilder pb=new ProcessBuilder();
-                this.p=pb.command("cmd","/c","start "+text_bat[0]).directory(new File(fo_server)).start();
+                this.p=pb.command("cmd","/k","start","start.bat").directory(new File(fo_server)).start();
             }catch(Exception ex){
                 ex.printStackTrace();
             }
@@ -1160,7 +1160,15 @@ public class FormMain extends javax.swing.JFrame {
     }//GEN-LAST:event_btn_editActionPerformed
 
     private void btn_deleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_deleteActionPerformed
-        // TODO add your handling code here:
+        if(this.sele_instance!=null && this.sele_instance.folder_ins!=null){
+            try{
+                String folder=this.sele_instance.folder_ins;
+                Storage.deleteFolder(folder);
+            }catch(Exception ex){
+               JOptionPane.showMessageDialog(null, ex.getMessage(),"Error",JOptionPane.ERROR_MESSAGE); 
+            }
+            this.getWorlds();
+        }
     }//GEN-LAST:event_btn_deleteActionPerformed
 
     public static void main(String args[]) {

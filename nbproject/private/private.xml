@@ -5,7 +5,8 @@
         <group>
             <file>file:/E:/Github/Netbeans/minecraftServer/src/form/FormMain.java</file>
             <file>file:/E:/Github/Netbeans/minecraftServer/src/form/DialogInstance.java</file>
-            <file>file:/E:/Github/Netbeans/minecraftServer/src/util/Download.java</file>
+            <file>file:/E:/Github/Netbeans/minecraftServer/src/dao/Instance.java</file>
+            <file>file:/E:/Github/Netbeans/minecraftServer/src/dao/Properties.java</file>
         </group>
     </open-files>
 </project-private>

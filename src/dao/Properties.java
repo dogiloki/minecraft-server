@@ -19,7 +19,7 @@ public class Properties implements DAO{
     
     // Gamemode
     final public static String SURVIVAL="survival";
-    final public static String CREATIVE="creactive";
+    final public static String CREATIVE="creative";
     final public static String ADVENTURE="adventure";
     final public static String SPECTATOR="spectator";
     
@@ -70,7 +70,7 @@ public class Properties implements DAO{
     final public static String RESOURCE_PACK_PROMP="";
     
     public Properties(){
-        
+        this.reset();
     }
     
     public Properties(String file_path){
