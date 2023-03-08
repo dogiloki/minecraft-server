@@ -16,11 +16,7 @@ import util.Storage;
 public class Test {
     
     public Test(){
-        try{
-            Storage.deleteFolder("instances - copia");
-        }catch(Exception ex){
-            System.out.println(ex.getMessage());
-        }
+        Storage.descompress("E:\\Escritorio\\compress","E:\\Escritorio\\hola.zip");
     }
     
     public static void main(String[] args){

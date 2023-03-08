@@ -1,6 +1,7 @@
 package util;
 
 import java.awt.Frame;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -13,6 +14,9 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -33,7 +37,7 @@ public class Storage{
     public static boolean createFolder(String ruta){
         try{
             String ruta_crear="";
-            for(String sub_ruta:ruta.split("/")){
+            for(String sub_ruta:ruta.replace("\\","/").split("/")){
                 ruta_crear+=sub_ruta+"/";
                 File directorio=new File(ruta_crear);
                 if(!directorio.exists()){
@@ -367,6 +371,80 @@ public class Storage{
             return ficheros.toArray(new String[ficheros.size()]);
         }
         return null;
+    }
+    
+    // Comprimir ficheros
+    public static boolean compress(String path, String name_zip){
+        try{
+            ZipOutputStream zos=new ZipOutputStream(new FileOutputStream(name_zip+".zip"));
+            zos=Storage.compress(path,zos,"");
+            zos.close();
+            return true;
+        }catch(Exception ex){
+            ex.printStackTrace();
+        }
+        return false;
+    }
+    private static ZipOutputStream compress(String path, ZipOutputStream zos, String path_dir){
+        try{
+            for(String f:Storage.listDirectory(path)){
+                String path_zip=path+"/"+f;
+                if(Storage.isFolder(path_zip)){
+                    zos=Storage.compress(path_zip,zos,(path_dir.equals("")?"":(path_dir+"\\"))+f);
+                    if(zos==null){
+                        return null;
+                    }
+                    continue;
+                }
+                ZipEntry ze=new ZipEntry((path_dir.equals("")?"":(path_dir+"\\"))+f);
+                zos.putNextEntry(ze);
+                FileInputStream fis=new FileInputStream(path_zip);
+                byte[] buffer=new byte[1024];
+                int len=0;
+                while((len=fis.read(buffer))>0){
+                    zos.write(buffer,0,len);
+                }
+                fis.close();
+            }
+            return zos;
+        }catch(Exception ex){
+            ex.printStackTrace();
+        }
+        return null;
+    }
+    
+    public static boolean descompress(String path, String path_zip){
+        try{
+            ZipInputStream zis=new ZipInputStream(new FileInputStream(path_zip));
+            ZipEntry zos;
+            while((zos=zis.getNextEntry())!=null){
+                String path_folder=path+"\\"+zos.getName();
+                if(zos.isDirectory()){
+                    Storage.createFolder(path_folder);
+                    continue;
+                }else{
+                    String[] sub_path=path_folder.replace("\\","/").split("/");
+                    String path_create="";
+                    for(int a=0; a<sub_path.length-1; a++){
+                        path_create+=sub_path[a]+"\\";
+                    }
+                    path_create=path_create.substring(0,path_create.length()-1);
+                    Storage.createFolder(path_create);
+                }
+                FileOutputStream fos=new FileOutputStream(path_folder);
+                int len=0;
+                byte[] buffer=new byte[1024];
+                while((len=zis.read(buffer))>0){
+                    fos.write(buffer,0,len);
+                }
+                fos.close();
+            }
+            zis.close();
+            return true;
+        }catch(Exception ex){
+            ex.printStackTrace();
+        }
+        return false;
     }
     
     // Obtener ruta donde se ejecuta el programa

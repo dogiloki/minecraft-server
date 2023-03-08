@@ -48,6 +48,7 @@ public class Properties implements DAO{
     public String require_resorce_pack;
     public String resource_pack;
     public String resource_pack_promp;
+    public String port;
     
     // Atributos por default
     final public static String LEVEL_NAME="";
@@ -68,6 +69,7 @@ public class Properties implements DAO{
     final public static String REQUIRE_RESORCE_PACK="false";
     final public static String RESOURCE_PACK="";
     final public static String RESOURCE_PACK_PROMP="";
+    final public static String PORT="25565";
     
     public Properties(){
         this.reset();
@@ -106,6 +108,7 @@ public class Properties implements DAO{
         this.require_resorce_pack=funt.set(this.cfg.getConfigData("require-resorce-pack"),this.require_resorce_pack);
         this.resource_pack=funt.set(this.cfg.getConfigData("resource-pack"),this.resource_pack);
         this.resource_pack_promp=funt.set(this.cfg.getConfigData("resource-pack-promp"),this.resource_pack_promp);
+        this.port=funt.set(this.cfg.getConfigData("server-port"),this.port);
     }
     
     public void reset(){
@@ -127,6 +130,7 @@ public class Properties implements DAO{
         this.require_resorce_pack=Properties.REQUIRE_RESORCE_PACK;
         this.resource_pack=Properties.RESOURCE_PACK;
         this.resource_pack_promp=Properties.RESOURCE_PACK_PROMP;
+        this.port=Properties.PORT;
     }
 
     public boolean create(){
@@ -161,6 +165,7 @@ public class Properties implements DAO{
         this.cfg.setConfigData("require-resorce-pack", this.require_resorce_pack);
         this.cfg.setConfigData("resource-pack", this.resource_pack);
         this.cfg.setConfigData("resource-pack-promp", this.resource_pack_promp);
+        this.cfg.setConfigData("server-port", this.port);
         this.cfg.save();
         return true;
     }

@@ -71,6 +71,9 @@ public class DialogInstance extends javax.swing.JDialog {
         content_version = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         lista_versiones = new javax.swing.JList<>();
+        jLabel8 = new javax.swing.JLabel();
+        caja_path_java4 = new javax.swing.JTextField();
+        btn_path_java_explore4 = new javax.swing.JButton();
         content_config = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
@@ -98,15 +101,43 @@ public class DialogInstance extends javax.swing.JDialog {
         });
         jScrollPane1.setViewportView(lista_versiones);
 
+        jLabel8.setText("Seleccionar versión");
+
+        btn_path_java_explore4.setText("Examinar");
+        btn_path_java_explore4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_path_java_explore4ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout content_versionLayout = new javax.swing.GroupLayout(content_version);
         content_version.setLayout(content_versionLayout);
         content_versionLayout.setHorizontalGroup(
             content_versionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 649, Short.MAX_VALUE)
+            .addGroup(content_versionLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(content_versionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(content_versionLayout.createSequentialGroup()
+                        .addComponent(jLabel8)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, content_versionLayout.createSequentialGroup()
+                        .addComponent(caja_path_java4)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btn_path_java_explore4)))
+                .addContainerGap())
         );
         content_versionLayout.setVerticalGroup(
             content_versionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 313, Short.MAX_VALUE)
+            .addGroup(content_versionLayout.createSequentialGroup()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 274, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel8)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(content_versionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(caja_path_java4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_path_java_explore4))
+                .addContainerGap())
         );
 
         content.addTab("Versión", content_version);
@@ -228,7 +259,7 @@ public class DialogInstance extends javax.swing.JDialog {
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(22, Short.MAX_VALUE))
+                .addContainerGap(41, Short.MAX_VALUE))
         );
 
         content.addTab("Configuración", content_config);
@@ -324,6 +355,10 @@ public class DialogInstance extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_btn_path_java_exploreActionPerformed
 
+    private void btn_path_java_explore4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_path_java_explore4ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btn_path_java_explore4ActionPerformed
+
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
@@ -343,12 +378,20 @@ public class DialogInstance extends javax.swing.JDialog {
     private javax.swing.JButton btn_cancelar;
     private javax.swing.JButton btn_ok;
     private javax.swing.JButton btn_path_java_explore;
+    private javax.swing.JButton btn_path_java_explore1;
+    private javax.swing.JButton btn_path_java_explore2;
+    private javax.swing.JButton btn_path_java_explore4;
     private javax.swing.JButton btn_reset_memory;
     private javax.swing.JButton btn_reset_path_java;
+    private javax.swing.JButton btn_reset_path_java1;
+    private javax.swing.JButton btn_reset_path_java2;
     private javax.swing.JTextField caja_memory_max;
     private javax.swing.JTextField caja_memory_min;
     private javax.swing.JTextField caja_nombre;
     private javax.swing.JTextField caja_path_java;
+    private javax.swing.JTextField caja_path_java1;
+    private javax.swing.JTextField caja_path_java2;
+    private javax.swing.JTextField caja_path_java4;
     private javax.swing.JTabbedPane content;
     private javax.swing.JPanel content_config;
     private javax.swing.JPanel content_version;
@@ -356,8 +399,13 @@ public class DialogInstance extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JList<String> lista_versiones;
     // End of variables declaration//GEN-END:variables
