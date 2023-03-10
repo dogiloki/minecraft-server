@@ -9,6 +9,8 @@ import javax.swing.JPanel;
 import util.Config;
 import util.Storage;
 import interfaces.DAO;
+import java.util.ArrayList;
+import java.util.List;
 import util.Function;
 
 public class Instance implements DAO{
@@ -33,6 +35,7 @@ public class Instance implements DAO{
     public JPanel panel_world=null;
     public String folder_ins="";
     public String folder_world="";
+    public List<World> worlds=new ArrayList<>();
     public World world;
     
     public Instance(){

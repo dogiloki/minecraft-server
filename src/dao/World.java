@@ -8,6 +8,7 @@ package dao;
 import javax.swing.Icon;
 import util.Storage;
 import interfaces.DAO;
+import form.Server;
 
 public class World implements DAO {
     
@@ -15,6 +16,7 @@ public class World implements DAO {
     public String folder_path="";
     public String name="";
     public Icon icon=null;
+    public Server server=null;
 
     public World(){
         
@@ -23,6 +25,7 @@ public class World implements DAO {
     // Constructor para obtener la información de un mundo
     public World(String folder_path){
         this.old_folder_path=folder_path;
+        this.folder_path=folder_path;
     }
     
     public boolean create(){

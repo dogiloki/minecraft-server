@@ -24,16 +24,9 @@ import java.awt.Image;
 import java.awt.event.ItemEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
 import static java.lang.Long.parseLong;
 import java.text.MessageFormat;
-import java.util.List;
-import java.util.Optional;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
@@ -44,8 +37,7 @@ import util.Function;
 import util.GsonManager;
 import util.Watcher;
 import form.Server;
-import java.io.BufferedOutputStream;
-import java.io.FileOutputStream;
+import java.util.List;
 
 public class FormMain extends javax.swing.JFrame {
     
@@ -59,7 +51,7 @@ public class FormMain extends javax.swing.JFrame {
         initComponents();
         this.setLocationRelativeTo(null);
         this.dic();
-        this.getInstances();
+        this.setInstances();
         // Detectar cambios en carpetas
         this.runWath();
     }
@@ -84,28 +76,29 @@ public class FormMain extends javax.swing.JFrame {
     }
     
     public void runWath(){
-        this.watcher=new Watcher(this.cfg_global.getDic("fo_instances"),this,FormMain.class,"getInstances","getWorlds");
+        this.watcher=new Watcher(this.cfg_global.getDic("fo_instances"),this,FormMain.class,"setInstances");
     }
     
-    public void getInstances(){
+    public void setInstances(){
+        this._setInstances(true);
+    }
+    
+    public void setInstances(boolean get_folder){
+        this._setInstances(get_folder);
+    }
+    
+    private void _setInstances(boolean get_folder){
+        if(this.instances.size()<=0 || get_folder){
+            this.getInstancesDictory();
+        }
         this.panel_instances.removeAll();
         this.scroll_instances.updateUI();
-        String path_instances=this.cfg_global.getDic("fo_instances");
-        String file_instance=this.cfg_global.getDic("fi_instance");
-        String[] folders=Storage.listDirectory(path_instances);
         // Valores del panel en cada instancia
         int ancho=210, alto=80;
         int ancho_total=this.scroll_instances.getWidth()-25;
         int total_columnas=(int)(Math.floorDiv(ancho_total,ancho))-1;
         int x=0, y=0, count=0, filas=0;
-        for(String folder_tmp:folders){
-            String folder=path_instances+"/"+folder_tmp;
-            if(!Storage.exists(folder+"/"+file_instance)){
-                continue;
-            }
-            // Obtener datos de la instancia
-            Instance ins=new Instance(folder+"/"+file_instance);
-            
+        for(Instance ins:this.instances){
             // Panel principal
             JPanel panel=new JPanel();
             panel.setLayout(null);
@@ -136,11 +129,11 @@ public class FormMain extends javax.swing.JFrame {
                     sele_instance.panel_ins.setBackground(Color.decode("#b2cff0"));
                     sele_instance.panel_ins.setOpaque(true);
                     // Propiedades de la instancia
-                    Properties proper=new Properties(folder+"/"+cfg_global.getDic("fo_server")+"/server.properties");
+                    Properties proper=new Properties(ins.folder_ins+"/"+cfg_global.getDic("fo_server")+"/server.properties");
                     proper.save();
                     sele_instance.properties=proper;
                     getProperties();
-                    getWorlds();
+                    setWorlds(false);
                 }
                 @Override
                 public void mouseReleased(MouseEvent evt){ }
@@ -159,14 +152,6 @@ public class FormMain extends javax.swing.JFrame {
                     }
                 }
             });
-            
-            // Almacena instancias
-            ins.panel_ins=panel;
-            ins.panel_world=null;
-            ins.folder_ins=folder;
-            ins.folder_world="";
-            ins.world=null;
-            this.instances.add(ins);
             
             // Calculo para posicionar componentes
             if(x==0){
@@ -195,6 +180,8 @@ public class FormMain extends javax.swing.JFrame {
             label_nombre.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
             panel.add(label_nombre);
             
+            ins.panel_ins=panel;
+            
             // Diseño
             //Design.margen(panel,10);
             
@@ -206,33 +193,56 @@ public class FormMain extends javax.swing.JFrame {
         this.panel_instances.setPreferredSize(Function.createDimencion(ancho_total,filas*alto));
     }
     
-    public void getWorlds(){
+    public void getInstancesDictory(){
+        this.instances.clear();
+        String path_instances=this.cfg_global.getDic("fo_instances");
+        String file_instance=this.cfg_global.getDic("fi_instance");
+        String[] folders=Storage.listDirectory(path_instances);
+        for(String folder_tmp:folders){
+            String folder=path_instances+"/"+folder_tmp;
+            if(!Storage.exists(folder+"/"+file_instance)){
+                continue;
+            }
+            // Obtener datos de la instancia
+            Instance ins=new Instance(folder+"/"+file_instance);
+            
+            // Almacena instancias
+            ins.panel_world=null;
+            ins.folder_ins=folder;
+            ins.folder_world="";
+            ins.world=null;
+            this.instances.add(ins);
+        }
+        
+    }
+    
+    public void setWorlds(){
+        this._setWorlds(true);
+    }
+    
+    public void setWorlds(boolean get_folder){
+        this._setWorlds(get_folder);
+    }
+    
+    private void _setWorlds(boolean get_folder){
+        if(this.sele_instance.worlds.size()<=0 || get_folder){
+            this.getWorldsDictory();
+        }
         this.panel_worlds.removeAll();
         this.panel_worlds.updateUI();
-        if(this.sele_instance==null){
-            return;
-        }
-        String path_worlds=this.sele_instance.folder_ins+"/"+this.cfg_global.getDic("fo_server")+"/"+this.cfg_global.getDic("fo_worlds");
-        Storage.exists(path_worlds,Storage.CREATED,Storage.FOLDER);
-        String[] folders=Storage.listDirectory(path_worlds);
         // Valores del panel en cada instancia
         int ancho=170, alto=170;
         int ancho_total=this.scroll_mundos.getWidth()-25;
         int total_columnas=(int)Math.floorDiv(ancho_total, ancho)-1;
         int x=0, y=0, count=0, filas=0;
-        if(folders==null || folders.length<=0){
-            return;
-        }
-        for(String folder:folders){
-            // Obtener datos de la World
-            World world=new World(path_worlds+"/"+folder);
-            
+        for(World world:this.sele_instance.worlds){
+            Instance ins=this.sele_instance;
             // Panel principal
             JPanel panel=new JPanel();
             panel.setLayout(null);
             panel.setBounds(x,y,ancho,alto);
             panel.setOpaque(false);
-            panel.setToolTipText(folder);
+            panel.setToolTipText(world.name);
             panel.setBorder(BorderFactory.createLineBorder(new Color(150,150,150)));
             panel.addMouseListener(new MouseListener(){
                 @Override
@@ -249,7 +259,7 @@ public class FormMain extends javax.swing.JFrame {
                     btn_iniciar_server.setEnabled(true);
                     btn_eliminar_world.setEnabled(true);
                     sele_instance.world=world;
-                    sele_instance.folder_world=cfg_global.getDic("fo_worlds")+"/"+folder;
+                    sele_instance.folder_world=cfg_global.getDic("fo_worlds")+"/"+world.name;
                     
                     // Propiedades
                     sele_instance.properties.level_name=sele_instance.folder_world;
@@ -258,6 +268,14 @@ public class FormMain extends javax.swing.JFrame {
                     sele_instance.panel_world=panel;
                     sele_instance.panel_world.setBackground(Color.decode("#b2cff0"));
                     sele_instance.panel_world.setOpaque(true);
+                    
+                    // Obtener server si ya tiene uno iniciado
+                    Server server=sele_instance.world.server;
+                    if(server==null){
+                        server_text.setText("");
+                    }else{
+                        server.startOutput();
+                    }
                 }
                 @Override
                 public void mouseReleased(MouseEvent evt){ }
@@ -290,21 +308,18 @@ public class FormMain extends javax.swing.JFrame {
                 count=0;
             }
             
-            // Datos del World
-            world.name=folder;
-            
             // Compoente Versión
             JLabel label_icon=new JLabel();
             label_icon.setBounds(0,0,ancho,(alto/7)*5);
             label_icon.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
             // Datos del World
-            world.icon=new ImageIcon(new ImageIcon(path_worlds+"/"+folder+"/icon.png").getImage().getScaledInstance(label_icon.getWidth()-30, label_icon.getHeight()-10,Image.SCALE_DEFAULT));
+            world.icon=new ImageIcon(new ImageIcon(world.folder_path+"/"+world.name+"/icon.png").getImage().getScaledInstance(label_icon.getWidth()-30, label_icon.getHeight()-10,Image.SCALE_DEFAULT));
             // Agregar icon al panel
             label_icon.setIcon(world.icon);
             panel.add(label_icon);
             
             // Compoente Nombre
-            JLabel label_nombre=new JLabel(folder);
+            JLabel label_nombre=new JLabel(world.name);
             label_nombre.setBounds(0,(alto/7)*5,ancho,alto/7);
             label_nombre.setFont(new Font("arial",Font.PLAIN,16));
             label_nombre.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
@@ -319,6 +334,24 @@ public class FormMain extends javax.swing.JFrame {
         // Adaptar panel de las instancias
         this.panel_worlds.updateUI();
         this.panel_worlds.setPreferredSize(Function.createDimencion(ancho_total,filas*alto));
+    }
+    
+    public void getWorldsDictory(){
+        String path_worlds=this.sele_instance.folder_ins+"/"+this.cfg_global.getDic("fo_server")+"/"+this.cfg_global.getDic("fo_worlds");
+        Storage.exists(path_worlds,Storage.CREATED,Storage.FOLDER);
+        String[] folders=Storage.listDirectory(path_worlds);
+        if(folders==null || folders.length<=0){
+            return;
+        }
+        List<World> worlds=new ArrayList<>();
+        for(String folder:folders){
+            // Obtener datos de la World
+            World world=new World(path_worlds+"/"+folder);
+            // Datos del World
+            world.name=folder;
+            worlds.add(world);
+        }
+        this.sele_instance.worlds=worlds;
     }
     
     public void getProperties(){
@@ -414,10 +447,10 @@ public class FormMain extends javax.swing.JFrame {
         jPanel9 = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
         port = new javax.swing.JTextField();
-        panel_serve = new javax.swing.JPanel();
+        panel_server = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        serve_text = new javax.swing.JTextArea();
-        serve_box_input = new javax.swing.JTextField();
+        server_text = new javax.swing.JTextArea();
+        server_box_input = new javax.swing.JTextField();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenu2 = new javax.swing.JMenu();
@@ -970,39 +1003,39 @@ public class FormMain extends javax.swing.JFrame {
 
         jTabbedPane1.addTab("Propiedades", panel_properties);
 
-        serve_text.setColumns(20);
-        serve_text.setLineWrap(true);
-        serve_text.setRows(5);
-        jScrollPane1.setViewportView(serve_text);
+        server_text.setColumns(20);
+        server_text.setLineWrap(true);
+        server_text.setRows(5);
+        jScrollPane1.setViewportView(server_text);
 
-        serve_box_input.addKeyListener(new java.awt.event.KeyAdapter() {
+        server_box_input.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
-                serve_box_inputKeyReleased(evt);
+                server_box_inputKeyReleased(evt);
             }
         });
 
-        javax.swing.GroupLayout panel_serveLayout = new javax.swing.GroupLayout(panel_serve);
-        panel_serve.setLayout(panel_serveLayout);
-        panel_serveLayout.setHorizontalGroup(
-            panel_serveLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panel_serveLayout.createSequentialGroup()
+        javax.swing.GroupLayout panel_serverLayout = new javax.swing.GroupLayout(panel_server);
+        panel_server.setLayout(panel_serverLayout);
+        panel_serverLayout.setHorizontalGroup(
+            panel_serverLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panel_serverLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(panel_serveLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(serve_box_input, javax.swing.GroupLayout.DEFAULT_SIZE, 803, Short.MAX_VALUE)
+                .addGroup(panel_serverLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(server_box_input, javax.swing.GroupLayout.DEFAULT_SIZE, 803, Short.MAX_VALUE)
                     .addComponent(jScrollPane1))
                 .addContainerGap())
         );
-        panel_serveLayout.setVerticalGroup(
-            panel_serveLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panel_serveLayout.createSequentialGroup()
+        panel_serverLayout.setVerticalGroup(
+            panel_serverLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panel_serverLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(serve_box_input, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(server_box_input, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(7, Short.MAX_VALUE))
         );
 
-        jTabbedPane1.addTab("Servidor", panel_serve);
+        jTabbedPane1.addTab("Servidor", panel_server);
 
         jMenu1.setText("Configuración");
         jMenuBar1.add(jMenu1);
@@ -1063,39 +1096,7 @@ public class FormMain extends javax.swing.JFrame {
             String[] text_bat={"\""+ins.java_path+"\" -jar -Xmx"+ins.memory_max+" -Xms"+ins.memory_max+" ../../../"+fo_minecraft+"/"+fi_minecraft+" nogui"};
             Storage.writeFile(text_bat, fi_start);
             // Iniciar servidor
-            try{
-                String command=text_bat[0];
-                ProcessBuilder pb=new ProcessBuilder(command.split(" "));
-                Process process=pb.directory(new File(fo_server)).start();
-                // Obtener salida del servidor
-                Thread thread=new Thread(()->{
-                    try{
-                        BufferedReader reader=new BufferedReader(new InputStreamReader(process.getInputStream()));
-                        String line;
-                        this.serve_text.setText("");
-                        while((line=reader.readLine())!=null){
-                            this.serve_text.setText(this.serve_text.getText()+line+"\n");
-                            this.serve_text.setCaretPosition(this.serve_text.getDocument().getLength());
-                        }
-                        reader.close();
-                    }catch(IOException ex){
-                        ex.printStackTrace();
-                    }
-                });
-                thread.start();
-                this.servers.add(new Server(process));
-                
-                /*
-                ProcessHandle process_handle=ProcessHandle.current();
-                process_handle.children().filter(child_process->{
-                    ProcessHandle.Info info=child_process.info();
-                    return info.command().map(cmd->cmd.contains("java.exe")).orElse(false);
-                }).forEach(cmd_process->{
-                    System.out.println(cmd_process.pid());
-                });*/
-            }catch(Exception ex){
-                ex.printStackTrace();
-            }
+            Server server=new Server(text_bat[0],fo_server,this.server_text);
             // Archivo eula del servidor
             if(Storage.exists(fo_server+"/eula.txt")){
                 Config cfg_eula=new Config(fo_server+"/eula.txt");
@@ -1105,6 +1106,9 @@ public class FormMain extends javax.swing.JFrame {
                         cfg_eula.setConfigData("eula","true");
                         cfg_eula.save();
                     }
+                }else{
+                    ins.world.server=server;
+                    this.servers.add(server);
                 }
             }
         }else{
@@ -1120,7 +1124,7 @@ public class FormMain extends javax.swing.JFrame {
             }catch(Exception ex){
                JOptionPane.showMessageDialog(null, ex.getMessage(),"Error",JOptionPane.ERROR_MESSAGE); 
             }
-            this.getWorlds();
+            this.setWorlds();
         }
     }//GEN-LAST:event_btn_eliminar_worldActionPerformed
 
@@ -1135,7 +1139,7 @@ public class FormMain extends javax.swing.JFrame {
         }else{
             Storage.createFolder(folder_world);
         }
-        this.getWorlds();
+        this.setWorlds();
     }//GEN-LAST:event_btn_crear_worldActionPerformed
 
     private void btn_folder_worldsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_folder_worldsActionPerformed
@@ -1290,7 +1294,7 @@ public class FormMain extends javax.swing.JFrame {
 
     private void btn_editActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_editActionPerformed
         new DialogInstance(this,true,this.cfg_global,this.sele_instance).setVisible(true);
-        this.getInstances();
+        this.setInstances();
     }//GEN-LAST:event_btn_editActionPerformed
 
     private void btn_deleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_deleteActionPerformed
@@ -1301,7 +1305,7 @@ public class FormMain extends javax.swing.JFrame {
             }catch(Exception ex){
                JOptionPane.showMessageDialog(null, ex.getMessage(),"Error",JOptionPane.ERROR_MESSAGE); 
             }
-            this.getWorlds();
+            this.setWorlds();
         }
     }//GEN-LAST:event_btn_deleteActionPerformed
 
@@ -1312,13 +1316,14 @@ public class FormMain extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_portKeyReleased
 
-    private void serve_box_inputKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_serve_box_inputKeyReleased
+    private void server_box_inputKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_server_box_inputKeyReleased
         if(evt.getKeyCode()==10){
-            Server server=this.servers.get(0);
-            server.send(this.serve_box_input.getText());
-            this.serve_box_input.setText("");
+            Server server=this.sele_instance.world.server;
+            System.out.println(server.id);
+            server.send(this.server_box_input.getText());
+            this.server_box_input.setText("");
         }
-    }//GEN-LAST:event_serve_box_inputKeyReleased
+    }//GEN-LAST:event_server_box_inputKeyReleased
 
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -1380,7 +1385,7 @@ public class FormMain extends javax.swing.JFrame {
     private javax.swing.JCheckBox online_mode;
     private javax.swing.JPanel panel_instances;
     private javax.swing.JPanel panel_properties;
-    private javax.swing.JPanel panel_serve;
+    private javax.swing.JPanel panel_server;
     private javax.swing.JPanel panel_worlds;
     private javax.swing.JTextField port;
     private javax.swing.JCheckBox pvp;
@@ -1389,8 +1394,8 @@ public class FormMain extends javax.swing.JFrame {
     private javax.swing.JTextField resource_pack_promp;
     private javax.swing.JScrollPane scroll_instances;
     private javax.swing.JScrollPane scroll_mundos;
-    private javax.swing.JTextField serve_box_input;
-    private javax.swing.JTextArea serve_text;
+    private javax.swing.JTextField server_box_input;
+    private javax.swing.JTextArea server_text;
     private javax.swing.JCheckBox spawn_animals;
     private javax.swing.JCheckBox spawn_mosters;
     private javax.swing.JCheckBox spawn_npcs;
