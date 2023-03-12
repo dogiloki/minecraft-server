@@ -576,7 +576,7 @@ public class FormMain extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jSplitPane1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 244, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 244, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(server_box_input, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -611,7 +611,8 @@ public class FormMain extends javax.swing.JFrame {
         String fo_server=ins.folder_ins+"/"+this.cfg_global.getDic("fo_server");
         String fi_start=fo_server+"/start.bat";
         long fi_minecraft_size=parseLong(json.getJson("downloads").getJson("server").getValue("size"));
-        if(Storage.exists(fo_minecraft+"/"+fi_server) && (fi_minecraft_size==Storage.getSize(fo_minecraft+"/"+fi_server) || ins.file_server!=null)){
+        //if(Storage.exists(fo_minecraft+"/"+fi_server) && (fi_minecraft_size==Storage.getSize(fo_minecraft+"/"+fi_server) || (ins.file_server!=null) && !ins.file_server.equals(""))){
+        if(Storage.exists(fo_minecraft+"/"+fi_server) && (fi_minecraft_size==Storage.getSize(fo_minecraft+"/"+fi_server) || (ins.file_server!=null && !ins.file_server.equals("")))){
             // Archivo start.bat para iniciar servidor
             String text_bat_server="--serverJar=../../../"+fo_minecraft+"/"+MessageFormat.format(this.cfg_global.getDic("fi_server"),ins.version);
             //String text_bat_server="";
@@ -633,9 +634,16 @@ public class FormMain extends javax.swing.JFrame {
                     ins.world.server=server;
                     this.servers.add(server);
                 }
+            }else{
+                this.btn_iniciar_server.setEnabled(true);
             }
         }else{
-            new Download(this,true,fo_minecraft,fi_server,url,null).setVisible(true);
+            if(ins.file_server!=null && !ins.file_server.equals("") && !Storage.exists(ins.file_server)){
+                JOptionPane.showMessageDialog(null,"El archivo "+ins.file_server+" no existe","Error",JOptionPane.ERROR_MESSAGE);
+                this.server_text.setText("El archivo "+ins.file_server+" no existe");
+            }else{
+                new Download(this,true,fo_minecraft,fi_server,url,null).setVisible(true);
+            }
             this.btn_iniciar_server.setEnabled(true);
         }
     }//GEN-LAST:event_btn_iniciar_serverActionPerformed
@@ -690,6 +698,7 @@ public class FormMain extends javax.swing.JFrame {
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         for(Server server:this.servers){
             server.send("stop");
+            server.process.destroy();
         }
     }//GEN-LAST:event_formWindowClosing
 
@@ -727,10 +736,12 @@ public class FormMain extends javax.swing.JFrame {
     }//GEN-LAST:event_server_box_inputKeyReleased
 
     private void btn_stop_serverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_stop_serverActionPerformed
+        this.btn_iniciar_server.setEnabled(true);
         if(this.sele_instance==null || this.sele_instance.world==null || this.sele_instance.world.server==null){
             return;
         }
         this.sele_instance.world.server.send("stop");
+        this.sele_instance.world.server.process.destroy();
         this.sele_instance.world.server=null;
         this.setWorlds();
     }//GEN-LAST:event_btn_stop_serverActionPerformed

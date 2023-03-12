@@ -29,7 +29,7 @@ public class Server{
     private Thread thread=null;
     
     public Server(String command, String path_directory, JTextArea server_text){
-        this.command="cmd /c "+command;
+        this.command="cmd /c start start.bat";
         this.path_directory=path_directory;
         this.server_text=server_text;
         this.setProcess();
