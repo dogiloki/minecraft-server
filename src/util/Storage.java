@@ -13,6 +13,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -297,6 +298,12 @@ public class Storage{
     public static String selectFile(String path_current){ 
         return Storage._selectFile(null,path_current);
     }
+    public static File[] selectFiles(JFrame frame, String path_current){
+        return Storage._selectFiles(frame,path_current);
+    }
+    public static File[] selectFiles(String path_current){ 
+        return Storage._selectFiles(null,path_current);
+    }
     private static String _selectFile(JFrame frame, String path_current){ 
         JFileChooser chooser=new JFileChooser(path_current);
         chooser.setMultiSelectionEnabled(false);
@@ -306,6 +313,17 @@ public class Storage{
             return chooser.getSelectedFile().toString();
         }catch(Exception ex){
             return "";
+        }
+    }
+    private static File[] _selectFiles(JFrame frame, String path_current){ 
+        JFileChooser chooser=new JFileChooser(path_current);
+        chooser.setMultiSelectionEnabled(true);
+        chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        chooser.showOpenDialog(frame);
+        try{
+            return chooser.getSelectedFiles();
+        }catch(Exception ex){
+            return null;
         }
     }
     
@@ -445,6 +463,11 @@ public class Storage{
             ex.printStackTrace();
         }
         return false;
+    }
+    
+    public static String getExtension(String path){
+        String[] path_array=path.split("\\.");
+        return path_array[path_array.length-1];
     }
     
     // Obtener ruta donde se ejecuta el programa

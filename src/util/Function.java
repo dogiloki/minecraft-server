@@ -37,6 +37,15 @@ public class Function<T>{
     public T set(T... values){
         for(T value:values){
             if(value!=null){
+                return value;
+            }
+        }
+        return null;
+    }
+    
+    public static <T> T assign(T... values){
+        for(T value:values){
+            if(value!=null){
                 if(!value.equals("")){
                     return value;
                 }
@@ -45,7 +54,7 @@ public class Function<T>{
         return null;
     }
     
-    public static <T> T assign(T... values){
+    public static <T> T assignNotNull(T... values){
         for(T value:values){
             if(value!=null){
                 return value;

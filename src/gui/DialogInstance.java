@@ -10,6 +10,7 @@ import javax.swing.JOptionPane;
 import dao.Instance;
 import gui.instance.Configuration;
 import gui.instance.Properties;
+import gui.instance.Mods;
 
 import util.Config;
 import util.GsonManager;
@@ -37,6 +38,7 @@ public class DialogInstance extends javax.swing.JDialog {
         this.ins=ins;
         if(this.ins==null){
             this.ins=new Instance();
+            this.btn_mods.setEnabled(false);
         }else{
             this.setTitle(this.ins.name+" - "+this.ins.version);
         }
@@ -45,6 +47,7 @@ public class DialogInstance extends javax.swing.JDialog {
         this.panel_version=(Version)this.resizablePanel(new Version(this.cfg_global,this.ins,this));
         this.panel_properties=(Properties)this.resizablePanel(new Properties(this.cfg_global,this.ins));
         this.panel_configuration=(Configuration)this.resizablePanel(new Configuration(this.cfg_global,this.ins));
+        this.panel_mods=(Mods)this.resizablePanel(new Mods(this.cfg_global,this.ins));
         this.setPanel(this.panel_version);
     }
     
@@ -240,7 +243,7 @@ public class DialogInstance extends javax.swing.JDialog {
     }//GEN-LAST:event_btn_propertiesActionPerformed
 
     private void btn_modsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_modsActionPerformed
-        // TODO add your handling code here:
+        this.setPanel(this.panel_mods);
     }//GEN-LAST:event_btn_modsActionPerformed
 
     private void btn_configurationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_configurationActionPerformed
