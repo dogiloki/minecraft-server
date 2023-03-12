@@ -21,6 +21,7 @@ public class Instance implements DAO{
     
     public String name;
     public String version;
+    public String file_server;
     public String java_path;
     public String memory_min;
     public String memory_max;
@@ -60,6 +61,7 @@ public class Instance implements DAO{
         Function<String> funt=new Function<>();
         this.name=funt.set(this.cfg.getConfigData("name"),this.name);
         this.version=funt.set(this.cfg.getConfigData("version"),this.version);
+        this.file_server=funt.set(this.cfg.getConfigData("file.server"),this.file_server);
         this.java_path=funt.set(this.cfg.getConfigData("java.path"),this.java_path);
         this.memory_min=funt.set(this.cfg.getConfigData("memory.min"),this.memory_min);
         this.memory_max=funt.set(this.cfg.getConfigData("memory.max"),this.memory_max);
@@ -91,6 +93,7 @@ public class Instance implements DAO{
         }
         this.cfg.setConfigData("name",this.name);
         this.cfg.setConfigData("version",this.version);
+        this.cfg.setConfigData("file.server",this.file_server);
         this.cfg.setConfigData("java.path",this.java_path);
         this.cfg.setConfigData("memory.max",this.memory_min);
         this.cfg.setConfigData("memory.min",this.memory_min);

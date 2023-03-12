@@ -6,6 +6,7 @@ import javax.swing.JDialog;
 import javax.swing.table.DefaultTableModel;
 import util.Config;
 import util.Download;
+import util.Function;
 import util.GsonManager;
 import util.Storage;
 
@@ -46,8 +47,8 @@ public class Version extends javax.swing.JPanel {
             }
             String status="";
             String fo_minecraft=this.cfg_global.getDic("fo_mc")+"/"+this.versions.getValue("id");
-            String fi_minecraft=MessageFormat.format(this.cfg_global.getDic("fi_server"),this.versions.getValue("id"));
-            if(Storage.exists(fo_minecraft+"/"+fi_minecraft)){
+            String fi_server=Function.assign(this.ins.file_server,MessageFormat.format(this.cfg_global.getDic("fi_server"),this.versions.getValue("id")));
+            if(Storage.exists(fo_minecraft+"/"+fi_server)){
                 status="Descargado";
             }
             Object[] data={this.versions.getValue("id"),status};
@@ -66,6 +67,7 @@ public class Version extends javax.swing.JPanel {
         int row=this.table_versions.getSelectedRow();
         this.ins.version=this.table_versions.getValueAt(row,0).toString();
         this.frame.setTitle(this.ins.name+" - "+this.ins.version);
+        this.caja_path_java.setText(this.ins.file_server);
     }
     
     @SuppressWarnings("unchecked")
@@ -74,7 +76,7 @@ public class Version extends javax.swing.JPanel {
 
         content_version = new javax.swing.JPanel();
         jLabel8 = new javax.swing.JLabel();
-        caja_path_java4 = new javax.swing.JTextField();
+        caja_path_java = new javax.swing.JTextField();
         btn_path_java_explore4 = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         table_versions = new javax.swing.JTable();
@@ -99,7 +101,7 @@ public class Version extends javax.swing.JPanel {
                         .addComponent(jLabel8)
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(content_versionLayout.createSequentialGroup()
-                        .addComponent(caja_path_java4)
+                        .addComponent(caja_path_java)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btn_path_java_explore4)))
                 .addContainerGap())
@@ -111,7 +113,7 @@ public class Version extends javax.swing.JPanel {
                 .addComponent(jLabel8)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(content_versionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(caja_path_java4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(caja_path_java, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btn_path_java_explore4))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -156,7 +158,13 @@ public class Version extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btn_path_java_explore4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_path_java_explore4ActionPerformed
-        // TODO add your handling code here:
+        String fi_server=Storage.selectFile(this.cfg_global.getDic("fo_mc"));
+        if(fi_server==null){
+            return;
+        }
+        String fi_server_temp[]=fi_server.replace("\\","/").split("/");
+        this.ins.file_server=fi_server_temp[fi_server_temp.length-1];
+        this.caja_path_java.setText(this.ins.file_server);
     }//GEN-LAST:event_btn_path_java_explore4ActionPerformed
 
     private void table_versionsMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_table_versionsMousePressed
@@ -168,7 +176,7 @@ public class Version extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btn_path_java_explore4;
-    private javax.swing.JTextField caja_path_java4;
+    public javax.swing.JTextField caja_path_java;
     private javax.swing.JPanel content_version;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JScrollPane jScrollPane2;

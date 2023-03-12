@@ -276,8 +276,10 @@ public class FormMain extends javax.swing.JFrame {
                     Server server=sele_instance.world.server;
                     if(server==null){
                         server_text.setText("");
+                        btn_iniciar_server.setEnabled(true);
                     }else{
                         server.startOutput();
+                        btn_iniciar_server.setEnabled(false);
                     }
                 }
                 @Override
@@ -378,6 +380,7 @@ public class FormMain extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         server_text = new javax.swing.JTextArea();
         server_box_input = new javax.swing.JTextField();
+        btn_stop_server = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -432,7 +435,7 @@ public class FormMain extends javax.swing.JFrame {
         );
         panel_worldsLayout.setVerticalGroup(
             panel_worldsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 278, Short.MAX_VALUE)
+            .addGap(0, 273, Short.MAX_VALUE)
         );
 
         scroll_mundos.setViewportView(panel_worlds);
@@ -463,7 +466,7 @@ public class FormMain extends javax.swing.JFrame {
                     .addComponent(btn_folder_worlds)
                     .addComponent(btn_eliminar_world))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(scroll_mundos, javax.swing.GroupLayout.DEFAULT_SIZE, 278, Short.MAX_VALUE))
+                .addComponent(scroll_mundos, javax.swing.GroupLayout.DEFAULT_SIZE, 273, Short.MAX_VALUE))
         );
 
         jSplitPane1.setRightComponent(jPanel5);
@@ -503,7 +506,7 @@ public class FormMain extends javax.swing.JFrame {
         );
         panel_instancesLayout.setVerticalGroup(
             panel_instancesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 278, Short.MAX_VALUE)
+            .addGap(0, 273, Short.MAX_VALUE)
         );
 
         scroll_instances.setViewportView(panel_instances);
@@ -528,7 +531,7 @@ public class FormMain extends javax.swing.JFrame {
                     .addComponent(btn_edit)
                     .addComponent(btn_delete))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(scroll_instances, javax.swing.GroupLayout.DEFAULT_SIZE, 278, Short.MAX_VALUE))
+                .addComponent(scroll_instances, javax.swing.GroupLayout.DEFAULT_SIZE, 273, Short.MAX_VALUE))
         );
 
         jSplitPane1.setLeftComponent(jPanel1);
@@ -544,6 +547,13 @@ public class FormMain extends javax.swing.JFrame {
             }
         });
 
+        btn_stop_server.setText("Stop");
+        btn_stop_server.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_stop_serverActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -553,7 +563,10 @@ public class FormMain extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jSplitPane1)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addComponent(server_box_input))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(server_box_input)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btn_stop_server)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -564,7 +577,9 @@ public class FormMain extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 244, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(server_box_input, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(server_box_input, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_stop_server))
                 .addContainerGap())
         );
 
@@ -576,6 +591,7 @@ public class FormMain extends javax.swing.JFrame {
     }//GEN-LAST:event_btn_crearActionPerformed
 
     private void btn_iniciar_serverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_iniciar_serverActionPerformed
+        this.btn_iniciar_server.setEnabled(false);
         this.server_text.setText("Starting server...");
         Instance ins=this.sele_instance;
         if(!Storage.exists(this.cfg_global.getDic("fi_ver_mani"))){
@@ -590,13 +606,15 @@ public class FormMain extends javax.swing.JFrame {
         GsonManager json=new GsonManager(fo_meta_mc+"/"+name_json,GsonManager.FILE);
         String url=json.getJson("downloads").getJson("server").getValue("url");
         String fo_minecraft=this.cfg_global.getDic("fo_mc")+"/"+ins.version;
-        String fi_minecraft=MessageFormat.format(this.cfg_global.getDic("fi_server"),ins.version);
+        String fi_server=Function.assign(ins.file_server,MessageFormat.format(this.cfg_global.getDic("fi_server"),ins.version));
         String fo_server=ins.folder_ins+"/"+this.cfg_global.getDic("fo_server");
         String fi_start=fo_server+"/start.bat";
         long fi_minecraft_size=parseLong(json.getJson("downloads").getJson("server").getValue("size"));
-        if(Storage.exists(fo_minecraft+"/"+fi_minecraft) && fi_minecraft_size==Storage.getSize(fo_minecraft+"/"+fi_minecraft)){
+        if(Storage.exists(fo_minecraft+"/"+fi_server) && (fi_minecraft_size==Storage.getSize(fo_minecraft+"/"+fi_server) || ins.file_server!=null)){
             // Archivo start.bat para iniciar servidor
-            String[] text_bat={"\""+ins.java_path+"\" -jar -Xmx"+ins.memory_max+" -Xms"+ins.memory_max+" ../../../"+fo_minecraft+"/"+fi_minecraft+" nogui"};
+            String text_bat_server="--serverJar=../../../"+fo_minecraft+"/"+MessageFormat.format(this.cfg_global.getDic("fi_server"),ins.version);
+            //String text_bat_server="";
+            String[] text_bat={"\""+ins.java_path+"\" -jar -Xmx"+ins.memory_max+" -Xms"+ins.memory_max+" ../../../"+fo_minecraft+"/"+fi_server+" nogui "+(ins.file_server==null?"":text_bat_server)};
             Storage.writeFile(text_bat, fi_start);
             // Iniciar servidor
             Server server=new Server(text_bat[0],fo_server,this.server_text);
@@ -609,13 +627,15 @@ public class FormMain extends javax.swing.JFrame {
                         cfg_eula.setConfigData("eula","true");
                         cfg_eula.save();
                     }
+                    this.btn_iniciar_server.setEnabled(true);
                 }else{
                     ins.world.server=server;
                     this.servers.add(server);
                 }
             }
         }else{
-            new Download(this,true,fo_minecraft,fi_minecraft,url,null).setVisible(true);
+            new Download(this,true,fo_minecraft,fi_server,url,null).setVisible(true);
+            this.btn_iniciar_server.setEnabled(true);
         }
     }//GEN-LAST:event_btn_iniciar_serverActionPerformed
 
@@ -695,12 +715,24 @@ public class FormMain extends javax.swing.JFrame {
     }//GEN-LAST:event_btn_deleteActionPerformed
 
     private void server_box_inputKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_server_box_inputKeyReleased
+        if(this.sele_instance==null || this.sele_instance.world==null || this.sele_instance.world.server==null){
+            return;
+        }
         if(evt.getKeyCode()==10){
             Server server=this.sele_instance.world.server;
             server.send(this.server_box_input.getText());
             this.server_box_input.setText("");
         }
     }//GEN-LAST:event_server_box_inputKeyReleased
+
+    private void btn_stop_serverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_stop_serverActionPerformed
+        if(this.sele_instance==null || this.sele_instance.world==null || this.sele_instance.world.server==null){
+            return;
+        }
+        this.sele_instance.world.server.send("stop");
+        this.sele_instance.world.server=null;
+        this.setWorlds();
+    }//GEN-LAST:event_btn_stop_serverActionPerformed
 
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -729,6 +761,7 @@ public class FormMain extends javax.swing.JFrame {
     private javax.swing.JButton btn_eliminar_world;
     private javax.swing.JButton btn_folder_worlds;
     private javax.swing.JButton btn_iniciar_server;
+    private javax.swing.JButton btn_stop_server;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JScrollPane jScrollPane1;

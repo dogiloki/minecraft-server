@@ -222,6 +222,7 @@ public class DialogInstance extends javax.swing.JDialog {
         Instance ins=this.ins==null?new Instance():this.ins;
         ins.file_path=folder+"/"+this.cfg_global.getDic("fi_instance");
         ins.name=name;
+        ins.file_server=this.panel_version.caja_path_java.getText();
         ins.java_path=this.panel_configuration.caja_path_java.getText();
         ins.memory_min=this.panel_configuration.caja_memory_min.getText();
         ins.memory_max=this.panel_configuration.caja_memory_max.getText();

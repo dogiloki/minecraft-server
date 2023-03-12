@@ -50,7 +50,7 @@
                           <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                       </Group>
                       <Group type="102" attributes="0">
-                          <Component id="caja_path_java4" max="32767" attributes="0"/>
+                          <Component id="caja_path_java" max="32767" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="btn_path_java_explore4" min="-2" max="-2" attributes="0"/>
                       </Group>
@@ -66,7 +66,7 @@
                   <Component id="jLabel8" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="caja_path_java4" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="caja_path_java" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="btn_path_java_explore4" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="32767" attributes="0"/>
@@ -80,7 +80,10 @@
             <Property name="text" type="java.lang.String" value="Seleccionar versi&#xf3;n"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JTextField" name="caja_path_java4">
+        <Component class="javax.swing.JTextField" name="caja_path_java">
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="1"/>
+          </AuxValues>
         </Component>
         <Component class="javax.swing.JButton" name="btn_path_java_explore4">
           <Properties>
