@@ -2,14 +2,13 @@ package gui;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JTextArea;
+import util.Storage;
 
 /**
  *
@@ -18,22 +17,24 @@ import javax.swing.JTextArea;
 
 public class Server{
     
+    interface Callback{
+        void call();
+    }
+    
     public String id=UUID.randomUUID().toString();
     public String command="";
     public String path_directory="";
-    public JTextArea server_text=null;
     public Process process=null;
     public OutputStream output=null;
     public String text_log="";
     private boolean active_output=true;
     private Thread thread=null;
+    public Callback call_finalized;
     
-    public Server(String command, String path_directory, JTextArea server_text){
-        this.command="cmd /c start start.bat";
+    public Server(String command, String path_directory){
+        this.command="cmd /c start cmd /c"+command;
         this.path_directory=path_directory;
-        this.server_text=server_text;
         this.setProcess();
-        this.startOutput();
     }
     
     private void setProcess(){
@@ -41,7 +42,9 @@ public class Server{
             // Inicializar el servidor
             ProcessBuilder pb=new ProcessBuilder(this.command.split(" "));
             pb.directory(new File(this.path_directory));
+            pb.redirectErrorStream(false);
             Process process=pb.start();
+            this.startOutput();
             this.process=process;
             this.output=process.getOutputStream();
         }catch(Exception ex){
@@ -49,8 +52,9 @@ public class Server{
         }
     }
     
-    public void stopOutput(){
-        this.active_output=false;
+    public void getOutput(JTextArea text_area){
+        text_area.setText(String.join(" ",Storage.readFile(this.path_directory+"/logs/latest.log")));
+        text_area.setCaretPosition(text_area.getDocument().getLength());
     }
     
     public void startOutput(){
@@ -60,14 +64,11 @@ public class Server{
             try{
                 BufferedReader reader=new BufferedReader(new InputStreamReader(this.process.getInputStream()));
                 String line;
-                this.server_text.setText(this.text_log);
                 while((line=reader.readLine())!=null){
-                    String text=this.server_text.getText()+line+"\n";
-                    this.server_text.setText(text);
-                    this.text_log=this.server_text.getText();
-                    this.server_text.setCaretPosition(this.server_text.getDocument().getLength());
+                    this.text_log+=line+"\n";
                 }
-                process.waitFor();
+                this.process.waitFor();
+                this.finalized();
                 this.output.close();
                 reader.close();
             }catch(IOException ex){
@@ -93,6 +94,10 @@ public class Server{
             ex.printStackTrace();
         }
         return false;
+    }
+    
+    public void finalized(){
+        this.call_finalized.call();
     }
     
 }

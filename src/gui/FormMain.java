@@ -274,13 +274,14 @@ public class FormMain extends javax.swing.JFrame {
                     sele_instance.panel_world.setOpaque(true);
                     
                     // Obtener server si ya tiene uno iniciado
-                    Server server=sele_instance.world.server;
+                    Server server=world.server;
                     if(server==null){
-                        server_text.setText("");
                         btn_iniciar_server.setEnabled(true);
+                        btn_eliminar_world.setEnabled(true);
+                        text_serve_log.setText("");
                     }else{
-                        server.startOutput();
                         btn_iniciar_server.setEnabled(false);
+                        btn_eliminar_world.setEnabled(false);
                     }
                 }
                 @Override
@@ -379,9 +380,7 @@ public class FormMain extends javax.swing.JFrame {
         scroll_instances = new javax.swing.JScrollPane();
         panel_instances = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        server_text = new javax.swing.JTextArea();
-        server_box_input = new javax.swing.JTextField();
-        btn_stop_server = new javax.swing.JButton();
+        text_serve_log = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -436,7 +435,7 @@ public class FormMain extends javax.swing.JFrame {
         );
         panel_worldsLayout.setVerticalGroup(
             panel_worldsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 273, Short.MAX_VALUE)
+            .addGap(0, 281, Short.MAX_VALUE)
         );
 
         scroll_mundos.setViewportView(panel_worlds);
@@ -467,7 +466,8 @@ public class FormMain extends javax.swing.JFrame {
                     .addComponent(btn_folder_worlds)
                     .addComponent(btn_eliminar_world))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(scroll_mundos, javax.swing.GroupLayout.DEFAULT_SIZE, 273, Short.MAX_VALUE))
+                .addComponent(scroll_mundos, javax.swing.GroupLayout.DEFAULT_SIZE, 281, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         jSplitPane1.setRightComponent(jPanel5);
@@ -507,7 +507,7 @@ public class FormMain extends javax.swing.JFrame {
         );
         panel_instancesLayout.setVerticalGroup(
             panel_instancesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 273, Short.MAX_VALUE)
+            .addGap(0, 293, Short.MAX_VALUE)
         );
 
         scroll_instances.setViewportView(panel_instances);
@@ -532,28 +532,15 @@ public class FormMain extends javax.swing.JFrame {
                     .addComponent(btn_edit)
                     .addComponent(btn_delete))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(scroll_instances, javax.swing.GroupLayout.DEFAULT_SIZE, 273, Short.MAX_VALUE))
+                .addComponent(scroll_instances, javax.swing.GroupLayout.DEFAULT_SIZE, 293, Short.MAX_VALUE))
         );
 
         jSplitPane1.setLeftComponent(jPanel1);
 
-        server_text.setColumns(20);
-        server_text.setLineWrap(true);
-        server_text.setRows(5);
-        jScrollPane1.setViewportView(server_text);
-
-        server_box_input.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                server_box_inputKeyReleased(evt);
-            }
-        });
-
-        btn_stop_server.setText("Stop");
-        btn_stop_server.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_stop_serverActionPerformed(evt);
-            }
-        });
+        text_serve_log.setColumns(20);
+        text_serve_log.setRows(5);
+        text_serve_log.setWrapStyleWord(true);
+        jScrollPane1.setViewportView(text_serve_log);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -561,27 +548,17 @@ public class FormMain extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jSplitPane1)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(server_box_input)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btn_stop_server)))
+                .addComponent(jSplitPane1)
                 .addContainerGap())
+            .addComponent(jScrollPane1)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jSplitPane1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 244, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(server_box_input, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btn_stop_server))
-                .addContainerGap())
+                .addComponent(jSplitPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 323, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         pack();
@@ -593,7 +570,7 @@ public class FormMain extends javax.swing.JFrame {
 
     private void btn_iniciar_serverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_iniciar_serverActionPerformed
         this.btn_iniciar_server.setEnabled(false);
-        this.server_text.setText("Starting server...");
+        this.btn_eliminar_world.setEnabled(false);
         Instance ins=this.sele_instance;
         if(!Storage.exists(this.cfg_global.getDic("fi_ver_mani"))){
             new Download(null,true,this.cfg_global.getDic("fi_ver_mani"),null,this.cfg_global.getDic("url_ver_mani"),null).setVisible(true);
@@ -616,10 +593,16 @@ public class FormMain extends javax.swing.JFrame {
             // Archivo start.bat para iniciar servidor
             String text_bat_server="--serverJar=../../../"+fo_minecraft+"/"+MessageFormat.format(this.cfg_global.getDic("fi_server"),ins.version);
             //String text_bat_server="";
-            String[] text_bat={"\""+ins.java_path+"\" -jar -Xmx"+ins.memory_max+" -Xms"+ins.memory_max+" ../../../"+fo_minecraft+"/"+fi_server+" nogui "+(ins.file_server==null?"":text_bat_server)};
+            String[] text_bat={"\""+ins.java_path+"\" -jar -Xmx"+ins.memory_max+" -Xms"+ins.memory_max+" ../../../"+fo_minecraft+"/"+fi_server+" nogui "+(ins.file_server==null || ins.file_server.equals("")?"":text_bat_server)};
             Storage.writeFile(text_bat, fi_start);
             // Iniciar servidor
-            Server server=new Server(text_bat[0],fo_server,this.server_text);
+            Server server=new Server(text_bat[0],fo_server);
+            server.call_finalized=()->{
+              this.btn_iniciar_server.setEnabled(true);
+              this.btn_eliminar_world.setEnabled(true);
+              this.sele_instance.world.server=null;
+              server.getOutput(text_serve_log);
+            };
             // Archivo eula del servidor
             if(Storage.exists(fo_server+"/eula.txt")){
                 Config cfg_eula=new Config(fo_server+"/eula.txt");
@@ -630,21 +613,23 @@ public class FormMain extends javax.swing.JFrame {
                         cfg_eula.save();
                     }
                     this.btn_iniciar_server.setEnabled(true);
+                    this.btn_eliminar_world.setEnabled(true);
                 }else{
                     ins.world.server=server;
                     this.servers.add(server);
                 }
             }else{
                 this.btn_iniciar_server.setEnabled(true);
+                this.btn_eliminar_world.setEnabled(true);
             }
         }else{
             if(ins.file_server!=null && !ins.file_server.equals("") && !Storage.exists(ins.file_server)){
                 JOptionPane.showMessageDialog(null,"El archivo "+ins.file_server+" no existe","Error",JOptionPane.ERROR_MESSAGE);
-                this.server_text.setText("El archivo "+ins.file_server+" no existe");
             }else{
                 new Download(this,true,fo_minecraft,fi_server,url,null).setVisible(true);
             }
             this.btn_iniciar_server.setEnabled(true);
+            this.btn_eliminar_world.setEnabled(true);
         }
     }//GEN-LAST:event_btn_iniciar_serverActionPerformed
 
@@ -697,8 +682,7 @@ public class FormMain extends javax.swing.JFrame {
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         for(Server server:this.servers){
-            server.send("stop");
-            server.process.destroy();
+            server.finalized();
         }
     }//GEN-LAST:event_formWindowClosing
 
@@ -723,28 +707,6 @@ public class FormMain extends javax.swing.JFrame {
             this.setWorlds();
         }
     }//GEN-LAST:event_btn_deleteActionPerformed
-
-    private void server_box_inputKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_server_box_inputKeyReleased
-        if(this.sele_instance==null || this.sele_instance.world==null || this.sele_instance.world.server==null){
-            return;
-        }
-        if(evt.getKeyCode()==10){
-            Server server=this.sele_instance.world.server;
-            server.send(this.server_box_input.getText());
-            this.server_box_input.setText("");
-        }
-    }//GEN-LAST:event_server_box_inputKeyReleased
-
-    private void btn_stop_serverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_stop_serverActionPerformed
-        this.btn_iniciar_server.setEnabled(true);
-        if(this.sele_instance==null || this.sele_instance.world==null || this.sele_instance.world.server==null){
-            return;
-        }
-        this.sele_instance.world.server.send("stop");
-        this.sele_instance.world.server.process.destroy();
-        this.sele_instance.world.server=null;
-        this.setWorlds();
-    }//GEN-LAST:event_btn_stop_serverActionPerformed
 
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -773,7 +735,6 @@ public class FormMain extends javax.swing.JFrame {
     private javax.swing.JButton btn_eliminar_world;
     private javax.swing.JButton btn_folder_worlds;
     private javax.swing.JButton btn_iniciar_server;
-    private javax.swing.JButton btn_stop_server;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JScrollPane jScrollPane1;
@@ -782,7 +743,6 @@ public class FormMain extends javax.swing.JFrame {
     private javax.swing.JPanel panel_worlds;
     private javax.swing.JScrollPane scroll_instances;
     private javax.swing.JScrollPane scroll_mundos;
-    private javax.swing.JTextField server_box_input;
-    private javax.swing.JTextArea server_text;
+    private javax.swing.JTextArea text_serve_log;
     // End of variables declaration//GEN-END:variables
 }
