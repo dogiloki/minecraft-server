@@ -28,6 +28,7 @@ public class Mods extends javax.swing.JPanel {
         this.cfg_global=cfg_global;
         this.ins=ins;
         this.folder_mods+=this.ins.folder_ins+"/"+this.cfg_global.getDic("fo_server")+"/mods";
+        Storage.createFolder(this.folder_mods);
         this.getMods();
     }
     

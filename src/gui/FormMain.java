@@ -71,6 +71,7 @@ public class FormMain extends javax.swing.JFrame {
         this.cfg_global.setDic("fi_server",this.cfg_global.getConfigJson("files").getValue("server"));
         this.cfg_global.setDic("fi_ver_mani",this.cfg_global.getDic("fo_meta_mc")+"/"+this.cfg_global.getConfigJson("downloads").getJson("version_manifest").getValue("name"));
         this.cfg_global.setDic("url_ver_mani",this.cfg_global.getConfigJson("downloads").getJson("version_manifest").getValue("url"));
+        Storage.createFolder(this.cfg_global.getDic("fo_instances"));
     }
     
     public void runWath(){
