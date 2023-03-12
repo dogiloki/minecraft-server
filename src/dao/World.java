@@ -8,7 +8,7 @@ package dao;
 import javax.swing.Icon;
 import util.Storage;
 import interfaces.DAO;
-import form.Server;
+import gui.Server;
 
 public class World implements DAO {
     
