@@ -8,15 +8,14 @@ package dao;
 import javax.swing.Icon;
 import util.Storage;
 import interfaces.DAO;
-import gui.Server;
+import util.relations.OneByOne;
 
-public class World implements DAO {
+public class World extends OneByOne<Server> implements DAO {
     
     private String old_folder_path="";
     public String folder_path="";
     public String name="";
     public Icon icon=null;
-    public Server server=null;
 
     public World(){
         

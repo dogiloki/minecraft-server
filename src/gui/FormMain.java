@@ -7,6 +7,7 @@ package gui;
 
 import dao.Instance;
 import dao.Properties;
+import dao.Server;
 import dao.World;
 
 import java.awt.Color;
@@ -44,6 +45,7 @@ public class FormMain extends javax.swing.JFrame {
     private Instance sele_instance=null;
     private Config cfg_global=null;
     private List<Server> servers=new ArrayList<>();
+    private Server sele_server=null;
 
     public FormMain() {
         initComponents();
@@ -58,19 +60,20 @@ public class FormMain extends javax.swing.JFrame {
     public void dic(){
         // Obtener configuración del archivo central .cfg
         this.cfg_global=new Config(this.getClass(),"minecraftServer.cfg",Config.JSON);
+        Config.singleton(this.cfg_global);
         // Carpetas
-        this.cfg_global.setDic("fo_instances",this.cfg_global.getConfigJson("folders").getJson("instances").getValue("folder"));
-        this.cfg_global.setDic("fo_server",this.cfg_global.getConfigJson("folders").getJson("instances").getValue("server"));
-        this.cfg_global.setDic("fo_worlds",this.cfg_global.getConfigJson("folders").getJson("instances").getValue("worlds"));
-        this.cfg_global.setDic("fo_metadata",this.cfg_global.getConfigJson("folders").getJson("metadata").getValue("folder"));
-        this.cfg_global.setDic("fo_meta_mc",this.cfg_global.getDic("fo_metadata")+"/"+this.cfg_global.getConfigJson("folders").getJson("metadata").getValue("mc"));
-        this.cfg_global.setDic("fo_meta_fg",this.cfg_global.getDic("fo_metadata")+"/"+this.cfg_global.getConfigJson("folders").getJson("metadata").getValue("fg"));
-        this.cfg_global.setDic("fo_mc",this.cfg_global.getConfigJson("folders").getJson("minecraft-server").getValue("folder"));
+        Config.setDic("fo_instances",this.cfg_global.getConfigJson("folders").getJson("instances").getValue("folder"));
+        Config.setDic("fo_server",this.cfg_global.getConfigJson("folders").getJson("instances").getValue("server"));
+        Config.setDic("fo_worlds",this.cfg_global.getConfigJson("folders").getJson("instances").getValue("worlds"));
+        Config.setDic("fo_metadata",this.cfg_global.getConfigJson("folders").getJson("metadata").getValue("folder"));
+        Config.setDic("fo_meta_mc",this.cfg_global.getDic("fo_metadata")+"/"+this.cfg_global.getConfigJson("folders").getJson("metadata").getValue("mc"));
+        Config.setDic("fo_meta_fg",this.cfg_global.getDic("fo_metadata")+"/"+this.cfg_global.getConfigJson("folders").getJson("metadata").getValue("fg"));
+        Config.setDic("fo_mc",this.cfg_global.getConfigJson("folders").getJson("minecraft-server").getValue("folder"));
         // Archivos
-        this.cfg_global.setDic("fi_instance",this.cfg_global.getConfigJson("files").getValue("instance"));
-        this.cfg_global.setDic("fi_server",this.cfg_global.getConfigJson("files").getValue("server"));
-        this.cfg_global.setDic("fi_ver_mani",this.cfg_global.getDic("fo_meta_mc")+"/"+this.cfg_global.getConfigJson("downloads").getJson("version_manifest").getValue("name"));
-        this.cfg_global.setDic("url_ver_mani",this.cfg_global.getConfigJson("downloads").getJson("version_manifest").getValue("url"));
+        Config.setDic("fi_instance",this.cfg_global.getConfigJson("files").getValue("instance"));
+        Config.setDic("fi_server",this.cfg_global.getConfigJson("files").getValue("server"));
+        Config.setDic("fi_ver_mani",this.cfg_global.getDic("fo_meta_mc")+"/"+this.cfg_global.getConfigJson("downloads").getJson("version_manifest").getValue("name"));
+        Config.setDic("url_ver_mani",this.cfg_global.getConfigJson("downloads").getJson("version_manifest").getValue("url"));
         Storage.createFolder(this.cfg_global.getDic("fo_instances"));
     }
     
@@ -272,17 +275,9 @@ public class FormMain extends javax.swing.JFrame {
                     sele_instance.panel_world=panel;
                     sele_instance.panel_world.setBackground(Color.decode("#b2cff0"));
                     sele_instance.panel_world.setOpaque(true);
-                    
-                    // Obtener server si ya tiene uno iniciado
-                    Server server=world.server;
-                    if(server==null){
-                        btn_iniciar_server.setEnabled(true);
-                        btn_eliminar_world.setEnabled(true);
-                        text_serve_log.setText("");
-                    }else{
-                        btn_iniciar_server.setEnabled(false);
-                        btn_eliminar_world.setEnabled(false);
-                    }
+                    // Saber si tiene un servidor activo
+                    Server server=world.get();
+                    statusServer(server==null);
                 }
                 @Override
                 public void mouseReleased(MouseEvent evt){ }
@@ -359,6 +354,11 @@ public class FormMain extends javax.swing.JFrame {
             worlds.add(world);
         }
         this.sele_instance.worlds=worlds;
+    }
+    
+    public void statusServer(boolean status){
+        this.btn_iniciar_server.setEnabled(status);
+        this.btn_eliminar_world.setEnabled(status);
     }
     
     @SuppressWarnings("unchecked")
@@ -569,8 +569,7 @@ public class FormMain extends javax.swing.JFrame {
     }//GEN-LAST:event_btn_crearActionPerformed
 
     private void btn_iniciar_serverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_iniciar_serverActionPerformed
-        this.btn_iniciar_server.setEnabled(false);
-        this.btn_eliminar_world.setEnabled(false);
+        this.statusServer(false);
         Instance ins=this.sele_instance;
         if(!Storage.exists(this.cfg_global.getDic("fi_ver_mani"))){
             new Download(null,true,this.cfg_global.getDic("fi_ver_mani"),null,this.cfg_global.getDic("url_ver_mani"),null).setVisible(true);
@@ -583,53 +582,40 @@ public class FormMain extends javax.swing.JFrame {
         }
         GsonManager json=new GsonManager(fo_meta_mc+"/"+name_json,GsonManager.FILE);
         String url=json.getJson("downloads").getJson("server").getValue("url");
-        String fo_minecraft=this.cfg_global.getDic("fo_mc")+"/"+ins.version;
+        String fo_minecraft=Config.getDic("fo_mc")+"/"+ins.version;
         String fi_server=Function.assign(ins.file_server,MessageFormat.format(this.cfg_global.getDic("fi_server"),ins.version));
-        String fo_server=ins.folder_ins+"/"+this.cfg_global.getDic("fo_server");
-        String fi_start=fo_server+"/start.bat";
         long fi_minecraft_size=parseLong(json.getJson("downloads").getJson("server").getValue("size"));
-        //if(Storage.exists(fo_minecraft+"/"+fi_server) && (fi_minecraft_size==Storage.getSize(fo_minecraft+"/"+fi_server) || (ins.file_server!=null) && !ins.file_server.equals(""))){
         if(Storage.exists(fo_minecraft+"/"+fi_server) && (fi_minecraft_size==Storage.getSize(fo_minecraft+"/"+fi_server) || (ins.file_server!=null && !ins.file_server.equals("")))){
-            // Archivo start.bat para iniciar servidor
-            String text_bat_server="--serverJar=../../../"+fo_minecraft+"/"+MessageFormat.format(this.cfg_global.getDic("fi_server"),ins.version);
-            //String text_bat_server="";
-            String[] text_bat={"\""+ins.java_path+"\" -jar -Xmx"+ins.memory_max+" -Xms"+ins.memory_max+" ../../../"+fo_minecraft+"/"+fi_server+" nogui "+(ins.file_server==null || ins.file_server.equals("")?"":text_bat_server)};
-            Storage.writeFile(text_bat, fi_start);
             // Iniciar servidor
-            Server server=new Server(text_bat[0],fo_server);
+            Server server=new Server(ins);
+            server.start();
             server.call_finalized=()->{
-              this.btn_iniciar_server.setEnabled(true);
-              this.btn_eliminar_world.setEnabled(true);
-              this.sele_instance.world.server=null;
-              server.getOutput(text_serve_log);
+                this.statusServer(true);
             };
+            ins.world.set(server);
             // Archivo eula del servidor
-            if(Storage.exists(fo_server+"/eula.txt")){
-                Config cfg_eula=new Config(fo_server+"/eula.txt");
+            Config cfg_eula=server.eula();
+            if(cfg_eula!=null){
                 if(cfg_eula.getConfigData("eula").equals("false")){
                     int op=JOptionPane.showInternalConfirmDialog(null,"By changing the setting below to TRUE\nyou are indicating your agreement to our EULA\n( https://account.mojang.com/documents/minecraft_eula ).","EULA",JOptionPane.WARNING_MESSAGE);
                     if(op==0){
                         cfg_eula.setConfigData("eula","true");
                         cfg_eula.save();
                     }
-                    this.btn_iniciar_server.setEnabled(true);
-                    this.btn_eliminar_world.setEnabled(true);
-                }else{
-                    ins.world.server=server;
-                    this.servers.add(server);
+                    this.statusServer(true);
+                    return;
                 }
-            }else{
-                this.btn_iniciar_server.setEnabled(true);
-                this.btn_eliminar_world.setEnabled(true);
             }
+            //ins.world.server=server;
+            this.sele_server=server;
+            this.servers.add(server);
         }else{
             if(ins.file_server!=null && !ins.file_server.equals("") && !Storage.exists(ins.file_server)){
                 JOptionPane.showMessageDialog(null,"El archivo "+ins.file_server+" no existe","Error",JOptionPane.ERROR_MESSAGE);
             }else{
                 new Download(this,true,fo_minecraft,fi_server,url,null).setVisible(true);
             }
-            this.btn_iniciar_server.setEnabled(true);
-            this.btn_eliminar_world.setEnabled(true);
+            this.statusServer(true);
         }
     }//GEN-LAST:event_btn_iniciar_serverActionPerformed
 

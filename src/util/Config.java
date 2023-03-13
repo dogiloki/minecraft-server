@@ -10,6 +10,8 @@ import java.util.Map;
 
 public class Config{
     
+    private static Config instance=null;
+    
     private String file;
     private Map<String,String> configurations=new HashMap<>();
     private Map<String,Integer> position=new HashMap<>();
@@ -20,6 +22,14 @@ public class Config{
     
     public static final boolean JSON=true;
     public static final boolean CONFIG=true;
+    
+    public static void singleton(Config instance){
+        Config.instance=instance;
+    }
+    
+    public static Config singleton(){
+        return Config.instance;
+    }
     
     // Configuración
     public Config(Class _class, String file, boolean is_json){
@@ -121,12 +131,12 @@ public class Config{
         return this.gson.getJson(key);
     }
     
-    public void setDic(String key, String value){
-        this.dic.put(key,value);
+    public static void setDic(String key, String value){
+        Config.singleton().dic.put(key,value);
     }
     
-    public String getDic(String key){
-        return this.dic.get(key);
+    public static String getDic(String key){
+        return Config.singleton().dic.get(key);
     }
     
 }
