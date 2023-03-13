@@ -603,6 +603,9 @@ public class FormMain extends javax.swing.JFrame {
     }//GEN-LAST:event_btn_crearActionPerformed
 
     private void btn_iniciar_serverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_iniciar_serverActionPerformed
+        if(this.sele_instance==null || this.sele_instance.world==null){
+            return;
+        }
         this.statusServer(false);
         Instance ins=this.sele_instance;
         if(!Storage.exists(this.cfg_global.getDic("fi_ver_mani"))){

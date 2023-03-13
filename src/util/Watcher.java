@@ -73,7 +73,7 @@ public class Watcher implements Runnable{
                             try{
                                 method.invoke(this.context);
                             }catch(Exception ex){
-                                System.out.println(ex);
+                                System.out.println(ex.getCause());
                             }
                         }
                     }else{
@@ -81,7 +81,7 @@ public class Watcher implements Runnable{
                             try{
                                 this.object.getMethod(method).invoke(this.context);
                             }catch(Exception ex){
-                                ex.printStackTrace();
+                                System.out.println(ex.getCause());
                             }
                         }
                     }
