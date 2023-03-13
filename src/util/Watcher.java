@@ -1,6 +1,7 @@
 package util;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.WatchEvent;
@@ -80,7 +81,7 @@ public class Watcher implements Runnable{
                             try{
                                 this.object.getMethod(method).invoke(this.context);
                             }catch(Exception ex){
-                                System.out.println(ex);
+                                ex.printStackTrace();
                             }
                         }
                     }

@@ -9,8 +9,6 @@ import javax.swing.JPanel;
 import util.Config;
 import util.Storage;
 import interfaces.DAO;
-import java.util.ArrayList;
-import java.util.List;
 import util.Function;
 import util.relations.OneToMany;
 

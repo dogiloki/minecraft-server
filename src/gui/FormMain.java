@@ -41,7 +41,7 @@ import java.util.List;
 public class FormMain extends javax.swing.JFrame {
     
     private Watcher watcher;
-    private ArrayList<Instance> instances=new ArrayList<>();
+    private ArrayList<Instance> instances=null;
     private Instance sele_instance=null;
     private Config cfg_global=null;
     private List<Server> servers=new ArrayList<>();
@@ -78,7 +78,7 @@ public class FormMain extends javax.swing.JFrame {
     }
     
     public void runWath(){
-        this.watcher=new Watcher(this.cfg_global.getDic("fo_instances"),this,FormMain.class,"setInstances");
+        this.watcher=new Watcher(Config.getDic("fo_instances"),this,FormMain.class,"setInstances");
     }
     
     public void setInstances(){
@@ -91,8 +91,8 @@ public class FormMain extends javax.swing.JFrame {
     
     private void _setInstances(boolean get_folder){
         this.sele_instance=null;
-        if(this.instances.size()<=0 || get_folder){
-            this.getInstancesDictory();
+        if(this.instances==null || get_folder){
+            this.getInstancesDirectory();
         }
         this.panel_instances.removeAll();
         this.scroll_instances.updateUI();
@@ -102,6 +102,10 @@ public class FormMain extends javax.swing.JFrame {
         int total_columnas=(int)(Math.floorDiv(ancho_total,ancho))-1;
         int x=0, y=0, count=0, filas=0;
         for(Instance ins:this.instances){
+            if(!Storage.exists(ins.folder_ins+"/"+Config.getDic("fi_instance"))){
+                this.instances.remove(ins);
+                continue;
+            }
             // Panel principal
             JPanel panel=new JPanel();
             panel.setLayout(null);
@@ -136,6 +140,15 @@ public class FormMain extends javax.swing.JFrame {
                     proper.save();
                     sele_instance.properties=proper;
                     setWorlds(false);
+                    // Saber si tiene un servidor activo
+                    List<World> worlds=Function.assign(sele_instance.get(),new ArrayList<>());
+                    Server server=null;
+                    for(World world:worlds){
+                        if((server=world.get())!=null){
+                            break;
+                        }
+                    }
+                    statusServer(server==null);
                 }
                 @Override
                 public void mouseReleased(MouseEvent evt){ }
@@ -195,11 +208,11 @@ public class FormMain extends javax.swing.JFrame {
         this.panel_instances.setPreferredSize(Function.createDimencion(ancho_total,filas*alto));
     }
     
-    public void getInstancesDictory(){
-        this.instances.clear();
+    public void getInstancesDirectory(){
+        this.instances=Function.assign(this.instances,new ArrayList<>());
         String path_instances=this.cfg_global.getDic("fo_instances");
         String file_instance=this.cfg_global.getDic("fi_instance");
-        String[] folders=Storage.listDirectory(path_instances);
+        String[] folders=Storage.listDirectory(path_instances,Storage.FOLDER);
         for(String folder_tmp:folders){
             String folder=path_instances+"/"+folder_tmp;
             if(!Storage.exists(folder+"/"+file_instance)){
@@ -213,9 +226,18 @@ public class FormMain extends javax.swing.JFrame {
             ins.folder_ins=folder;
             ins.folder_world="";
             ins.world=null;
-            this.instances.add(ins);
+            
+            boolean exists=false;
+            for(Instance i:this.instances){
+                if(i.folder_ins.equals(ins.folder_ins)){
+                    exists=true;
+                    break;
+                }
+            }
+            if(!exists){
+                this.instances.add(ins);
+            }
         }
-        
     }
     
     public void setWorlds(){
@@ -233,7 +255,7 @@ public class FormMain extends javax.swing.JFrame {
             return;
         }
         if(this.sele_instance.get()==null || get_folder){
-            this.getWorldsDictory();
+            this.getWorldsDirectory();
         }
         this.panel_worlds.removeAll();
         this.panel_worlds.updateUI();
@@ -242,8 +264,12 @@ public class FormMain extends javax.swing.JFrame {
         int ancho_total=this.scroll_mundos.getWidth()-25;
         int total_columnas=(int)Math.floorDiv(ancho_total, ancho)-1;
         int x=0, y=0, count=0, filas=0;
-        for(World world:this.sele_instance.get()){
-            Instance ins=this.sele_instance;
+        List<World> worlds=Function.assign(this.sele_instance.get(),new ArrayList<>());
+        for(World world:worlds){
+            if(!Storage.exists(world.folder_path)){
+                this.instances.remove(world);
+                continue;
+            }
             // Panel principal
             JPanel panel=new JPanel();
             panel.setLayout(null);
@@ -263,8 +289,6 @@ public class FormMain extends javax.swing.JFrame {
                         sele_instance.panel_world.setBackground(null);
                         sele_instance.panel_world.setOpaque(false);
                     }
-                    btn_iniciar_server.setEnabled(true);
-                    btn_eliminar_world.setEnabled(true);
                     sele_instance.world=world;
                     sele_instance.folder_world=cfg_global.getDic("fo_worlds")+"/"+world.name;
                     
@@ -277,7 +301,7 @@ public class FormMain extends javax.swing.JFrame {
                     sele_instance.panel_world.setOpaque(true);
                     // Saber si tiene un servidor activo
                     Server server=world.get();
-                    statusServer(server==null);
+                    btn_eliminar_world.setEnabled(server==null);
                 }
                 @Override
                 public void mouseReleased(MouseEvent evt){ }
@@ -338,26 +362,37 @@ public class FormMain extends javax.swing.JFrame {
         this.panel_worlds.setPreferredSize(Function.createDimencion(ancho_total,filas*alto));
     }
     
-    public void getWorldsDictory(){
-        String path_worlds=this.sele_instance.folder_ins+"/"+this.cfg_global.getDic("fo_server")+"/"+this.cfg_global.getDic("fo_worlds");
+    public void getWorldsDirectory(){
+        String path_worlds=this.sele_instance.folder_ins+"/"+Config.getDic("fo_server")+"/"+Config.getDic("fo_worlds");
         Storage.exists(path_worlds,Storage.CREATED,Storage.FOLDER);
         String[] folders=Storage.listDirectory(path_worlds);
         if(folders==null || folders.length<=0){
             return;
         }
-        List<World> worlds=new ArrayList<>();
+        List<World> worlds=Function.assign(this.sele_instance.get(),new ArrayList<>());
         for(String folder:folders){
             // Obtener datos de la World
             World world=new World(path_worlds+"/"+folder);
             // Datos del World
             world.name=folder;
-            this.sele_instance.add(world);
+            boolean exists=false;
+            for(World w:worlds){
+                if(w.folder_path.equals(world.folder_path)){
+                    exists=true;
+                    break;
+                }
+            }
+            if(!exists){
+                this.sele_instance.add(world);
+            }
         }
     }
     
     public void statusServer(boolean status){
         this.btn_iniciar_server.setEnabled(status);
         this.btn_eliminar_world.setEnabled(status);
+        this.btn_delete.setEnabled(status);
+        this.btn_edit.setEnabled(status);
     }
     
     @SuppressWarnings("unchecked")
@@ -619,7 +654,7 @@ public class FormMain extends javax.swing.JFrame {
     }//GEN-LAST:event_btn_iniciar_serverActionPerformed
 
     private void btn_eliminar_worldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_eliminar_worldActionPerformed
-        if(this.sele_instance!=null && this.sele_instance.folder_world!=null){
+        if(this.sele_instance!=null && this.sele_instance.folder_world!=null && this.sele_instance.world!=null){
             try{
                 String folder=this.sele_instance.folder_ins+"/"+this.cfg_global.getDic("fo_server")+"/"+this.sele_instance.folder_world;
                 Storage.deleteFolder(folder);
