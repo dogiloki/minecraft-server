@@ -1,7 +1,6 @@
 package util;
 
 import java.awt.Frame;
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -13,7 +12,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -468,6 +467,21 @@ public class Storage{
     public static String getExtension(String path){
         String[] path_array=path.split("\\.");
         return path_array[path_array.length-1];
+    }
+    
+    public static String getNameNotExtension(String path){
+        String[] path_array=path.replace("\\", "/").split("/");
+        return (path_array[path_array.length-1]).split("\\.")[0];
+    }
+    
+    public static String getName(String path){
+        String[] path_array=path.replace("\\", "/").split("/");
+        return path_array[path_array.length-1];
+    }
+    
+    public static String getFolder(String path){
+        String[] array=path.replace("\\", "/").split("/");
+        return String.join("/",Arrays.copyOfRange(array,0,array.length-1));
     }
     
     // Obtener ruta donde se ejecuta el programa

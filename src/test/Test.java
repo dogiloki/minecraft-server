@@ -5,6 +5,8 @@
  */
 package test;
 
+import dao.FileDAO;
+import dao.FolderDAO;
 import dao.Instance;
 import util.Config;
 import util.Storage;
@@ -16,7 +18,9 @@ import util.Storage;
 public class Test {
     
     public Test(){
-        Storage.descompress("E:\\Escritorio\\compress","E:\\Escritorio\\hola.zip");
+        FolderDAO f=new FolderDAO("E:\\Escritorio\\hola");
+        f.delete();
+        System.out.println(f.toString());
     }
     
     public static void main(String[] args){
