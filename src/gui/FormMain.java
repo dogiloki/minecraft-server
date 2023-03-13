@@ -232,7 +232,7 @@ public class FormMain extends javax.swing.JFrame {
             this.panel_worlds.updateUI();
             return;
         }
-        if(this.sele_instance.worlds.size()<=0 || get_folder){
+        if(this.sele_instance.get()==null || get_folder){
             this.getWorldsDictory();
         }
         this.panel_worlds.removeAll();
@@ -242,7 +242,7 @@ public class FormMain extends javax.swing.JFrame {
         int ancho_total=this.scroll_mundos.getWidth()-25;
         int total_columnas=(int)Math.floorDiv(ancho_total, ancho)-1;
         int x=0, y=0, count=0, filas=0;
-        for(World world:this.sele_instance.worlds){
+        for(World world:this.sele_instance.get()){
             Instance ins=this.sele_instance;
             // Panel principal
             JPanel panel=new JPanel();
@@ -351,9 +351,8 @@ public class FormMain extends javax.swing.JFrame {
             World world=new World(path_worlds+"/"+folder);
             // Datos del World
             world.name=folder;
-            worlds.add(world);
+            this.sele_instance.add(world);
         }
-        this.sele_instance.worlds=worlds;
     }
     
     public void statusServer(boolean status){

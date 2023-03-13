@@ -12,8 +12,9 @@ import interfaces.DAO;
 import java.util.ArrayList;
 import java.util.List;
 import util.Function;
+import util.relations.OneToMany;
 
-public class Instance implements DAO{
+public class Instance extends OneToMany<World> implements DAO{
     
     public String file_path=null;
     private Config cfg=null;
@@ -36,7 +37,6 @@ public class Instance implements DAO{
     public JPanel panel_world=null;
     public String folder_ins="";
     public String folder_world="";
-    public List<World> worlds=new ArrayList<>();
     public World world;
     
     public Instance(){
