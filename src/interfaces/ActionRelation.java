@@ -5,7 +5,7 @@ package interfaces;
  * @author dogi_
  */
 
-public interface ActionRelations<T>{
+public interface ActionRelation<T>{
     
     public void set(T item);
     public T get();

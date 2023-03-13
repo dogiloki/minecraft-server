@@ -1,13 +1,13 @@
 package util.relations;
 
-import interfaces.ActionRelations;
+import interfaces.ActionRelation;
 
 /**
  *
  * @author dogi_
  */
 
-public class OneByOne<T> implements ActionRelations<T>{
+public class OneByOne<T> implements ActionRelation<T>{
     
     T item=null;
     
