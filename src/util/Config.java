@@ -20,8 +20,9 @@ public class Config{
     private GsonManager gson;
     private final boolean is_json;
     
-    public static final boolean JSON=true;
-    public static final boolean CONFIG=true;
+    public static final int JSON=1;
+    public static final int CONFIG=2;
+    public static final int TXT=3;
     
     public static void singleton(Config instance){
         Config.instance=instance;
@@ -32,9 +33,9 @@ public class Config{
     }
     
     // Configuración
-    public Config(Class _class, String file, boolean is_json){
+    public Config(Class _class, String file, int is_json){
         this.file=file;
-        this.is_json=is_json;
+        this.is_json=is_json==Config.JSON;
         String[] text=_class==null?Storage.readFile(this.file):Storage.readFile(_class,this.file);
         if(this.is_json){
             this.gson=new GsonManager(String.join(" ",text));
@@ -50,10 +51,10 @@ public class Config{
         this.generated(text);
     }
     
-    public Config(String file, boolean is_json){
+    public Config(String file, int type){
         this.file=file;
-        this.is_json=is_json;
-        String[] text=Storage.readFile(this.file);
+        this.is_json=type==Config.JSON;
+        String[] text=type==Config.TXT?file.split("\n"):Storage.readFile(this.file);
         if(this.is_json){
             this.gson=new GsonManager(String.join(" ",text));
         }else{

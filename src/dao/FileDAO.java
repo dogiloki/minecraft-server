@@ -1,6 +1,6 @@
 package dao;
 
-import interfaces.Directory;
+import util.interfaces.Directory;
 import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;

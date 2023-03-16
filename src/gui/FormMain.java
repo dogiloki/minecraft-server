@@ -611,7 +611,7 @@ public class FormMain extends javax.swing.JFrame {
         if(!Storage.exists(this.cfg_global.getDic("fi_ver_mani"))){
             new Download(null,true,this.cfg_global.getDic("fi_ver_mani"),null,this.cfg_global.getDic("url_ver_mani"),null).setVisible(true);
         }
-        GsonManager versions=new Config(this.cfg_global.getDic("fi_ver_mani"),true).getJson().getJsonArray("versions");
+        GsonManager versions=new Config(Config.getDic("fi_ver_mani"),Config.JSON).getJson().getJsonArray("versions");
         String name_json=ins.version+".json";
         String fo_meta_mc=this.cfg_global.getDic("fo_meta_mc");
         if(!Storage.exists(fo_meta_mc+"/"+name_json)){

@@ -7,6 +7,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -148,6 +149,9 @@ public class GsonManager{
         return new Gson().toJson(json);
     }
     public static String createJson(Object json){
+        return new Gson().toJson(json);
+    }
+    public static String createJson(Map<String,Object> json){
         return new Gson().toJson(json);
     }
 

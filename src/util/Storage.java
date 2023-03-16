@@ -232,8 +232,8 @@ public class Storage{
     }
     
     // Saber si existe un archivo o carpeta
-    public static boolean exists(String ruta){
-        File directorio=new File(ruta);
+    public static boolean exists(Object ruta){
+        File directorio=new File(String.valueOf(ruta));
         return (directorio.exists());
     }
     

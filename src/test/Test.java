@@ -9,18 +9,36 @@ import dao.FileDAO;
 import dao.FolderDAO;
 import dao.Instance;
 import util.Config;
+import util.directory.ModelDirectory;
 import util.Storage;
+import util.annotations.directory.Directory;
+import util.annotations.directory.Key;
+import util.enums.DirectoryType;
+import util.enums.FieldType;
 
 /**
  *
  * @author dogi_
  */
-public class Test {
+@Directory(type=DirectoryType.JSON)
+public class Test extends ModelDirectory{
+
+    @Key(value="key_name")
+    public String name="Julio";
+    @Key(value="key_edad")
+    public int edad=20;
+    @Key(value="key_peso")
+    public float peso=58;
+    @Key(value="key_instance")
+    public Instance instance;
+    
+    public String var;
+    public String temp;
     
     public Test(){
-        FolderDAO f=new FolderDAO("E:\\Escritorio\\hola");
-        f.delete();
-        System.out.println(f.toString());
+        super.run(this,"E:\\Escritorio\\prueba.json");
+        this.save();
+        System.out.println(this.edad);
     }
     
     public static void main(String[] args){

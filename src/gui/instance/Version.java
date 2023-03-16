@@ -34,7 +34,7 @@ public class Version extends javax.swing.JPanel {
         if(!Storage.exists(this.cfg_global.getDic("fi_ver_mani"))){
             new Download(null,true,this.cfg_global.getDic("fi_ver_mani"),null,this.cfg_global.getDic("url_ver_mani"),null).setVisible(true);
         }
-        this.versions=new Config(this.cfg_global.getDic("fi_ver_mani"),true).getJson().getJsonArray("versions");
+        this.versions=new Config(this.cfg_global.getDic("fi_ver_mani"),Config.JSON).getJson().getJsonArray("versions");
         DefaultTableModel modelo_versions=new DefaultTableModel();
         modelo_versions.addColumn("Versión");
         modelo_versions.addColumn("Estado");
