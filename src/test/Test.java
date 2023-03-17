@@ -20,13 +20,13 @@ import util.enums.FieldType;
  *
  * @author dogi_
  */
-@Directory(type=DirectoryType.FOLDER)
+@Directory(type=DirectoryType.JSON)
 public class Test extends ModelDirectory{
 
     @Key(value="key_name")
     public String name="Julio";
     @Key(value="key_edad")
-    public int edad;
+    public int edad=20;
     @Key(value="key_peso")
     public float peso=58;
     

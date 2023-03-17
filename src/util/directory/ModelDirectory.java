@@ -53,11 +53,7 @@ public class ModelDirectory extends Storage{
             this.type=annot_directory.type();
         }
         this.create();
-<<<<<<< HEAD
-        super.run(this.src,this.type);
-=======
         super.run(src,this.type);
->>>>>>> 9ddecff630b5415f72ffaa92c1134f75924175b8
     }
     
     private void create(){
@@ -181,16 +177,12 @@ public class ModelDirectory extends Storage{
         }
     }
     
-    public void save(){
-<<<<<<< HEAD
-        if(this.type==null || this.src==null || this.isFolder()){
-=======
-        if(this.type!=null && this.src!=null || this.isFolder()){
->>>>>>> 9ddecff630b5415f72ffaa92c1134f75924175b8
-            return;
+    public boolean save(){
+        if(this.type!=null && this.src!=null && this.isFile()){
+            this.clean();
+            return this.write(this.getText());
         }
-        this.clean();
-        this.write(this.getText());
+        return false;
     }
     
     public boolean isFile(){
