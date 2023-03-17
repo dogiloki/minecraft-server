@@ -26,16 +26,20 @@ public class Storage{
         
     }
     
+<<<<<<< HEAD
     public Storage(String src, DirectoryType type){
         this.run(src,type);
     }
     
+=======
+>>>>>>> 9ddecff630b5415f72ffaa92c1134f75924175b8
     public void run(String src, DirectoryType type){
         this.type=type;
         this.src=src;
     }
     
     public boolean open(boolean append){
+<<<<<<< HEAD
         if(this.type!=null && this.type!=DirectoryType.FOLDER && this.src!=null){
             try{
                 this.file=new File(this.src);
@@ -45,6 +49,18 @@ public class Storage{
             }catch(IOException ex){
                 return false;
             }
+=======
+        if(this.type==DirectoryType.FOLDER){
+            return true;
+        }
+        try{
+            this.file=new File(src);
+            this.bw=new BufferedWriter(new FileWriter(this.file,append));
+            this.br=new BufferedReader(new FileReader(this.file));
+            return true;
+        }catch(IOException ex){
+            return false;
+>>>>>>> 9ddecff630b5415f72ffaa92c1134f75924175b8
         }
         return false;
     }
@@ -137,7 +153,11 @@ public class Storage{
         File directorio=new File(path);
         if(!directorio.exists() && created){
             Storage store=new Storage();
+<<<<<<< HEAD
             store.run(path,type);
+=======
+            store.run(ruta,type);
+>>>>>>> 9ddecff630b5415f72ffaa92c1134f75924175b8
             switch(type){
                 case FOLDER: return Storage.createFolder(path);
                 case FILE: return store.write("");

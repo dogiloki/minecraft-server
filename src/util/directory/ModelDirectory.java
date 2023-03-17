@@ -53,7 +53,11 @@ public class ModelDirectory extends Storage{
             this.type=annot_directory.type();
         }
         this.create();
+<<<<<<< HEAD
         super.run(this.src,this.type);
+=======
+        super.run(src,this.type);
+>>>>>>> 9ddecff630b5415f72ffaa92c1134f75924175b8
     }
     
     private void create(){
@@ -70,6 +74,13 @@ public class ModelDirectory extends Storage{
     
     private void get(){
         try{
+            Directory annot_directory=this.child_class.getAnnotation(Directory.class);
+            if(annot_directory instanceof Directory){
+                this.type=annot_directory.type();
+                if(this.isFolder()){
+                    return;
+                }
+            }
             for(Field field:this.child_class.getDeclaredFields()){
                 Key annot_key=field.getAnnotation(Key.class);
                 if(annot_key instanceof Key){
@@ -171,7 +182,11 @@ public class ModelDirectory extends Storage{
     }
     
     public void save(){
+<<<<<<< HEAD
         if(this.type==null || this.src==null || this.isFolder()){
+=======
+        if(this.type!=null && this.src!=null || this.isFolder()){
+>>>>>>> 9ddecff630b5415f72ffaa92c1134f75924175b8
             return;
         }
         this.clean();
