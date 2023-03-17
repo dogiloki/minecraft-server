@@ -26,30 +26,35 @@ public class Storage{
         
     }
     
+    public Storage(String src, DirectoryType type){
+        this.run(src,type);
+    }
+    
     public void run(String src, DirectoryType type){
         this.type=type;
         this.src=src;
-        this.open(true);
     }
     
     public boolean open(boolean append){
-        if(this.type==DirectoryType.FOLDER){
-            return true;
+        if(this.type!=null && this.type!=DirectoryType.FOLDER && this.src!=null){
+            try{
+                this.file=new File(this.src);
+                this.bw=new BufferedWriter(new FileWriter(this.file,append));
+                this.br=new BufferedReader(new FileReader(this.file));
+                return true;
+            }catch(IOException ex){
+                return false;
+            }
         }
-        try{
-            this.file=new File(src);
-            this.bw=new BufferedWriter(new FileWriter(this.file,append));
-            this.br=new BufferedReader(new FileReader(this.file));
-            return true;
-        }catch(IOException ex){
-            return false;
-        }
+        return false;
     }
     
     public boolean clean(){
         this.close();
         try{
-            this.open(false);
+            if(!this.open(false) || !this.close()){
+                return false;
+            }
             this.bw.write("");
             this.close();
             return true;
@@ -60,7 +65,9 @@ public class Storage{
     
     public boolean write(Object text){
         try{
-            this.open(true);
+            if(!this.open(true)){
+                return false;
+            }
             this.bw.write(((String)text));
             this.close();
             return true;
@@ -71,7 +78,9 @@ public class Storage{
     
     public String read(){
         try{
-            this.open(true);
+            if(!this.open(true)){
+                return null;
+            }
             String line=null;
             String lines="";
             while((line=this.br.readLine())!=null){
@@ -86,6 +95,9 @@ public class Storage{
     
     public boolean close(){
         try{
+            if(this.bw==null || this.br==null){
+                return true;
+            }
             this.bw.close();
             this.br.close();
             return true;
@@ -94,11 +106,19 @@ public class Storage{
         }
     }
     
+    public boolean delete(){
+        try{
+            return this.file.delete();
+        }catch(Exception ex){
+            return false;
+        }
+    }
+    
     // Crea una carpeta
-    public static boolean createFolder(String ruta){
+    public static boolean createFolder(String path){
         try{
             String ruta_crear="";
-            for(String sub_ruta:ruta.replace("\\","/").split("/")){
+            for(String sub_ruta:path.replace("\\","/").split("/")){
                 ruta_crear+=sub_ruta+"/";
                 File directorio=new File(ruta_crear);
                 if(!directorio.exists()){
@@ -113,13 +133,13 @@ public class Storage{
     }
     
     // Saber si existe un archivo o carpeta
-    public static boolean exists(String ruta, DirectoryType type, boolean created){
-        File directorio=new File(ruta);
+    public static boolean exists(String path, DirectoryType type, boolean created){
+        File directorio=new File(path);
         if(!directorio.exists() && created){
             Storage store=new Storage();
-            store.run(ruta,type);
+            store.run(path,type);
             switch(type){
-                case FOLDER: return Storage.createFolder(ruta);
+                case FOLDER: return Storage.createFolder(path);
                 case FILE: return store.write("");
             }
             store.close();

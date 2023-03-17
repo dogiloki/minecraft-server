@@ -20,17 +20,15 @@ import util.enums.FieldType;
  *
  * @author dogi_
  */
-@Directory(type=DirectoryType.FOLDER)
+@Directory(type=DirectoryType.JSON)
 public class Test extends ModelDirectory{
 
     @Key(value="key_name")
     public String name="Julio";
     @Key(value="key_edad")
-    public int edad=20;
+    public int edad;
     @Key(value="key_peso")
     public float peso=58;
-    @Key(value="key_instance")
-    public Instance instance;
     
     public String var;
     public String temp;
@@ -38,6 +36,7 @@ public class Test extends ModelDirectory{
     public Test(){
         super.run(this,"E:\\Escritorio\\prueba.json");
         this.save();
+        System.out.println(this.edad);
     }
     
     public static void main(String[] args){

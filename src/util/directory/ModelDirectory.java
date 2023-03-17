@@ -28,7 +28,6 @@ import util.GsonManager;
  */
 public class ModelDirectory extends Storage{
     
-    DirectoryType type=null;
     Class<?> child_class;
     public Object instance;
     Map<String,Object> fields=new HashMap<>();
@@ -49,9 +48,12 @@ public class ModelDirectory extends Storage{
         this.instance=instance;
         this.child_class=instance.getClass();
         this.src=src;
-        this.get();
+        Directory annot_directory=this.child_class.getAnnotation(Directory.class);
+        if(annot_directory instanceof Directory){
+            this.type=annot_directory.type();
+        }
         this.create();
-        super.run(src,this.type);
+        super.run(this.src,this.type);
     }
     
     private void create(){
@@ -68,24 +70,17 @@ public class ModelDirectory extends Storage{
     
     private void get(){
         try{
-            Directory annot_directory=this.child_class.getAnnotation(Directory.class);
-            if(annot_directory instanceof Directory){
-                this.type=annot_directory.type();
-                if(this.isFolder()){
-                    return;
-                }
-            }
             for(Field field:this.child_class.getDeclaredFields()){
                 Key annot_key=field.getAnnotation(Key.class);
                 if(annot_key instanceof Key){
-                    Object value;
-                    if(annot_key.type()==FieldType.CLASS){
+                    Object value=field.get(this.instance);
+                    if(annot_key.type()==FieldType.CLASS && value!=null){
                         ModelDirectory model=new ModelDirectory();
-                        model.run(field.get(this.instance));
+                        model.run(value);
                         value=model.getText();
                     }else{
-                        if(field.get(this.instance)==null){
-                            value=null;
+                        if(value==null){
+                            value="";
                         }else{
                             value=field.getType().isPrimitive()?field.get(this.instance):String.valueOf(field.get(this.instance));
                         }
@@ -100,6 +95,7 @@ public class ModelDirectory extends Storage{
     }
     
     private Object setText(){
+        this.get();
         String text=this.read();
         if(text==null || text.equals("")){
             return null;
@@ -130,10 +126,10 @@ public class ModelDirectory extends Storage{
     }
     
     private String getText(){
-        this.get();
         if(this.type==null){
             return null;
         }
+        this.get();
         switch(this.type){
             case JSON: return new Gson().toJson(this.fields)+"\n";
             case ENV:{
@@ -175,7 +171,7 @@ public class ModelDirectory extends Storage{
     }
     
     public void save(){
-        if(this.type!=null && this.src!=null || this.isFolder()){
+        if(this.type==null || this.src==null || this.isFolder()){
             return;
         }
         this.clean();
