@@ -34,9 +34,10 @@ import util.Storage;
 import util.Config;
 import util.Download;
 import util.Function;
-import util.GsonManager;
+import util.dataformat.GsonManager;
 import util.Watcher;
 import java.util.List;
+import util.enums.DirectoryType;
 
 public class FormMain extends javax.swing.JFrame {
     
@@ -62,18 +63,18 @@ public class FormMain extends javax.swing.JFrame {
         this.cfg_global=new Config(this.getClass(),"minecraftServer.cfg",Config.JSON);
         Config.singleton(this.cfg_global);
         // Carpetas
-        Config.setDic("fo_instances",this.cfg_global.getConfigJson("folders").getJson("instances").getValue("folder"));
-        Config.setDic("fo_server",this.cfg_global.getConfigJson("folders").getJson("instances").getValue("server"));
-        Config.setDic("fo_worlds",this.cfg_global.getConfigJson("folders").getJson("instances").getValue("worlds"));
-        Config.setDic("fo_metadata",this.cfg_global.getConfigJson("folders").getJson("metadata").getValue("folder"));
+        Config.setDic("fo_instances",(String)this.cfg_global.getConfigJson("folders").getJson("instances").getValue("folder"));
+        Config.setDic("fo_server",(String)this.cfg_global.getConfigJson("folders").getJson("instances").getValue("server"));
+        Config.setDic("fo_worlds",(String)this.cfg_global.getConfigJson("folders").getJson("instances").getValue("worlds"));
+        Config.setDic("fo_metadata",(String)this.cfg_global.getConfigJson("folders").getJson("metadata").getValue("folder"));
         Config.setDic("fo_meta_mc",this.cfg_global.getDic("fo_metadata")+"/"+this.cfg_global.getConfigJson("folders").getJson("metadata").getValue("mc"));
         Config.setDic("fo_meta_fg",this.cfg_global.getDic("fo_metadata")+"/"+this.cfg_global.getConfigJson("folders").getJson("metadata").getValue("fg"));
-        Config.setDic("fo_mc",this.cfg_global.getConfigJson("folders").getJson("minecraft-server").getValue("folder"));
+        Config.setDic("fo_mc",(String)this.cfg_global.getConfigJson("folders").getJson("minecraft-server").getValue("folder"));
         // Archivos
-        Config.setDic("fi_instance",this.cfg_global.getConfigJson("files").getValue("instance"));
-        Config.setDic("fi_server",this.cfg_global.getConfigJson("files").getValue("server"));
+        Config.setDic("fi_instance",(String)this.cfg_global.getConfigJson("files").getValue("instance"));
+        Config.setDic("fi_server",(String)this.cfg_global.getConfigJson("files").getValue("server"));
         Config.setDic("fi_ver_mani",this.cfg_global.getDic("fo_meta_mc")+"/"+this.cfg_global.getConfigJson("downloads").getJson("version_manifest").getValue("name"));
-        Config.setDic("url_ver_mani",this.cfg_global.getConfigJson("downloads").getJson("version_manifest").getValue("url"));
+        Config.setDic("url_ver_mani",(String)this.cfg_global.getConfigJson("downloads").getJson("version_manifest").getValue("url"));
         Storage.createFolder(this.cfg_global.getDic("fo_instances"));
     }
     
@@ -615,13 +616,13 @@ public class FormMain extends javax.swing.JFrame {
         String name_json=ins.version+".json";
         String fo_meta_mc=this.cfg_global.getDic("fo_meta_mc");
         if(!Storage.exists(fo_meta_mc+"/"+name_json)){
-            new Download(this,true,fo_meta_mc,name_json,versions.searchArray(versions,"id",ins.version).getValue("url"),null).setVisible(true);
+            new Download(this,true,fo_meta_mc,name_json,(String)versions.searchArray(versions,"id",ins.version).getValue("url"),null).setVisible(true);
         }
-        GsonManager json=new GsonManager(fo_meta_mc+"/"+name_json,GsonManager.FILE);
-        String url=json.getJson("downloads").getJson("server").getValue("url");
+        GsonManager json=new GsonManager(fo_meta_mc+"/"+name_json,DirectoryType.FILE);
+        String url=(String)json.getJson("downloads").getJson("server").getValue("url");
         String fo_minecraft=Config.getDic("fo_mc")+"/"+ins.version;
         String fi_server=Function.assign(ins.file_server,MessageFormat.format(this.cfg_global.getDic("fi_server"),ins.version));
-        long fi_minecraft_size=parseLong(json.getJson("downloads").getJson("server").getValue("size"));
+        long fi_minecraft_size=parseLong((String)json.getJson("downloads").getJson("server").getValue("size"));
         if(Storage.exists(fo_minecraft+"/"+fi_server) && (fi_minecraft_size==Storage.getSize(fo_minecraft+"/"+fi_server) || (ins.file_server!=null && !ins.file_server.equals("")))){
             // Iniciar servidor
             Server server=new Server(ins);

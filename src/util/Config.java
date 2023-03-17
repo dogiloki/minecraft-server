@@ -1,5 +1,6 @@
 package util;
 
+import util.dataformat.GsonManager;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -125,7 +126,7 @@ public class Config{
     }
     
     public String getConfigData(String key){
-        return this.isJson()?this.gson.getValue(key):this.configurations.get(key);
+        return this.isJson()?(String)this.gson.getValue(key):this.configurations.get(key);
     }
     
     public GsonManager getConfigJson(String key){

@@ -2,7 +2,7 @@ package gui.instance;
 
 import dao.Instance;
 import util.Config;
-import util.GsonManager;
+import util.dataformat.GsonManager;
 import util.Storage;
 
 /**

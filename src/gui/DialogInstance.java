@@ -13,7 +13,7 @@ import gui.instance.Properties;
 import gui.instance.Mods;
 
 import util.Config;
-import util.GsonManager;
+import util.dataformat.GsonManager;
 import util.Storage;
 import gui.instance.Version;
 import java.awt.BorderLayout;

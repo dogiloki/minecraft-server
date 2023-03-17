@@ -9,7 +9,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.table.DefaultTableModel;
 import util.Config;
-import util.GsonManager;
+import util.dataformat.GsonManager;
 import util.Storage;
 
 /**

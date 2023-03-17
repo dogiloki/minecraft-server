@@ -1,7 +1,6 @@
 package util.directory;
 
 import com.google.gson.Gson;
-import java.io.IOException;
 import java.io.StringWriter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -20,7 +19,9 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import util.GsonManager;
+import util.dataformat.GsonManager;
+import util.dataformat.ENV;
+import util.interfaces.DataFormat;
 
 /**
  *
@@ -107,12 +108,21 @@ public class ModelDirectory extends Storage{
         if(text==null || text.equals("")){
             return null;
         }
-        GsonManager json=new GsonManager(text);
-        this.attributes.forEach((key,name)->{
+        DataFormat data;
+        switch(this.type){
+            case JSON: data=new GsonManager(text); break;
+            case ENV: data=new ENV(text); break;
+            default: data=null; break;
+        }
+        if(data==null){
+            return null;
+        }
+        for(Map.Entry<String,String> entry:this.attributes.entrySet()){
+            String key=entry.getKey();
+            String name=entry.getValue();
             try{
+                Object value=data.getValue(key);
                 Field field=this.child_class.getField(name);
-                //Object ins=Class.forName(field.getType().getTypeName()).newInstance();
-                Object value=json.getValue(key);
                 Constructor<?> constructor;
                 if(field.getType().isPrimitive()){
                     String class_name=field.getType().getName();
@@ -128,7 +138,7 @@ public class ModelDirectory extends Storage{
             }catch(Exception ex){
                 ex.printStackTrace();
             }
-        });
+        }
         return text;
     }
     
@@ -139,13 +149,7 @@ public class ModelDirectory extends Storage{
         this.get();
         switch(this.type){
             case JSON: return new Gson().toJson(this.fields)+"\n";
-            case ENV:{
-                String env="";
-                for(Map.Entry<String,Object> entry:this.fields.entrySet()){
-                    env+=entry.getKey()+"="+entry.getValue()+"\n";
-                }
-                return env.substring(0,env.length()-1);
-            }
+            case ENV: return new ENV(this.fields).toString()+"\n";
             case XML:{
                 try{
                     String xml="";

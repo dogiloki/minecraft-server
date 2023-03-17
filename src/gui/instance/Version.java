@@ -7,7 +7,7 @@ import javax.swing.table.DefaultTableModel;
 import util.Config;
 import util.Download;
 import util.Function;
-import util.GsonManager;
+import util.dataformat.GsonManager;
 import util.Storage;
 
 /**

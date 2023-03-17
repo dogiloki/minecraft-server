@@ -1,20 +1,22 @@
-package util;
+package util.dataformat;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import java.io.File;
 import java.util.List;
 import java.util.Map;
+import util.Storage;
+import util.enums.DirectoryType;
+import util.interfaces.DataFormat;
 
 /**
  *
  * @author dogi_
  */
 
-public class GsonManager{
+public class GsonManager implements DataFormat{
 
     public String json;
     private JsonParser parser;
@@ -23,8 +25,6 @@ public class GsonManager{
     private JsonObject object;
     private int indice;
     private boolean is_array;
-    
-    public static final int FILE=1;
 
     public GsonManager(String json){
         this.indice=0;
@@ -32,18 +32,18 @@ public class GsonManager{
         this.constructer();
     }
     
-    public GsonManager(String dir, Class _class, int type){
+    public GsonManager(String dir, Class _class, DirectoryType type){
         this.indice=0;
         switch(type){
-            case GsonManager.FILE: this.json=String.join(" ",Storage.readFile(_class,dir.trim())); break;
+            case FILE: this.json=String.join(" ",Storage.readFile(_class,dir.trim())); break;
         }
         this.constructer();
     }
     
-    public GsonManager(String dir, int type){
+    public GsonManager(String dir, DirectoryType type){
         this.indice=0;
         switch(type){
-            case GsonManager.FILE: this.json=String.join(" ",Storage.readFile(dir.trim())); break;
+            case FILE: this.json=String.join(" ",Storage.readFile(dir.trim())); break;
         }
         this.constructer();
     }
@@ -110,12 +110,12 @@ public class GsonManager{
         return this.json;
     }
 
-    public String getValue(String key){
+    public Object getValue(String key){
         JsonElement object=this.object.get(key);
         if(object==null){
             return null;
         }
-        return object.getAsString();
+        return object;
     }
     
     public GsonManager getJson(String key){
