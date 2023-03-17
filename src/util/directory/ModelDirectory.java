@@ -46,32 +46,37 @@ public class ModelDirectory extends Storage{
     }
     
     private void _run(Object instance, String src){
-        super.run(src);
         this.instance=instance;
         this.child_class=instance.getClass();
         this.src=src;
         this.get();
         this.create();
+        super.run(src,this.type);
     }
     
     private void create(){
-        if(this.type!=null && this.src!=null)
-        switch(this.type){
-            case FOLDER:
-                Storage.createFolder(this.src);
-                break;
-            default:
-                Storage.exists(this.src,DirectoryType.FILE,true);
-                break;
+        if(this.type==null || this.src==null){
+            return;
         }
-        this.setText();
+        if(this.isFolder()){
+            Storage.createFolder(this.src);
+        }else{
+            Storage.exists(this.src,DirectoryType.FILE,true);
+            this.setText();
+        }
     }
     
     private void get(){
         try{
+            Directory annot_directory=this.child_class.getAnnotation(Directory.class);
+            if(annot_directory instanceof Directory){
+                this.type=annot_directory.type();
+                if(this.isFolder()){
+                    return;
+                }
+            }
             for(Field field:this.child_class.getDeclaredFields()){
                 Key annot_key=field.getAnnotation(Key.class);
-                Directory annot_directory=this.child_class.getAnnotation(Directory.class);
                 if(annot_key instanceof Key){
                     Object value;
                     if(annot_key.type()==FieldType.CLASS){
@@ -87,9 +92,6 @@ public class ModelDirectory extends Storage{
                     }
                     this.fields.put(annot_key.value(),value);
                     this.attributes.put(annot_key.value(),field.getName());
-                }
-                if(annot_directory instanceof Directory){
-                    this.type=annot_directory.type();
                 }
             }
         }catch(IllegalAccessException ex){
@@ -130,7 +132,7 @@ public class ModelDirectory extends Storage{
     private String getText(){
         this.get();
         if(this.type==null){
-            return "";
+            return null;
         }
         switch(this.type){
             case JSON: return new Gson().toJson(this.fields)+"\n";
@@ -168,14 +170,35 @@ public class ModelDirectory extends Storage{
                     return "";
                 }
             }
-            default: return "";
+            default: return null;
         }
     }
     
     public void save(){
-        if(this.type!=null && this.src!=null)
+        if(this.type!=null && this.src!=null || this.isFolder()){
+            return;
+        }
         this.clean();
         this.write(this.getText());
+    }
+    
+    public boolean isFile(){
+        if(this.type==null){
+            return false;
+        }
+        switch(this.type){
+            case JSON: return true;
+            case XML: return true;
+            case ENV: return true;
+            default: return false;
+        }
+    }
+    
+    public boolean isFolder(){
+        if(this.type==null){
+            return false;
+        }
+        return this.type==DirectoryType.FOLDER;
     }
     
 }
