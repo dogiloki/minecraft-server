@@ -16,21 +16,26 @@ import util.enums.DirectoryType;
 
 public class Storage{
     
-    public String src=null;
-    public File file=null;
-    public BufferedWriter bw=null;
-    public BufferedReader br=null;
+    protected String src=null;
+    protected DirectoryType type=null;
+    protected File file=null;
+    private BufferedWriter bw=null;
+    private BufferedReader br=null;
     
     public Storage(){
         
     }
     
-    public void run(String src){
+    public void run(String src, DirectoryType type){
+        this.type=type;
         this.src=src;
         this.open(true);
     }
     
     public boolean open(boolean append){
+        if(this.type==DirectoryType.FOLDER){
+            return true;
+        }
         try{
             this.file=new File(src);
             this.bw=new BufferedWriter(new FileWriter(this.file,append));
@@ -112,7 +117,7 @@ public class Storage{
         File directorio=new File(ruta);
         if(!directorio.exists() && created){
             Storage store=new Storage();
-            store.run(ruta);
+            store.run(ruta,type);
             switch(type){
                 case FOLDER: return Storage.createFolder(ruta);
                 case FILE: return store.write("");
