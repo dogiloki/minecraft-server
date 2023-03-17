@@ -148,7 +148,7 @@ public class ModelDirectory extends Storage{
         }
         this.get();
         switch(this.type){
-            case JSON: return new Gson().toJson(this.fields)+"\n";
+            case JSON: return new Gson().toJson(this.fields);
             case ENV: return new ENV(this.fields).toString()+"\n";
             case XML:{
                 try{
