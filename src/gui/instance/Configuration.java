@@ -1,10 +1,10 @@
 package gui.instance;
 
 import dao.Instance;
-import util.Config;
-import util.dataformat.GsonManager;
-import util.StorageOld;
-import util.directory.Storage;
+import multitaks.Config;
+import multitaks.dataformat.GsonManager;
+import multitaks.StorageOld;
+import multitaks.directory.Storage;
 
 /**
  *

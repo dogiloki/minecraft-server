@@ -4,12 +4,12 @@ import dao.Instance;
 import java.text.MessageFormat;
 import javax.swing.JDialog;
 import javax.swing.table.DefaultTableModel;
-import util.Config;
-import util.Download;
-import util.Function;
-import util.dataformat.GsonManager;
-import util.StorageOld;
-import util.directory.Storage;
+import multitaks.Config;
+import multitaks.Download;
+import multitaks.Function;
+import multitaks.dataformat.GsonManager;
+import multitaks.StorageOld;
+import multitaks.directory.Storage;
 
 /**
  *

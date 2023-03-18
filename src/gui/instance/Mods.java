@@ -8,11 +8,11 @@ import static java.util.Map.entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.table.DefaultTableModel;
-import util.Config;
-import util.dataformat.GsonManager;
-import util.StorageOld;
-import util.directory.Storage;
-import util.enums.DirectoryType;
+import multitaks.Config;
+import multitaks.dataformat.GsonManager;
+import multitaks.StorageOld;
+import multitaks.directory.Storage;
+import multitaks.enums.DirectoryType;
 
 /**
  *

@@ -12,13 +12,13 @@ import gui.instance.Configuration;
 import gui.instance.Properties;
 import gui.instance.Mods;
 
-import util.Config;
-import util.dataformat.GsonManager;
-import util.StorageOld;
+import multitaks.Config;
+import multitaks.dataformat.GsonManager;
+import multitaks.StorageOld;
 import gui.instance.Version;
 import java.awt.BorderLayout;
 import javax.swing.JPanel;
-import util.directory.Storage;
+import multitaks.directory.Storage;
 
 public class DialogInstance extends javax.swing.JDialog {
 

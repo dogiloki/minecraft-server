@@ -7,7 +7,7 @@ package gui;
 
 import java.io.File;
 import javax.swing.JOptionPane;
-import util.StorageOld;
+import multitaks.StorageOld;
 
 public class DialogCopy extends javax.swing.JDialog implements Runnable{
 
