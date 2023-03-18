@@ -9,6 +9,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -340,6 +341,9 @@ public class Storage{
     public static String selectFile(){ 
         return Storage._selectFile(null,"");
     }
+    public static String selectFile(JFrame frame){ 
+        return Storage._selectFile(frame,"");
+    }
     public static String selectFile(JFrame frame, String path_current){ 
         return Storage._selectFile(frame,path_current);
     }
@@ -379,6 +383,9 @@ public class Storage{
     public static String selectFolder(){ 
         return Storage._selectFolder(null,"");
     }
+    public static String selectFolder(JFrame frame){ 
+        return Storage._selectFolder(frame,"");
+    }
     public static String selectFolder(JFrame frame, String path_current){ 
         return Storage._selectFolder(frame,path_current);
     }
@@ -405,6 +412,31 @@ public class Storage{
     // Saber si es un archivo
     public static boolean isFile(String path){
         return new File(path).isFile();
+    }
+    
+    public static String getExtension(String path){
+        String[] path_array=path.split("\\.");
+        return path_array[path_array.length-1];
+    }
+    
+    public static String getNameNotExtension(String path){
+        String[] path_array=path.replace("\\", "/").split("/");
+        return (path_array[path_array.length-1]).split("\\.")[0];
+    }
+    
+    public static String getName(String path){
+        String[] path_array=path.replace("\\", "/").split("/");
+        return path_array[path_array.length-1];
+    }
+    
+    public static String getFolder(String path){
+        String[] array=path.replace("\\", "/").split("/");
+        return String.join("/",Arrays.copyOfRange(array,0,array.length-1));
+    }
+    
+    // Obtener ruta donde se ejecuta el programa
+    public static String getDir(){
+        return new File("").getAbsolutePath().replace("\\","/");
     }
     
 }

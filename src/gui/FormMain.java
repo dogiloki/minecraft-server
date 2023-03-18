@@ -693,7 +693,7 @@ public class FormMain extends javax.swing.JFrame {
             return;
         }
         try{
-            Desktop.getDesktop().open(new File(StorageOld.getDir()+"/"+this.sele_instance.folder_ins+"/"+this.cfg_global.getDic("fo_server")+"/"+this.cfg_global.getDic("fo_worlds")));
+            Desktop.getDesktop().open(new File(Storage.getDir()+"/"+this.sele_instance.folder_ins+"/"+this.cfg_global.getDic("fo_server")+"/"+this.cfg_global.getDic("fo_worlds")));
         }catch(Exception ex){
             JOptionPane.showMessageDialog(null,ex.getMessage(),"Error",JOptionPane.ERROR_MESSAGE);
         }

@@ -220,30 +220,5 @@ public class StorageOld{
             throw new Exception(ex.getMessage());
         }
     }
-    
-    public static String getExtension(String path){
-        String[] path_array=path.split("\\.");
-        return path_array[path_array.length-1];
-    }
-    
-    public static String getNameNotExtension(String path){
-        String[] path_array=path.replace("\\", "/").split("/");
-        return (path_array[path_array.length-1]).split("\\.")[0];
-    }
-    
-    public static String getName(String path){
-        String[] path_array=path.replace("\\", "/").split("/");
-        return path_array[path_array.length-1];
-    }
-    
-    public static String getFolder(String path){
-        String[] array=path.replace("\\", "/").split("/");
-        return String.join("/",Arrays.copyOfRange(array,0,array.length-1));
-    }
-    
-    // Obtener ruta donde se ejecuta el programa
-    public static String getDir(){
-        return new File("").getAbsolutePath().replace("\\","/");
-    }
 
 }

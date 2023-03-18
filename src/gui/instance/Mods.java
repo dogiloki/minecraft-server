@@ -43,7 +43,7 @@ public class Mods extends javax.swing.JPanel {
             return;
         }
         for(String folder:mods){
-            boolean status=StorageOld.getExtension(folder).equals("disabled");
+            boolean status=Storage.getExtension(folder).equals("disabled");
             Object[] data={(status?"":"Activo"),(folder).replace(".disabled","")};
             model_mods.addRow(data);
         }

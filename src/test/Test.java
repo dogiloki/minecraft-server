@@ -34,7 +34,7 @@ public class Test extends ModelDirectory{
     public Test(){
         super.run(this,"E:\\Escritorio\\inversiones");
         this.name="HOla";
-        String[] folderes=this.listFolders();
+        String[] folderes=this.listDirectory();
         for(String f:folderes){
             System.out.println(f);
         }
