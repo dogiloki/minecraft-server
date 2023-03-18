@@ -30,15 +30,15 @@ import java.text.MessageFormat;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
-import util.StorageOld;
-import util.Config;
-import util.Download;
-import util.Function;
-import util.dataformat.GsonManager;
-import util.Watcher;
+import multitaks.StorageOld;
+import multitaks.Config;
+import multitaks.Download;
+import multitaks.Function;
+import multitaks.dataformat.GsonManager;
+import multitaks.Watcher;
 import java.util.List;
-import util.directory.Storage;
-import util.enums.DirectoryType;
+import multitaks.directory.Storage;
+import multitaks.enums.DirectoryType;
 
 public class FormMain extends javax.swing.JFrame {
     

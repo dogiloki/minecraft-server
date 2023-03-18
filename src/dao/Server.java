@@ -8,10 +8,10 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.text.MessageFormat;
 import java.util.UUID;
-import util.Config;
-import util.Function;
-import util.StorageOld;
-import util.directory.Storage;
+import multitaks.Config;
+import multitaks.Function;
+import multitaks.StorageOld;
+import multitaks.directory.Storage;
 
 /**
  *

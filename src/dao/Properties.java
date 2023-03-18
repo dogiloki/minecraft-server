@@ -5,12 +5,12 @@ package dao;
  * @author dogi_
  */
 
-import util.Config;
-import util.StorageOld;
+import multitaks.Config;
+import multitaks.StorageOld;
 import interfaces.DAO;
-import util.Function;
-import util.directory.Storage;
-import util.enums.DirectoryType;
+import multitaks.Function;
+import multitaks.directory.Storage;
+import multitaks.enums.DirectoryType;
 
 public class Properties implements DAO{
     

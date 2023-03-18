@@ -6,11 +6,11 @@ package dao;
  */
 
 import javax.swing.Icon;
-import util.StorageOld;
+import multitaks.StorageOld;
 import interfaces.DAO;
-import util.directory.Storage;
-import util.enums.DirectoryType;
-import util.relations.OneByOne;
+import multitaks.directory.Storage;
+import multitaks.enums.DirectoryType;
+import multitaks.relations.OneByOne;
 
 public class World extends OneByOne<Server> implements DAO {
     

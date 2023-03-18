@@ -6,13 +6,13 @@
 package test;
 
 import dao.Instance;
-import util.Config;
-import util.directory.ModelDirectory;
-import util.StorageOld;
-import util.annotations.directory.Directory;
-import util.annotations.directory.Key;
-import util.enums.DirectoryType;
-import util.enums.FieldType;
+import multitaks.Config;
+import multitaks.directory.ModelDirectory;
+import multitaks.StorageOld;
+import multitaks.annotations.directory.Directory;
+import multitaks.annotations.directory.Key;
+import multitaks.enums.DirectoryType;
+import multitaks.enums.FieldType;
 
 /**
  *

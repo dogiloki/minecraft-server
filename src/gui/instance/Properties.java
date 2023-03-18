@@ -2,7 +2,7 @@ package gui.instance;
 
 import dao.Instance;
 import java.awt.event.ItemEvent;
-import util.Config;
+import multitaks.Config;
 
 /**
  *
