@@ -5,12 +5,10 @@
  */
 package test;
 
-import dao.FileDAO;
-import dao.FolderDAO;
 import dao.Instance;
 import util.Config;
 import util.directory.ModelDirectory;
-import util.Storage;
+import util.StorageOld;
 import util.annotations.directory.Directory;
 import util.annotations.directory.Key;
 import util.enums.DirectoryType;
@@ -20,7 +18,7 @@ import util.enums.FieldType;
  *
  * @author dogi_
  */
-@Directory(type=DirectoryType.ENV)
+@Directory(type=DirectoryType.FOLDER)
 public class Test extends ModelDirectory{
 
     @Key(value="key_name")
@@ -34,10 +32,12 @@ public class Test extends ModelDirectory{
     public String temp;
     
     public Test(){
-        super.run(this,"prueba");
+        super.run(this,"E:\\Escritorio\\inversiones");
         this.name="HOla";
-        this.save();
-        System.out.println(this.name+" - "+this.edad+" - "+this.peso);
+        String[] folderes=this.listFolders();
+        for(String f:folderes){
+            System.out.println(f);
+        }
     }
     
     public static void main(String[] args){

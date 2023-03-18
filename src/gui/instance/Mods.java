@@ -10,7 +10,9 @@ import java.util.logging.Logger;
 import javax.swing.table.DefaultTableModel;
 import util.Config;
 import util.dataformat.GsonManager;
-import util.Storage;
+import util.StorageOld;
+import util.directory.Storage;
+import util.enums.DirectoryType;
 
 /**
  *
@@ -36,12 +38,12 @@ public class Mods extends javax.swing.JPanel {
         DefaultTableModel model_mods=new DefaultTableModel();
         model_mods.addColumn("Activo");
         model_mods.addColumn("Nombre");
-        String[] mods=Storage.listDirectory(this.folder_mods,Storage.FILE);
+        String[] mods=Storage.listDirectory(this.folder_mods,DirectoryType.FILE);
         if(mods==null){
             return;
         }
         for(String folder:mods){
-            boolean status=Storage.getExtension(folder).equals("disabled");
+            boolean status=StorageOld.getExtension(folder).equals("disabled");
             Object[] data={(status?"":"Activo"),(folder).replace(".disabled","")};
             model_mods.addRow(data);
         }
@@ -152,7 +154,7 @@ public class Mods extends javax.swing.JPanel {
             try{
                 String[] name_temp=file.getPath().replace("\\","/").split("/");
                 String name=name_temp[name_temp.length-1];
-                Storage.copyFile(file.getPath(),this.folder_mods+"/"+name);
+                StorageOld.copyFile(file.getPath(),this.folder_mods+"/"+name);
             }catch(Exception ex){
                 ex.printStackTrace();
                 return;
@@ -163,21 +165,21 @@ public class Mods extends javax.swing.JPanel {
 
     private void btn_delete_modsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_delete_modsActionPerformed
         this.getSelecctionMods().forEach((key,item)->{
-            Storage.deleteFile(this.folder_mods+"/"+item);
+            StorageOld.deleteFile(this.folder_mods+"/"+item);
         });
         this.getMods();
     }//GEN-LAST:event_btn_delete_modsActionPerformed
 
     private void btn_active_modsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_active_modsActionPerformed
         this.getSelecctionMods().forEach((key,item)->{
-            Storage.rename(this.folder_mods+"/"+item+".disabled",this.folder_mods+"/"+item);
+            StorageOld.rename(this.folder_mods+"/"+item+".disabled",this.folder_mods+"/"+item);
         });
         this.getMods();
     }//GEN-LAST:event_btn_active_modsActionPerformed
 
     private void btn_desactive_modsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_desactive_modsActionPerformed
         this.getSelecctionMods().forEach((key,item)->{
-            Storage.rename(this.folder_mods+"/"+item,this.folder_mods+"/"+item+".disabled");
+            StorageOld.rename(this.folder_mods+"/"+item,this.folder_mods+"/"+item+".disabled");
         });
         this.getMods();
     }//GEN-LAST:event_btn_desactive_modsActionPerformed

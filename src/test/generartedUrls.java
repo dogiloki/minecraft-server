@@ -86,7 +86,7 @@ public class generartedUrls{
             new Instalacion("1.19.1","https://piston-data.mojang.com/v1/objects/8399e1211e95faa421c1507b322dbeae86d604df/server.jar"),
             new Instalacion("1.19.2","https://piston-data.mojang.com/v1/objects/f69c284232d7c7580bd89a5a4931c3581eae1378/server.jar")
         );
-        Storage.writeFile(GsonManager.createJson(urls),"servers.json");
+        StorageOld.writeFile(GsonManager.createJson(urls),"servers.json");
     }
     
     public static void main(String[] args){

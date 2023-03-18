@@ -7,7 +7,7 @@ package gui;
 
 import java.io.File;
 import javax.swing.JOptionPane;
-import util.Storage;
+import util.StorageOld;
 
 public class DialogCopy extends javax.swing.JDialog implements Runnable{
 
@@ -39,7 +39,7 @@ public class DialogCopy extends javax.swing.JDialog implements Runnable{
     @Override
     public void run(){
         try{
-            Storage.copyDirectory(this.path_old,this.path_new);
+            StorageOld.copyDirectory(this.path_old,this.path_new);
             JOptionPane.showMessageDialog(null,this.message,"Exito",JOptionPane.INFORMATION_MESSAGE);
         }catch(Exception ex){
             JOptionPane.showMessageDialog(null,ex.getMessage(),"Error",JOptionPane.ERROR_MESSAGE);

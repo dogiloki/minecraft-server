@@ -10,7 +10,8 @@ import java.text.MessageFormat;
 import java.util.UUID;
 import util.Config;
 import util.Function;
-import util.Storage;
+import util.StorageOld;
+import util.directory.Storage;
 
 /**
  *
@@ -114,7 +115,7 @@ public final class Server implements DAO{
         String fi_server=Function.assign(this.ins.file_server,MessageFormat.format(Config.getDic("fi_server"),this.ins.version));
         // Archivo ejecutable para iniciar servidor
         this.command="\""+this.ins.java_path+"\" -jar -Xmx"+ins.memory_max+" -Xms"+ins.memory_max+" ../../../"+fo_minecraft+"/"+fi_server+" nogui";
-        return Storage.writeFile(this.command.split(" "), this.path_directory+"/"+this.name_file_run);
+        return StorageOld.writeFile(this.command.split(" "), this.path_directory+"/"+this.name_file_run);
     }
 
     @Override

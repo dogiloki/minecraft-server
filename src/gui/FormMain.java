@@ -30,13 +30,14 @@ import java.text.MessageFormat;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
-import util.Storage;
+import util.StorageOld;
 import util.Config;
 import util.Download;
 import util.Function;
 import util.dataformat.GsonManager;
 import util.Watcher;
 import java.util.List;
+import util.directory.Storage;
 import util.enums.DirectoryType;
 
 public class FormMain extends javax.swing.JFrame {
@@ -213,7 +214,7 @@ public class FormMain extends javax.swing.JFrame {
         this.instances=Function.assign(this.instances,new ArrayList<>());
         String path_instances=this.cfg_global.getDic("fo_instances");
         String file_instance=this.cfg_global.getDic("fi_instance");
-        String[] folders=Storage.listDirectory(path_instances,Storage.FOLDER);
+        String[] folders=Storage.listDirectory(path_instances,DirectoryType.FOLDER);
         for(String folder_tmp:folders){
             String folder=path_instances+"/"+folder_tmp;
             if(!Storage.exists(folder+"/"+file_instance)){
@@ -365,7 +366,7 @@ public class FormMain extends javax.swing.JFrame {
     
     public void getWorldsDirectory(){
         String path_worlds=this.sele_instance.folder_ins+"/"+Config.getDic("fo_server")+"/"+Config.getDic("fo_worlds");
-        Storage.exists(path_worlds,Storage.CREATED,Storage.FOLDER);
+        Storage.exists(path_worlds,DirectoryType.FOLDER,true);
         String[] folders=Storage.listDirectory(path_worlds);
         if(folders==null || folders.length<=0){
             return;
@@ -661,7 +662,7 @@ public class FormMain extends javax.swing.JFrame {
         if(this.sele_instance!=null && this.sele_instance.folder_world!=null && this.sele_instance.world!=null){
             try{
                 String folder=this.sele_instance.folder_ins+"/"+this.cfg_global.getDic("fo_server")+"/"+this.sele_instance.folder_world;
-                Storage.deleteFolder(folder);
+                StorageOld.deleteFolder(folder);
             }catch(Exception ex){
                JOptionPane.showMessageDialog(null, ex.getMessage(),"Error",JOptionPane.ERROR_MESSAGE); 
             }
@@ -692,7 +693,7 @@ public class FormMain extends javax.swing.JFrame {
             return;
         }
         try{
-            Desktop.getDesktop().open(new File(Storage.getDir()+"/"+this.sele_instance.folder_ins+"/"+this.cfg_global.getDic("fo_server")+"/"+this.cfg_global.getDic("fo_worlds")));
+            Desktop.getDesktop().open(new File(StorageOld.getDir()+"/"+this.sele_instance.folder_ins+"/"+this.cfg_global.getDic("fo_server")+"/"+this.cfg_global.getDic("fo_worlds")));
         }catch(Exception ex){
             JOptionPane.showMessageDialog(null,ex.getMessage(),"Error",JOptionPane.ERROR_MESSAGE);
         }
@@ -724,7 +725,7 @@ public class FormMain extends javax.swing.JFrame {
         if(this.sele_instance!=null && this.sele_instance.folder_ins!=null){
             try{
                 String folder=this.sele_instance.folder_ins;
-                Storage.deleteFolder(folder);
+                StorageOld.deleteFolder(folder);
             }catch(Exception ex){
                JOptionPane.showMessageDialog(null, ex.getMessage(),"Error",JOptionPane.ERROR_MESSAGE); 
             }

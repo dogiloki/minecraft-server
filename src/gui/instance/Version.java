@@ -8,7 +8,8 @@ import util.Config;
 import util.Download;
 import util.Function;
 import util.dataformat.GsonManager;
-import util.Storage;
+import util.StorageOld;
+import util.directory.Storage;
 
 /**
  *

@@ -7,7 +7,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import java.util.List;
 import java.util.Map;
-import util.Storage;
+import util.StorageOld;
 import util.enums.DirectoryType;
 import util.interfaces.DataFormat;
 
@@ -35,7 +35,7 @@ public class GsonManager implements DataFormat{
     public GsonManager(String dir, Class _class, DirectoryType type){
         this.indice=0;
         switch(type){
-            case FILE: this.json=String.join(" ",Storage.readFile(_class,dir.trim())); break;
+            case FILE: this.json=String.join(" ",StorageOld.readFile(_class,dir.trim())); break;
         }
         this.constructer();
     }
@@ -43,7 +43,7 @@ public class GsonManager implements DataFormat{
     public GsonManager(String dir, DirectoryType type){
         this.indice=0;
         switch(type){
-            case FILE: this.json=String.join(" ",Storage.readFile(dir.trim())); break;
+            case FILE: this.json=String.join(" ",StorageOld.readFile(dir.trim())); break;
         }
         this.constructer();
     }

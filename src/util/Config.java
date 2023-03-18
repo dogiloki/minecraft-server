@@ -37,7 +37,7 @@ public class Config{
     public Config(Class _class, String file, int is_json){
         this.file=file;
         this.is_json=is_json==Config.JSON;
-        String[] text=_class==null?Storage.readFile(this.file):Storage.readFile(_class,this.file);
+        String[] text=_class==null?StorageOld.readFile(this.file):StorageOld.readFile(_class,this.file);
         if(this.is_json){
             this.gson=new GsonManager(String.join(" ",text));
         }else{
@@ -48,14 +48,14 @@ public class Config{
     public Config(Class _class, String file){
         this.file=file;
         this.is_json=false;
-        String[] text=_class==null?Storage.readFile(this.file):Storage.readFile(_class,this.file);
+        String[] text=_class==null?StorageOld.readFile(this.file):StorageOld.readFile(_class,this.file);
         this.generated(text);
     }
     
     public Config(String file, int type){
         this.file=file;
         this.is_json=type==Config.JSON;
-        String[] text=type==Config.TXT?file.split("\n"):Storage.readFile(this.file);
+        String[] text=type==Config.TXT?file.split("\n"):StorageOld.readFile(this.file);
         if(this.is_json){
             this.gson=new GsonManager(String.join(" ",text));
         }else{
@@ -66,7 +66,7 @@ public class Config{
     public Config(String file){
         this.file=file;
         this.is_json=false;
-        String[] text=Storage.readFile(this.file);
+        String[] text=StorageOld.readFile(this.file);
         this.generated(text);
     }
     
@@ -121,7 +121,7 @@ public class Config{
                 int linea_num=this.position.get(key);
                 lineas.put(linea_num, linea_texto);
             }
-            Storage.writeFile(lineas,this.file);
+            StorageOld.writeFile(lineas,this.file);
         }
     }
     

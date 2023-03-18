@@ -14,10 +14,11 @@ import gui.instance.Mods;
 
 import util.Config;
 import util.dataformat.GsonManager;
-import util.Storage;
+import util.StorageOld;
 import gui.instance.Version;
 import java.awt.BorderLayout;
 import javax.swing.JPanel;
+import util.directory.Storage;
 
 public class DialogInstance extends javax.swing.JDialog {
 

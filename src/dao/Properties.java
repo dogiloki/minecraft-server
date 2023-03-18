@@ -6,9 +6,11 @@ package dao;
  */
 
 import util.Config;
-import util.Storage;
+import util.StorageOld;
 import interfaces.DAO;
 import util.Function;
+import util.directory.Storage;
+import util.enums.DirectoryType;
 
 public class Properties implements DAO{
     
@@ -134,13 +136,13 @@ public class Properties implements DAO{
     }
 
     public boolean create(){
-        Storage.exists(this.file_path,Storage.CREATED,Storage.FILE);
+        Storage.exists(this.file_path,DirectoryType.FILE,true);
         this.cfg=new Config(this.file_path);
         return true;
     }
 
     public boolean delete(){
-        return Storage.deleteFile(this.file_path);
+        return StorageOld.deleteFile(this.file_path);
     }
 
     public boolean save(){

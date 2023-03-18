@@ -3,7 +3,8 @@ package gui.instance;
 import dao.Instance;
 import util.Config;
 import util.dataformat.GsonManager;
-import util.Storage;
+import util.StorageOld;
+import util.directory.Storage;
 
 /**
  *
@@ -171,7 +172,7 @@ public class Configuration extends javax.swing.JPanel {
     }//GEN-LAST:event_btn_reset_path_javaActionPerformed
 
     private void btn_path_java_exploreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_path_java_exploreActionPerformed
-        String path_java=Storage.selectFile("");
+        String path_java=Storage.selectFile();
         if(path_java!=null && !path_java.trim().equals("")){
             this.caja_path_java.setText(path_java);
         }

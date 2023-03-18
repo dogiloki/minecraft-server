@@ -7,9 +7,11 @@ package dao;
 
 import javax.swing.JPanel;
 import util.Config;
-import util.Storage;
+import util.StorageOld;
 import interfaces.DAO;
 import util.Function;
+import util.directory.Storage;
+import util.enums.DirectoryType;
 import util.relations.OneToMany;
 
 public class Instance extends OneToMany<World> implements DAO{
@@ -72,13 +74,13 @@ public class Instance extends OneToMany<World> implements DAO{
     }
     
     public boolean create(){
-        Storage.exists(this.file_path,Storage.CREATED,Storage.FILE);
+        Storage.exists(this.file_path,DirectoryType.FILE,true);
         this.cfg=new Config(this.file_path);
         return true;
     }
     
     public boolean delete(){
-        return Storage.deleteFile(this.file_path);
+        return StorageOld.deleteFile(this.file_path);
     }
 
     // Guardar los valores en el archivo .cfg

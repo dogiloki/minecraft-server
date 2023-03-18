@@ -6,8 +6,10 @@ package dao;
  */
 
 import javax.swing.Icon;
-import util.Storage;
+import util.StorageOld;
 import interfaces.DAO;
+import util.directory.Storage;
+import util.enums.DirectoryType;
 import util.relations.OneByOne;
 
 public class World extends OneByOne<Server> implements DAO {
@@ -28,18 +30,18 @@ public class World extends OneByOne<Server> implements DAO {
     }
     
     public boolean create(){
-        Storage.exists(this.folder_path+"/"+this.name+".properties",Storage.CREATED,Storage.FILE);
-        Storage.exists(this.folder_path,Storage.CREATED,Storage.FOLDER);
+        Storage.exists(this.folder_path+"/"+this.name+".properties",DirectoryType.FILE,true);
+        Storage.exists(this.folder_path,DirectoryType.FOLDER,true);
         return true;
     }
     
     public boolean delete(){
-        return Storage.deleteFile(this.folder_path);
+        return StorageOld.deleteFile(this.folder_path);
     }
     
     // Almacenar cambios hechos en el mundo
     public boolean save(){
-        Storage.rename(this.old_folder_path, this.folder_path);
+        StorageOld.rename(this.old_folder_path, this.folder_path);
         return true;
     }
     
