@@ -662,7 +662,7 @@ public class FormMain extends javax.swing.JFrame {
         if(this.sele_instance!=null && this.sele_instance.folder_world!=null && this.sele_instance.world!=null){
             try{
                 String folder=this.sele_instance.folder_ins+"/"+this.cfg_global.getDic("fo_server")+"/"+this.sele_instance.folder_world;
-                StorageOld.deleteFolder(folder);
+                Storage.deleteFolder(folder);
             }catch(Exception ex){
                JOptionPane.showMessageDialog(null, ex.getMessage(),"Error",JOptionPane.ERROR_MESSAGE); 
             }
@@ -725,7 +725,7 @@ public class FormMain extends javax.swing.JFrame {
         if(this.sele_instance!=null && this.sele_instance.folder_ins!=null){
             try{
                 String folder=this.sele_instance.folder_ins;
-                StorageOld.deleteFolder(folder);
+                Storage.deleteFolder(folder);
             }catch(Exception ex){
                JOptionPane.showMessageDialog(null, ex.getMessage(),"Error",JOptionPane.ERROR_MESSAGE); 
             }

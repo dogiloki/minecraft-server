@@ -165,7 +165,7 @@ public class Mods extends javax.swing.JPanel {
 
     private void btn_delete_modsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_delete_modsActionPerformed
         this.getSelecctionMods().forEach((key,item)->{
-            StorageOld.deleteFile(this.folder_mods+"/"+item);
+            Storage.deleteFile(this.folder_mods+"/"+item);
         });
         this.getMods();
     }//GEN-LAST:event_btn_delete_modsActionPerformed

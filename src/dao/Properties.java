@@ -142,7 +142,7 @@ public class Properties implements DAO{
     }
 
     public boolean delete(){
-        return StorageOld.deleteFile(this.file_path);
+        return Storage.deleteFile(this.file_path);
     }
 
     public boolean save(){

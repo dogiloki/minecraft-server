@@ -36,7 +36,7 @@ public class World extends OneByOne<Server> implements DAO {
     }
     
     public boolean delete(){
-        return StorageOld.deleteFile(this.folder_path);
+        return Storage.deleteFile(this.folder_path);
     }
     
     // Almacenar cambios hechos en el mundo

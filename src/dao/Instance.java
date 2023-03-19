@@ -80,7 +80,7 @@ public class Instance extends OneToMany<World> implements DAO{
     }
     
     public boolean delete(){
-        return StorageOld.deleteFile(this.file_path);
+        return Storage.deleteFile(this.file_path);
     }
 
     // Guardar los valores en el archivo .cfg
