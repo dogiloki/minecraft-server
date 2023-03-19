@@ -5,20 +5,17 @@
  */
 package test;
 
-import dao.Instance;
-import multitaks.Config;
-import multitaks.directory.ModelDirectory;
-import multitaks.StorageOld;
 import multitaks.annotations.directory.Directory;
 import multitaks.annotations.directory.Key;
+import multitaks.directory.ModelDirectory;
 import multitaks.enums.DirectoryType;
-import multitaks.enums.FieldType;
+
 
 /**
  *
  * @author dogi_
  */
-@Directory(type=DirectoryType.FOLDER)
+@Directory(type=DirectoryType.JSON)
 public class Test extends ModelDirectory{
 
     @Key(value="key_name")
@@ -32,12 +29,8 @@ public class Test extends ModelDirectory{
     public String temp;
     
     public Test(){
-        super.run(this,"E:\\Escritorio\\inversiones");
-        this.name="HOla";
-        String[] folderes=this.listDirectory();
-        for(String f:folderes){
-            System.out.println(f);
-        }
+        super.run(this,"E:\\Escritorio\\hola2.json");
+        this.save();
     }
     
     public static void main(String[] args){
