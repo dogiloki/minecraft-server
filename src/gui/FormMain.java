@@ -143,7 +143,7 @@ public class FormMain extends javax.swing.JFrame {
                     sele_instance.properties=proper;
                     setWorlds(false);
                     // Saber si tiene un servidor activo
-                    List<World> worlds=Function.assign(sele_instance.getAll(),new ArrayList<>());
+                    List<World> worlds=Function.assign(sele_instance.get(),new ArrayList<>());
                     Server server=null;
                     for(World world:worlds){
                         if((server=world.get())!=null){
@@ -256,7 +256,7 @@ public class FormMain extends javax.swing.JFrame {
             this.panel_worlds.updateUI();
             return;
         }
-        if(this.sele_instance.getAll()==null || get_folder){
+        if(this.sele_instance.get()==null || get_folder){
             this.getWorldsDirectory();
         }
         this.panel_worlds.removeAll();
@@ -266,7 +266,7 @@ public class FormMain extends javax.swing.JFrame {
         int ancho_total=this.scroll_mundos.getWidth()-25;
         int total_columnas=(int)Math.floorDiv(ancho_total, ancho)-1;
         int x=0, y=0, count=0, filas=0;
-        List<World> worlds=Function.assign(this.sele_instance.getAll(),new ArrayList<>());
+        List<World> worlds=Function.assign(this.sele_instance.get(),new ArrayList<>());
         for(World world:worlds){
             if(!Storage.exists(world.folder_path)){
                 this.instances.remove(world);
@@ -371,7 +371,7 @@ public class FormMain extends javax.swing.JFrame {
         if(folders==null || folders.length<=0){
             return;
         }
-        List<World> worlds=Function.assign(this.sele_instance.getAll(),new ArrayList<>());
+        List<World> worlds=Function.assign(this.sele_instance.get(),new ArrayList<>());
         for(String folder:folders){
             // Obtener datos de la World
             World world=new World(path_worlds+"/"+folder);
