@@ -105,7 +105,7 @@ public final class Server implements DAO{
     }
     
     public void finalized(){
-        ins.world.remove();
+        ins.world=null;
         this.call_finalized.call();
     }
     

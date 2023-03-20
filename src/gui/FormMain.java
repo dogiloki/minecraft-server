@@ -143,10 +143,10 @@ public class FormMain extends javax.swing.JFrame {
                     sele_instance.properties=proper;
                     setWorlds(false);
                     // Saber si tiene un servidor activo
-                    List<World> worlds=Function.assign(sele_instance.get(),new ArrayList<>());
+                    List<World> worlds=sele_instance.worlds;
                     Server server=null;
                     for(World world:worlds){
-                        if((server=world.get())!=null){
+                        if((server=world.server)!=null){
                             break;
                         }
                     }
@@ -256,7 +256,7 @@ public class FormMain extends javax.swing.JFrame {
             this.panel_worlds.updateUI();
             return;
         }
-        if(this.sele_instance.get()==null || get_folder){
+        if(this.sele_instance.worlds==null || get_folder){
             this.getWorldsDirectory();
         }
         this.panel_worlds.removeAll();
@@ -266,7 +266,7 @@ public class FormMain extends javax.swing.JFrame {
         int ancho_total=this.scroll_mundos.getWidth()-25;
         int total_columnas=(int)Math.floorDiv(ancho_total, ancho)-1;
         int x=0, y=0, count=0, filas=0;
-        List<World> worlds=Function.assign(this.sele_instance.get(),new ArrayList<>());
+        List<World> worlds=this.sele_instance.worlds;
         for(World world:worlds){
             if(!Storage.exists(world.folder_path)){
                 this.instances.remove(world);
@@ -302,7 +302,7 @@ public class FormMain extends javax.swing.JFrame {
                     sele_instance.panel_world.setBackground(Color.decode("#b2cff0"));
                     sele_instance.panel_world.setOpaque(true);
                     // Saber si tiene un servidor activo
-                    Server server=world.get();
+                    Server server=world.server;
                     btn_eliminar_world.setEnabled(server==null);
                 }
                 @Override
@@ -371,7 +371,7 @@ public class FormMain extends javax.swing.JFrame {
         if(folders==null || folders.length<=0){
             return;
         }
-        List<World> worlds=Function.assign(this.sele_instance.get(),new ArrayList<>());
+        List<World> worlds=this.sele_instance.worlds;
         for(String folder:folders){
             // Obtener datos de la World
             World world=new World(path_worlds+"/"+folder);
@@ -385,7 +385,7 @@ public class FormMain extends javax.swing.JFrame {
                 }
             }
             if(!exists){
-                this.sele_instance.add(world);
+                this.sele_instance.worlds.add(world);
             }
         }
     }
@@ -631,7 +631,7 @@ public class FormMain extends javax.swing.JFrame {
             server.call_finalized=()->{
                 this.statusServer(true);
             };
-            ins.world.set(server);
+            ins.world.server=server;
             // Archivo eula del servidor
             Config cfg_eula=server.eula();
             if(cfg_eula!=null){

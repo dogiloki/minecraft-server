@@ -7,14 +7,17 @@ package dao;
 
 import javax.swing.JPanel;
 import multitaks.Config;
-import multitaks.StorageOld;
 import interfaces.DAO;
+import java.util.ArrayList;
+import java.util.List;
 import multitaks.Function;
+import multitaks.annotations.relation.Relation;
 import multitaks.directory.Storage;
 import multitaks.enums.DirectoryType;
-import multitaks.relations.OneToMany;
+import multitaks.enums.RelationType;
+import multitaks.relation.ModelRelation;
 
-public class Instance extends OneToMany<World> implements DAO{
+public class Instance extends ModelRelation implements DAO{
     
     public String file_path=null;
     private Config cfg=null;
@@ -37,6 +40,9 @@ public class Instance extends OneToMany<World> implements DAO{
     public JPanel panel_world=null;
     public String folder_ins="";
     public String folder_world="";
+    @Relation(type=RelationType.OneToMany)
+    public List<World> worlds=new ArrayList<>();
+    @Relation(type=RelationType.OneByOne)
     public World world;
     
     public Instance(){

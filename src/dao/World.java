@@ -8,16 +8,20 @@ package dao;
 import javax.swing.Icon;
 import multitaks.StorageOld;
 import interfaces.DAO;
+import multitaks.annotations.relation.Relation;
 import multitaks.directory.Storage;
 import multitaks.enums.DirectoryType;
-import multitaks.relations.OneByOne;
+import multitaks.enums.RelationType;
+import multitaks.relation.ModelRelation;
 
-public class World extends OneByOne<Server> implements DAO {
+public class World extends ModelRelation implements DAO {
     
     private String old_folder_path="";
     public String folder_path="";
     public String name="";
     public Icon icon=null;
+    @Relation(type=RelationType.OneByOne)
+    public Server server=null;
 
     public World(){
         
