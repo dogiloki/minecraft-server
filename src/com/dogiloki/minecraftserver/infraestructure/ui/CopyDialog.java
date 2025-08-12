@@ -1,14 +1,12 @@
 package com.dogiloki.minecraftserver.infraestructure.ui;
 
+import com.dogiloki.multitaks.directory.Storage;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author dogi_
  */
-
-import com.dogiloki.multitaks.directory.Storage;
-import java.io.File;
-import javax.swing.JOptionPane;
-
 public class CopyDialog extends javax.swing.JDialog implements Runnable{
 
     private String path_old="";
@@ -19,6 +17,7 @@ public class CopyDialog extends javax.swing.JDialog implements Runnable{
     public CopyDialog(java.awt.Frame parent, boolean modal, String path_old, String path_new) {
         super(parent, modal);
         initComponents();
+        this.setLocationRelativeTo(null);
         this.path_old=path_old;
         this.path_new=path_new;
         this.message="Exito!!";
@@ -39,7 +38,12 @@ public class CopyDialog extends javax.swing.JDialog implements Runnable{
     @Override
     public void run(){
         try{
-            Storage.copyDirectory(this.path_old,this.path_new);
+            Storage storage=new Storage(this.path_old);
+            if(storage.isFile()){
+                Storage.copyFile(storage.getSrc(),this.path_new);
+            }else{
+                Storage.copyDirectory(storage.getSrc(),this.path_new);
+            }
             JOptionPane.showMessageDialog(null,this.message,"Exito",JOptionPane.INFORMATION_MESSAGE);
         }catch(Exception ex){
             JOptionPane.showMessageDialog(null,ex.getMessage(),"Error",JOptionPane.ERROR_MESSAGE);

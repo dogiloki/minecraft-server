@@ -3,7 +3,6 @@ package com.dogiloki.minecraftserver.infraestructure.ui;
 import com.dogiloki.minecraftserver.application.dao.Properties;
 import com.dogiloki.minecraftserver.core.services.Instance;
 import com.dogiloki.minecraftserver.infraestructure.ui.components.ConfigurationPanel;
-import com.dogiloki.minecraftserver.infraestructure.ui.components.ModsPanel;
 import com.dogiloki.minecraftserver.infraestructure.ui.components.ServerPropertiesPanel;
 import com.dogiloki.minecraftserver.infraestructure.ui.components.VersionPanel;
 import com.dogiloki.multitaks.Function;
@@ -20,7 +19,6 @@ public final class InstanceDialog extends javax.swing.JDialog{
     private Instance ins;
     private final VersionPanel panel_version;
     private final ServerPropertiesPanel panel_server_properties;
-    private final ModsPanel panel_mods_panel;
     private final ConfigurationPanel panel_configuration;
     
     public InstanceDialog(java.awt.Frame parent, boolean modal, Instance ins) {
@@ -31,7 +29,6 @@ public final class InstanceDialog extends javax.swing.JDialog{
         this.ins=ins;
         if(this.ins==null){
             this.ins=new Instance();
-            this.btn_mods.setEnabled(false);
         }else{
             this.setTitle(this.ins.cfg.name+" - "+this.ins.cfg.version);
         }
@@ -39,7 +36,6 @@ public final class InstanceDialog extends javax.swing.JDialog{
         // Agregar paneles
         this.panel_version=new VersionPanel(this.ins,this);
         this.panel_server_properties=new ServerPropertiesPanel(this.ins);
-        this.panel_mods_panel=new ModsPanel(this.ins);
         this.panel_configuration=new ConfigurationPanel(this.ins);
         Function.setPanel(this.panel_frame,this.panel_version);
     }
@@ -64,7 +60,6 @@ public final class InstanceDialog extends javax.swing.JDialog{
         panel_menu = new javax.swing.JPanel();
         btn_version = new javax.swing.JButton();
         btn_properties = new javax.swing.JButton();
-        btn_mods = new javax.swing.JButton();
         btn_configuration = new javax.swing.JButton();
         panel_frame = new javax.swing.JPanel();
 
@@ -88,7 +83,7 @@ public final class InstanceDialog extends javax.swing.JDialog{
         panel_menu.setLayout(new java.awt.GridLayout(0, 1));
 
         btn_version.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
-        btn_version.setText("Vesión");
+        btn_version.setText("Versión");
         btn_version.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         btn_version.setHorizontalTextPosition(javax.swing.SwingConstants.LEADING);
         btn_version.addActionListener(new java.awt.event.ActionListener() {
@@ -108,17 +103,6 @@ public final class InstanceDialog extends javax.swing.JDialog{
             }
         });
         panel_menu.add(btn_properties);
-
-        btn_mods.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
-        btn_mods.setText("Mods");
-        btn_mods.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        btn_mods.setHorizontalTextPosition(javax.swing.SwingConstants.LEADING);
-        btn_mods.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_modsActionPerformed(evt);
-            }
-        });
-        panel_menu.add(btn_mods);
 
         btn_configuration.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
         btn_configuration.setText("Configuración");
@@ -189,10 +173,6 @@ public final class InstanceDialog extends javax.swing.JDialog{
         Function.setPanel(this.panel_frame,this.panel_server_properties);
     }//GEN-LAST:event_btn_propertiesActionPerformed
 
-    private void btn_modsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_modsActionPerformed
-        Function.setPanel(this.panel_frame,this.panel_mods_panel);
-    }//GEN-LAST:event_btn_modsActionPerformed
-
     private void btn_configurationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_configurationActionPerformed
         Function.setPanel(this.panel_frame,this.panel_configuration);
     }//GEN-LAST:event_btn_configurationActionPerformed
@@ -219,7 +199,6 @@ public final class InstanceDialog extends javax.swing.JDialog{
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btn_configuration;
-    private javax.swing.JButton btn_mods;
     private javax.swing.JButton btn_properties;
     private javax.swing.JButton btn_save;
     private javax.swing.JButton btn_version;

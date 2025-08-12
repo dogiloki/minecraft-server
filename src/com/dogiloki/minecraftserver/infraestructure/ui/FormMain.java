@@ -33,7 +33,7 @@ public final class FormMain extends javax.swing.JFrame {
     private Instance selected_instance=null;
     private Watcher watcher;
 
-    public FormMain() {
+    public FormMain(){
         initComponents();
         ConfigFile.load(Properties.class);
         this.split_panel.setDividerLocation(200);
@@ -135,7 +135,7 @@ public final class FormMain extends javax.swing.JFrame {
 
         split_panel.setLeftComponent(jScrollPane2);
 
-        panel_server.setLayout(new java.awt.GridLayout());
+        panel_server.setLayout(new java.awt.GridLayout(1, 0));
         split_panel.setRightComponent(panel_server);
 
         text_serve_log.setColumns(20);

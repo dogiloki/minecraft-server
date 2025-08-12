@@ -18,6 +18,8 @@ public class Files{
     public String instance_properties="server.properties";
     @Expose
     public String minecraft_server_jar="minecraft_server.{0}.jar";
+    @Expose
+    public String minecraft_forge_jar="forge.{0}.jar";
     
     public Files(){
         

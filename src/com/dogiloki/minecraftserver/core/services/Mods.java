@@ -17,4 +17,9 @@ public class Mods extends ModelDirectory{
         this.exists(true);
     }
     
+    @Override
+    public String toString(){
+        return this.getName();
+    }
+    
 }

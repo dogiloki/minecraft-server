@@ -18,6 +18,8 @@ public class Folders{
     public String instances_server="server";
     @Expose
     public String instances_worlds="saves";
+    @Expose
+    public String instances_mods="mods";
     
     @Expose
     public String metadata_folder="meta";
@@ -27,7 +29,11 @@ public class Folders{
     public String metadata_forge="forge";
     
     @Expose
-    public String minecraft_server_folder="minecraft";
+    public String libraries_folder="libraries";
+    @Expose
+    public String libraries_mc="minecraft";
+    @Expose
+    public String libraries_forge="forge";
     
     @Expose
     public String packages_mods_folder="mods";

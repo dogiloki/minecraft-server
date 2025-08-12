@@ -3,16 +3,18 @@ package com.dogiloki.minecraftserver.infraestructure.ui.components;
 import com.dogiloki.minecraftserver.application.dao.Properties;
 import com.dogiloki.minecraftserver.core.services.Instance;
 import com.dogiloki.minecraftserver.core.services.MinecraftServer;
+import com.dogiloki.minecraftserver.core.services.Mods;
+import com.dogiloki.minecraftserver.core.services.PackagesMods;
 import com.dogiloki.minecraftserver.core.services.World;
+import com.dogiloki.minecraftserver.infraestructure.utils.ComboItemWrapper;
 import com.dogiloki.multitaks.code.Code;
 import com.dogiloki.multitaks.directory.Storage;
 import com.dogiloki.multitaks.download.DownloadDialog;
 import com.dogiloki.multitaks.persistent.ExecutionObserver;
-import com.sun.tools.attach.VirtualMachine;
-import com.sun.tools.attach.VirtualMachineDescriptor;
 import java.awt.Frame;
-import java.lang.management.ManagementFactory;
-import java.lang.management.RuntimeMXBean;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Scanner;
 import javax.swing.JOptionPane;
 
 /**
@@ -20,7 +22,7 @@ import javax.swing.JOptionPane;
  * @author _dogi
  */
 
-public class ServerPanel extends javax.swing.JPanel{
+public final class ServerPanel extends javax.swing.JPanel{
 
     private final Frame parent;
     private final Instance ins;
@@ -33,15 +35,15 @@ public class ServerPanel extends javax.swing.JPanel{
     public ServerPanel(Frame parent, Instance ins, World world){
         initComponents();
         this.parent=parent;
-        this.minecraft_server=new MinecraftServer(ins.cfg.version);
+        this.minecraft_server=new MinecraftServer(ins.cfg);
         this.ins=ins;
         this.world=world;
         this.name_instance_label.setText(this.ins.cfg.name+" - "+this.world.getName());
+        /*
         // Verificar si ya está iniciado el servidor
         RuntimeMXBean runtime=ManagementFactory.getRuntimeMXBean();
         String current_jvm=runtime.getName();
         for(VirtualMachineDescriptor vm:VirtualMachine.list()){
-            System.out.println(vm.displayName());
             if(vm.displayName().contains(this.minecraft_server.getNameServerJar())){
                 if(!vm.id().equals(current_jvm.split("@")[0])){
                     this.start_server_btn.setEnabled(false);
@@ -49,6 +51,17 @@ public class ServerPanel extends javax.swing.JPanel{
                 }
             }
         }
+        */
+        this.loadPackagesMods();
+    }
+    
+    public void loadPackagesMods(){
+        PackagesMods packages_mods=new PackagesMods();
+        this.packages_mods_box.removeAll();
+        this.packages_mods_box.addItem(new ComboItemWrapper<Mods>(null,"-- Sin Mods --"));
+        packages_mods.items().iterate((name,mods)->{
+            this.packages_mods_box.addItem(new ComboItemWrapper<Mods>(mods));
+        });
     }
     
     public String getId(){
@@ -58,14 +71,14 @@ public class ServerPanel extends javax.swing.JPanel{
     // Verificar que la versión del servidor este descargada
     public void createMinecraftServer(){
         Storage manifest_version=MinecraftServer.VERSION_MANIFEST;
-        Storage version_json=this.minecraft_server.version_json;
+        Storage server_json=this.minecraft_server.server_json;
         Storage server_jar=this.minecraft_server.server_jar;
         if(!manifest_version.exists()){
             DownloadDialog download=new DownloadDialog(null,true,Properties.downloads.version_manifest_url,manifest_version.getSrc());
             download.setVisible(true);
         }
-        if(!version_json.exists()){
-            DownloadDialog download=new DownloadDialog(null,true,this.minecraft_server.getUrlMetaJson(),version_json.getSrc());
+        if(!server_json.exists()){
+            DownloadDialog download=new DownloadDialog(null,true,this.minecraft_server.getUrlMetaJson(),server_json.getSrc());
             download.setVisible(true);
         }
         if(!server_jar.exists()){
@@ -85,6 +98,32 @@ public class ServerPanel extends javax.swing.JPanel{
                 " -jar"+
                 " ../../../"+this.minecraft_server.server_jar.getSrc()+
                 " nogui";
+        if(this.ins.cfg.usedForge()){
+            Storage read_run=new Storage(this.minecraft_server.forge_jar.getSrc());
+            Scanner scanner=read_run.readIterator();
+            while(scanner.hasNext()){
+                String line=scanner.next();
+                if(line.startsWith("java")){
+                    command=line
+                            .replace("java",this.ins.cfg.java_path)
+                            .replace("@user_jvm_args.txt"," -Xms"+this.ins.cfg.memory_min+" -Xmx"+this.ins.cfg.memory_max+" -XX:+UseG1GC -XX:+UnlockExperimentalVMOptions -XX:G1NewSizePercent=20 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20 -XX:MaxGCPauseMillis=50 -XX:+DisableExplicitGC")
+                            .replace("@libraries","@libraries")+" nogui";
+                    break;
+                }
+            }
+            try{
+                // Librerias para forge
+                Storage.deleteFile(Storage.getDir()+"/"+this.ins.getSrc()+"/"+Properties.folders.instances_server+"/libraries");
+                Files.createSymbolicLink(
+                    Paths.get(Storage.getDir()+"/"+this.ins.getSrc()+"/"+Properties.folders.instances_server+"/libraries"),
+                    Paths.get(Storage.getDir()+"/"+this.minecraft_server.forge_jar.getFolder()+"/libraries")
+                );
+                // Mods
+                
+            }catch(Exception ex){
+                ex.printStackTrace();
+            }
+        }
         // -Djava.awt.headless=true
         this.file_run.write(command);
         this.file_eula.write("#https://account.mojang.com/documents/minecraft_eula \neula=true");
@@ -111,8 +150,8 @@ public class ServerPanel extends javax.swing.JPanel{
 
         name_instance_label = new javax.swing.JLabel();
         start_server_btn = new javax.swing.JButton();
-        jLabel1 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
+        packages_mods_box = new javax.swing.JComboBox<>();
 
         name_instance_label.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         name_instance_label.setText("jLabel1");
@@ -123,8 +162,6 @@ public class ServerPanel extends javax.swing.JPanel{
                 start_server_btnActionPerformed(evt);
             }
         });
-
-        jLabel1.setText("jLabel1");
 
         jButton1.setText("jButton1");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -138,24 +175,23 @@ public class ServerPanel extends javax.swing.JPanel{
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(name_instance_label, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(0, 212, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(packages_mods_box, 0, 206, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(start_server_btn))
-            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(name_instance_label)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(start_server_btn)
-                    .addComponent(jButton1))
-                .addContainerGap(217, Short.MAX_VALUE))
+                    .addComponent(jButton1)
+                    .addComponent(packages_mods_box, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(239, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -174,8 +210,8 @@ public class ServerPanel extends javax.swing.JPanel{
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel name_instance_label;
+    private javax.swing.JComboBox<ComboItemWrapper<Mods>> packages_mods_box;
     private javax.swing.JButton start_server_btn;
     // End of variables declaration//GEN-END:variables
 }
