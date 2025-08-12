@@ -1,50 +1,40 @@
-package gui.instance;
+package com.dogiloki.minecraftserver.infraestructure.ui.components;
 
-import dao.Instance;
+import com.dogiloki.minecraftserver.core.services.Instance;
+import com.dogiloki.multitaks.directory.DirectoryList;
+import com.dogiloki.multitaks.directory.Storage;
 import java.io.File;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
-import static java.util.Map.entry;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.table.DefaultTableModel;
-import multitaks.Config;
-import multitaks.dataformat.GsonManager;
-import multitaks.StorageOld;
-import multitaks.directory.Storage;
-import multitaks.enums.DirectoryType;
 
 /**
  *
  * @author dogi_
  */
-public class Mods extends javax.swing.JPanel {
+public final class ModsPanel extends javax.swing.JPanel {
     
-    private Config cfg_global;
-    private GsonManager versions;
     private Instance ins=null;
     private String folder_mods="";
     
-    public Mods(Config cfg_global, Instance ins){
+    public ModsPanel(Instance ins){
         initComponents();
-        this.cfg_global=cfg_global;
         this.ins=ins;
-        this.folder_mods+=this.ins.folder_ins+"/"+this.cfg_global.getDic("fo_server")+"/mods";
-        Storage.createFolder(this.folder_mods);
-        this.getMods();
     }
     
     public void getMods(){
         DefaultTableModel model_mods=new DefaultTableModel();
         model_mods.addColumn("Activo");
         model_mods.addColumn("Nombre");
-        String[] mods=Storage.listDirectory(this.folder_mods,DirectoryType.FILE);
+        DirectoryList mods=new Storage(this.folder_mods).listFiles();
+        Path folder;
         if(mods==null){
             return;
         }
-        for(String folder:mods){
-            boolean status=Storage.getExtension(folder).equals("disabled");
-            Object[] data={(status?"":"Activo"),(folder).replace(".disabled","")};
+        while((folder=mods.next())!=null){
+            boolean status=new Storage(folder.toString()).getExtension().equals("disabled");
+            Object[] data={(status?"":"Activo"),folder.toString().replace(".disabled","")};
             model_mods.addRow(data);
         }
         this.table_mods.setModel(model_mods);
@@ -154,7 +144,7 @@ public class Mods extends javax.swing.JPanel {
             try{
                 String[] name_temp=file.getPath().replace("\\","/").split("/");
                 String name=name_temp[name_temp.length-1];
-                StorageOld.copyFile(file.getPath(),this.folder_mods+"/"+name);
+                Storage.copyFile(file.getPath(),this.folder_mods+"/"+name);
             }catch(Exception ex){
                 ex.printStackTrace();
                 return;
@@ -172,14 +162,14 @@ public class Mods extends javax.swing.JPanel {
 
     private void btn_active_modsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_active_modsActionPerformed
         this.getSelecctionMods().forEach((key,item)->{
-            StorageOld.rename(this.folder_mods+"/"+item+".disabled",this.folder_mods+"/"+item);
+            Storage.rename(this.folder_mods+"/"+item+".disabled",this.folder_mods+"/"+item);
         });
         this.getMods();
     }//GEN-LAST:event_btn_active_modsActionPerformed
 
     private void btn_desactive_modsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_desactive_modsActionPerformed
         this.getSelecctionMods().forEach((key,item)->{
-            StorageOld.rename(this.folder_mods+"/"+item,this.folder_mods+"/"+item+".disabled");
+            Storage.rename(this.folder_mods+"/"+item,this.folder_mods+"/"+item+".disabled");
         });
         this.getMods();
     }//GEN-LAST:event_btn_desactive_modsActionPerformed

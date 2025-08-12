@@ -1,0 +1,17 @@
+com/
+└── organismo/
+    └── asistencia/
+        ├── core/                  # Capa de dominio
+        │   ├── entities/          # Entidades de negocio
+        │   ├── repositories/      # Interfaces de repositorio
+        │   ├── usecases/          # Casos de uso
+        │   └── exceptions/        # Excepciones de dominio
+        ├── infrastructure/        # Capa de infraestructura
+        │   ├── persistence/       # Implementación de repositorios
+        │   ├── ui/                # Implementación de la interfaz
+        │   └── services/          # Servicios externos
+        ├── application/           # Capa de aplicación
+        │   ├── dto/               # Objetos de transferencia
+        │   ├── controllers/       # Controladores
+        │   └── config/           # Configuración
+        └── Main.java             # Punto de entrada

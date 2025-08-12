@@ -1,74 +1,84 @@
-package gui.instance;
+package com.dogiloki.minecraftserver.infraestructure.ui.components;
 
-import dao.Instance;
-import java.text.MessageFormat;
+import com.dogiloki.minecraftserver.application.dao.Properties;
+import com.dogiloki.minecraftserver.core.services.Instance;
+import com.dogiloki.minecraftserver.core.services.MinecraftServer;
+import com.dogiloki.multitaks.dataformat.JSON;
+import com.dogiloki.multitaks.dataformat.contracts.DataFormat;
+import com.dogiloki.multitaks.directory.Storage;
+import com.dogiloki.multitaks.download.DownloadDialog;
+import com.dogiloki.multitaks.validator.MapValues;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Date;
 import javax.swing.JDialog;
 import javax.swing.table.DefaultTableModel;
-import multitaks.Config;
-import multitaks.Download;
-import multitaks.Function;
-import multitaks.dataformat.GsonManager;
-import multitaks.StorageOld;
-import multitaks.directory.Storage;
 
 /**
  *
  * @author dogi_
  */
-public class Version extends javax.swing.JPanel {
+public final class VersionPanel extends javax.swing.JPanel{
 
-    private Config cfg_global;
-    private GsonManager versions;
     private Instance ins=null;
+    private Storage version_manifest=MinecraftServer.VERSION_MANIFEST;
     private JDialog frame;
     
-    public Version(Config cfg_global, Instance ins, JDialog frame){
+    public VersionPanel(Instance ins, JDialog frame){
         initComponents();
         this.frame=frame;
-        this.cfg_global=cfg_global;
         this.ins=ins;
         this.table_versions.setDefaultEditor(Object.class,null);
-        this.getVersion();
+        this.loadVersions();
     }
     
-    public void getVersion(){
-        if(!Storage.exists(this.cfg_global.getDic("fi_ver_mani"))){
-            new Download(null,true,this.cfg_global.getDic("fi_ver_mani"),null,this.cfg_global.getDic("url_ver_mani"),null).setVisible(true);
-        }
-        this.versions=new Config(this.cfg_global.getDic("fi_ver_mani"),Config.JSON).getJson().getJsonArray("versions");
-        DefaultTableModel modelo_versions=new DefaultTableModel();
-        modelo_versions.addColumn("Versión");
-        modelo_versions.addColumn("Estado");
-        //Collections.reverse(Arrays.asList(Config.servers)); // Invertir array
-        Integer row_selection=null;
-        int count=0;
-        while(this.versions.nextObject()){
-            if(!this.versions.getValue("type").equals("release")){
-                continue;
+    public void loadVersions(){
+        try{
+            if(!this.version_manifest.exists()){
+                DownloadDialog download=new DownloadDialog(null,true,Properties.downloads.version_manifest_url,this.version_manifest.getSrc());
+                download.setVisible(true);
+                this.loadVersions();
+                return;
             }
-            String status="";
-            String fo_minecraft=this.cfg_global.getDic("fo_mc")+"/"+this.versions.getValue("id");
-            String fi_server=Function.assign(this.ins.file_server,MessageFormat.format(this.cfg_global.getDic("fi_server"),this.versions.getValue("id")));
-            if(Storage.exists(fo_minecraft+"/"+fi_server)){
-                status="Descargado";
+            DefaultTableModel model=new DefaultTableModel();
+            model.addColumn("Versión");
+            model.addColumn("Descargado");
+            JsonObject json=JSON.gson().fromJson(this.version_manifest.read(),JsonObject.class);
+            JsonArray versions=json.getAsJsonArray("versions");
+            int default_selected_row=-1;
+            int current_row=0;
+            for(JsonElement element:versions){
+                JsonObject version=element.getAsJsonObject();
+                if(!version.get("type").getAsString().equals("release")) continue;
+                String download_date="";
+                String name=version.get("id").getAsString();
+                String fo_minecraft=Properties.folders.metadata_mc+"/"+name;
+                String fi_minecraft=DataFormat.messageFormat(Properties.files.minecraft_server_jar,new MapValues().append("0",name));
+                Storage jar=new Storage(fo_minecraft+"/"+fi_minecraft);
+                if(jar.exists()){
+                    download_date=new Date(Files.getLastModifiedTime(Paths.get(jar.getSrc())).toMillis()).toString();
+                }
+                Object[] data={name,download_date};
+                model.addRow(data);
+                // Verificar si se va a seleccionar
+                if(name.equals(this.ins.cfg.version)){
+                    default_selected_row=current_row;
+                }
+                current_row++;
             }
-            Object[] data={this.versions.getValue("id"),status};
-            modelo_versions.addRow(data);
-            if(row_selection==null && this.versions.getValue("id").equals(this.ins.version)){
-                row_selection=count;
+            this.table_versions.setModel(model);
+            
+            // Selecionar la fila por defecto si se encontró
+            if(default_selected_row>=0 && default_selected_row<model.getRowCount()){
+                this.table_versions.setRowSelectionInterval(default_selected_row,default_selected_row);
+                this.table_versions.scrollRectToVisible(this.table_versions.getCellRect(default_selected_row,0,true));
             }
-            count++;
+        }catch(Exception ex){
+            ex.printStackTrace();
         }
-        this.table_versions.setModel(modelo_versions);
-        if(row_selection==null){
-            this.table_versions.setRowSelectionInterval(0,0);
-        }else{
-            this.table_versions.setRowSelectionInterval(row_selection, row_selection);
-        }
-        int row=this.table_versions.getSelectedRow();
-        this.ins.version=this.table_versions.getValueAt(row,0).toString();
-        this.frame.setTitle(this.ins.name+" - "+this.ins.version);
-        this.caja_path_java.setText(this.ins.file_server);
     }
     
     @SuppressWarnings("unchecked")
@@ -132,6 +142,9 @@ public class Version extends javax.swing.JPanel {
         ));
         table_versions.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         table_versions.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                table_versionsMouseClicked(evt);
+            }
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 table_versionsMousePressed(evt);
             }
@@ -159,20 +172,20 @@ public class Version extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btn_path_java_explore4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_path_java_explore4ActionPerformed
-        String fi_server=Storage.selectFile(this.cfg_global.getDic("fo_mc"));
-        if(fi_server==null){
-            return;
-        }
-        String fi_server_temp[]=fi_server.replace("\\","/").split("/");
-        this.ins.file_server=fi_server_temp[fi_server_temp.length-1];
-        this.caja_path_java.setText(this.ins.file_server);
+        
     }//GEN-LAST:event_btn_path_java_explore4ActionPerformed
 
     private void table_versionsMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_table_versionsMousePressed
         int row=this.table_versions.getSelectedRow();
-        this.ins.version=this.table_versions.getValueAt(row,0).toString();
-        this.frame.setTitle(this.ins.name+" - "+this.ins.version);
+        this.ins.cfg.version=this.table_versions.getValueAt(row,0).toString();
+        this.frame.setTitle(this.ins.cfg.name+" - "+this.ins.cfg.version);
     }//GEN-LAST:event_table_versionsMousePressed
+
+    private void table_versionsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_table_versionsMouseClicked
+        if(evt.getClickCount()==2){
+            
+        }
+    }//GEN-LAST:event_table_versionsMouseClicked
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -1,22 +1,22 @@
-package gui;
+package com.dogiloki.minecraftserver.infraestructure.ui;
 
 /**
  *
  * @author dogi_
  */
 
+import com.dogiloki.multitaks.directory.Storage;
 import java.io.File;
 import javax.swing.JOptionPane;
-import multitaks.StorageOld;
 
-public class DialogCopy extends javax.swing.JDialog implements Runnable{
+public class CopyDialog extends javax.swing.JDialog implements Runnable{
 
     private String path_old="";
     private String path_new="";
     private String message="";
     private boolean destroy=false;
     
-    public DialogCopy(java.awt.Frame parent, boolean modal, String path_old, String path_new) {
+    public CopyDialog(java.awt.Frame parent, boolean modal, String path_old, String path_new) {
         super(parent, modal);
         initComponents();
         this.path_old=path_old;
@@ -26,7 +26,7 @@ public class DialogCopy extends javax.swing.JDialog implements Runnable{
         new Thread(this).start();
     }
     
-    public DialogCopy(java.awt.Frame parent, boolean modal, String path_old, String path_new, String message) {
+    public CopyDialog(java.awt.Frame parent, boolean modal, String path_old, String path_new, String message) {
         super(parent, modal);
         initComponents();
         this.path_old=path_old;
@@ -39,7 +39,7 @@ public class DialogCopy extends javax.swing.JDialog implements Runnable{
     @Override
     public void run(){
         try{
-            StorageOld.copyDirectory(this.path_old,this.path_new);
+            Storage.copyDirectory(this.path_old,this.path_new);
             JOptionPane.showMessageDialog(null,this.message,"Exito",JOptionPane.INFORMATION_MESSAGE);
         }catch(Exception ex){
             JOptionPane.showMessageDialog(null,ex.getMessage(),"Error",JOptionPane.ERROR_MESSAGE);
@@ -113,7 +113,7 @@ public class DialogCopy extends javax.swing.JDialog implements Runnable{
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                DialogCopy dialog = new DialogCopy(new javax.swing.JFrame(), true, "", "", "");
+                CopyDialog dialog = new CopyDialog(new javax.swing.JFrame(), true, "", "", "");
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {

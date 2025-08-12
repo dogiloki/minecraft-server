@@ -1,49 +1,38 @@
-package gui.instance;
+package com.dogiloki.minecraftserver.infraestructure.ui.components;
 
-import dao.Instance;
+import com.dogiloki.minecraftserver.application.dao.ServerProperties;
+import com.dogiloki.minecraftserver.core.services.Instance;
 import java.awt.event.ItemEvent;
-import multitaks.Config;
 
 /**
  *
  * @author dogi_
  */
 
-public class Properties extends javax.swing.JPanel {
+public final class ServerPropertiesPanel extends javax.swing.JPanel{
 
-    private Config cfg_global;
     private Instance ins=null;
     
-    public Properties(Config cfg_global, Instance ins){
+    public ServerPropertiesPanel(Instance ins){
         initComponents();
-        this.cfg_global=cfg_global;
         this.ins=ins;
-        // Propiedades de la instancia
-        dao.Properties proper;
-        if(this.ins.file_path==null){
-            proper=new dao.Properties();
-        }else{
-            proper=new dao.Properties(ins.folder_ins+"/"+cfg_global.getDic("fo_server")+"/server.properties");
-            proper.save();
-        }
-        this.ins.properties=proper;
         this.getProperties();
     }
     
     public void getProperties(){
-        dao.Properties proper=this.ins.properties;
+        ServerProperties proper=this.ins.server_properties;
         
         if(this.gamemode.getItemCount()<=0){
-            this.gamemode.addItem(dao.Properties.SPECTATOR);
-            this.gamemode.addItem(dao.Properties.ADVENTURE);
-            this.gamemode.addItem(dao.Properties.CREATIVE);
-            this.gamemode.addItem(dao.Properties.SURVIVAL);
+            this.gamemode.addItem(com.dogiloki.minecraftserver.application.dao.ServerProperties.SPECTATOR);
+            this.gamemode.addItem(com.dogiloki.minecraftserver.application.dao.ServerProperties.ADVENTURE);
+            this.gamemode.addItem(com.dogiloki.minecraftserver.application.dao.ServerProperties.CREATIVE);
+            this.gamemode.addItem(com.dogiloki.minecraftserver.application.dao.ServerProperties.SURVIVAL);
         }
         if(this.difficulty.getItemCount()<=0){
-            this.difficulty.addItem(dao.Properties.PEACEFUL);
-            this.difficulty.addItem(dao.Properties.EASY);
-            this.difficulty.addItem(dao.Properties.NORMAL);
-            this.difficulty.addItem(dao.Properties.HARD);
+            this.difficulty.addItem(com.dogiloki.minecraftserver.application.dao.ServerProperties.PEACEFUL);
+            this.difficulty.addItem(com.dogiloki.minecraftserver.application.dao.ServerProperties.EASY);
+            this.difficulty.addItem(com.dogiloki.minecraftserver.application.dao.ServerProperties.NORMAL);
+            this.difficulty.addItem(com.dogiloki.minecraftserver.application.dao.ServerProperties.HARD);
         }
         
         this.gamemode.setSelectedItem(proper.gamemode);
@@ -126,10 +115,9 @@ public class Properties extends javax.swing.JPanel {
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addComponent(jLabel3)
-                        .addContainerGap(217, Short.MAX_VALUE))
-                    .addComponent(difficulty, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addComponent(difficulty, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -184,11 +172,9 @@ public class Properties extends javax.swing.JPanel {
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addComponent(jLabel5)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(spawn_protection))
-                .addContainerGap())
+                    .addComponent(jLabel5)
+                    .addComponent(spawn_protection, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -217,9 +203,10 @@ public class Properties extends javax.swing.JPanel {
                 .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel9Layout.createSequentialGroup()
                         .addComponent(jLabel4)
-                        .addGap(0, 140, Short.MAX_VALUE))
-                    .addComponent(port))
-                .addContainerGap())
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(jPanel9Layout.createSequentialGroup()
+                        .addComponent(port, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         jPanel9Layout.setVerticalGroup(
             jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -260,11 +247,9 @@ public class Properties extends javax.swing.JPanel {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(max_players))
-                .addContainerGap())
+                    .addComponent(jLabel1)
+                    .addComponent(max_players, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -298,11 +283,9 @@ public class Properties extends javax.swing.JPanel {
             .addGroup(jPanel7Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel7Layout.createSequentialGroup()
-                        .addComponent(jLabel6)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(resource_pack))
-                .addContainerGap())
+                    .addComponent(jLabel6)
+                    .addComponent(resource_pack, javax.swing.GroupLayout.PREFERRED_SIZE, 469, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel7Layout.setVerticalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -344,8 +327,8 @@ public class Properties extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(gamemode, javax.swing.GroupLayout.PREFERRED_SIZE, 176, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18))
+                    .addComponent(gamemode, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -379,11 +362,9 @@ public class Properties extends javax.swing.JPanel {
             .addGroup(jPanel8Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel8Layout.createSequentialGroup()
-                        .addComponent(jLabel7)
-                        .addGap(0, 70, Short.MAX_VALUE))
-                    .addComponent(resource_pack_promp))
-                .addContainerGap())
+                    .addComponent(jLabel7)
+                    .addComponent(resource_pack_promp, javax.swing.GroupLayout.PREFERRED_SIZE, 579, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel8Layout.setVerticalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -406,50 +387,41 @@ public class Properties extends javax.swing.JPanel {
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(white_list)
+                    .addComponent(force_gamemode)
+                    .addComponent(pvp)
+                    .addComponent(allow_flight)
+                    .addComponent(online_mode))
+                .addGap(24, 24, 24)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(allow_nether)
+                    .addComponent(spawn_npcs)
+                    .addComponent(spawn_animals)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 188, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(spawn_mosters)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btn_reset_properties, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(enable_command_block)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(white_list)
-                                .addGap(18, 18, 18)
-                                .addComponent(force_gamemode))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(pvp)
-                                .addGap(18, 18, 18)
-                                .addComponent(allow_flight)
-                                .addGap(18, 18, 18)
-                                .addComponent(online_mode))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(enable_command_block)
-                                .addGap(18, 18, 18)
-                                .addComponent(allow_nether))
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(btn_reset_properties, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(spawn_npcs)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(spawn_animals)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(spawn_mosters))
-                                    .addComponent(require_resorce_pack))))))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(require_resorce_pack)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -461,152 +433,148 @@ public class Properties extends javax.swing.JPanel {
                     .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(white_list)
-                                    .addComponent(force_gamemode))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(pvp)
-                                    .addComponent(allow_flight)
-                                    .addComponent(online_mode)))
-                            .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(enable_command_block)
-                            .addComponent(allow_nether))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(spawn_npcs)
-                            .addComponent(spawn_animals)
-                            .addComponent(spawn_mosters))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(require_resorce_pack)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btn_reset_properties)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                    .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(white_list)
+                    .addComponent(enable_command_block)
+                    .addComponent(require_resorce_pack))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(force_gamemode)
+                    .addComponent(allow_nether))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(pvp)
+                    .addComponent(spawn_npcs))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(allow_flight)
+                    .addComponent(spawn_animals))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(online_mode)
+                    .addComponent(spawn_mosters)
+                    .addComponent(btn_reset_properties))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
     private void require_resorce_packItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_require_resorce_packItemStateChanged
-        if(this.ins!=null && this.ins.properties!=null){
-            this.ins.properties.require_resorce_pack=this.require_resorce_pack.isSelected()?"true":"false";
+        if(this.ins!=null && this.ins.server_properties!=null){
+            this.ins.server_properties.require_resorce_pack=this.require_resorce_pack.isSelected()?"true":"false";
         }
     }//GEN-LAST:event_require_resorce_packItemStateChanged
 
     private void difficultyItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_difficultyItemStateChanged
-        if(this.ins!=null && this.ins.properties!=null && evt.getStateChange()==ItemEvent.DESELECTED){
-            this.ins.properties.difficulty=this.difficulty.getSelectedItem().toString();
+        if(this.ins!=null && this.ins.server_properties!=null && evt.getStateChange()==ItemEvent.DESELECTED){
+            this.ins.server_properties.difficulty=this.difficulty.getSelectedItem().toString();
         }
     }//GEN-LAST:event_difficultyItemStateChanged
 
     private void allow_netherItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_allow_netherItemStateChanged
-        if(this.ins!=null && this.ins.properties!=null){
-            this.ins.properties.allow_nether=this.allow_nether.isSelected()?"true":"false";
+        if(this.ins!=null && this.ins.server_properties!=null){
+            this.ins.server_properties.allow_nether=this.allow_nether.isSelected()?"true":"false";
         }
     }//GEN-LAST:event_allow_netherItemStateChanged
 
     private void white_listItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_white_listItemStateChanged
-        if(this.ins!=null && this.ins.properties!=null){
-            this.ins.properties.white_list=this.white_list.isSelected()?"true":"false";
+        if(this.ins!=null && this.ins.server_properties!=null){
+            this.ins.server_properties.white_list=this.white_list.isSelected()?"true":"false";
         }
     }//GEN-LAST:event_white_listItemStateChanged
 
     private void btn_reset_propertiesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_reset_propertiesActionPerformed
-        if(this.ins!=null && this.ins.properties!=null){
-            this.ins.properties.reset();
+        if(this.ins!=null && this.ins.server_properties!=null){
+            this.ins.server_properties.reset();
             this.getProperties();
         }
     }//GEN-LAST:event_btn_reset_propertiesActionPerformed
 
     private void online_modeItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_online_modeItemStateChanged
-        if(this.ins!=null && this.ins.properties!=null){
-            this.ins.properties.online_mode=this.online_mode.isSelected()?"true":"false";
+        if(this.ins!=null && this.ins.server_properties!=null){
+            this.ins.server_properties.online_mode=this.online_mode.isSelected()?"true":"false";
         }
     }//GEN-LAST:event_online_modeItemStateChanged
 
     private void spawn_protectionKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_spawn_protectionKeyReleased
-        if(this.ins!=null && this.ins.properties!=null){
-            this.ins.properties.spawn_protection=this.spawn_protection.getText();
+        if(this.ins!=null && this.ins.server_properties!=null){
+            this.ins.server_properties.spawn_protection=this.spawn_protection.getText();
         }
     }//GEN-LAST:event_spawn_protectionKeyReleased
 
     private void portKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_portKeyReleased
-        if(this.ins!=null && this.ins.properties!=null){
-            this.ins.properties.port=this.port.getText();
+        if(this.ins!=null && this.ins.server_properties!=null){
+            this.ins.server_properties.port=this.port.getText();
         }
     }//GEN-LAST:event_portKeyReleased
 
     private void pvpItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_pvpItemStateChanged
-        if(this.ins!=null && this.ins.properties!=null){
-            this.ins.properties.pvp=this.pvp.isSelected()?"true":"false";
+        if(this.ins!=null && this.ins.server_properties!=null){
+            this.ins.server_properties.pvp=this.pvp.isSelected()?"true":"false";
         }
     }//GEN-LAST:event_pvpItemStateChanged
 
     private void allow_flightItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_allow_flightItemStateChanged
-        if(this.ins!=null && this.ins.properties!=null){
-            this.ins.properties.allow_flight=this.allow_flight.isSelected()?"true":"false";
+        if(this.ins!=null && this.ins.server_properties!=null){
+            this.ins.server_properties.allow_flight=this.allow_flight.isSelected()?"true":"false";
         }
     }//GEN-LAST:event_allow_flightItemStateChanged
 
     private void max_playersKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_max_playersKeyReleased
-        if(this.ins!=null && this.ins.properties!=null){
-            this.ins.properties.max_players=this.max_players.getText();
+        if(this.ins!=null && this.ins.server_properties!=null){
+            this.ins.server_properties.max_players=this.max_players.getText();
         }
     }//GEN-LAST:event_max_playersKeyReleased
 
     private void enable_command_blockItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_enable_command_blockItemStateChanged
-        if(this.ins!=null && this.ins.properties!=null){
-            this.ins.properties.enable_command_block=this.enable_command_block.isSelected()?"true":"false";
+        if(this.ins!=null && this.ins.server_properties!=null){
+            this.ins.server_properties.enable_command_block=this.enable_command_block.isSelected()?"true":"false";
         }
     }//GEN-LAST:event_enable_command_blockItemStateChanged
 
     private void resource_packKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_resource_packKeyReleased
-        if(this.ins!=null && this.ins.properties!=null){
-            this.ins.properties.resource_pack=this.resource_pack.getText();
+        if(this.ins!=null && this.ins.server_properties!=null){
+            this.ins.server_properties.resource_pack=this.resource_pack.getText();
         }
     }//GEN-LAST:event_resource_packKeyReleased
 
     private void spawn_animalsItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_spawn_animalsItemStateChanged
-        if(this.ins!=null && this.ins.properties!=null){
-            this.ins.properties.spawn_animals=this.spawn_animals.isSelected()?"true":"false";
+        if(this.ins!=null && this.ins.server_properties!=null){
+            this.ins.server_properties.spawn_animals=this.spawn_animals.isSelected()?"true":"false";
         }
     }//GEN-LAST:event_spawn_animalsItemStateChanged
 
     private void spawn_mostersItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_spawn_mostersItemStateChanged
-        if(this.ins!=null && this.ins.properties!=null){
-            this.ins.properties.spawn_mosters=this.spawn_mosters.isSelected()?"true":"false";
+        if(this.ins!=null && this.ins.server_properties!=null){
+            this.ins.server_properties.spawn_mosters=this.spawn_mosters.isSelected()?"true":"false";
         }
     }//GEN-LAST:event_spawn_mostersItemStateChanged
 
     private void gamemodeItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_gamemodeItemStateChanged
-        if(this.ins!=null && this.ins.properties!=null && evt.getStateChange()==ItemEvent.DESELECTED){
-            this.ins.properties.gamemode=this.gamemode.getSelectedItem().toString();
+        if(this.ins!=null && this.ins.server_properties!=null && evt.getStateChange()==ItemEvent.DESELECTED){
+            this.ins.server_properties.gamemode=this.gamemode.getSelectedItem().toString();
         }
     }//GEN-LAST:event_gamemodeItemStateChanged
 
     private void spawn_npcsItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_spawn_npcsItemStateChanged
-        if(this.ins!=null && this.ins.properties!=null){
-            this.ins.properties.spawn_npcs=this.spawn_npcs.isSelected()?"true":"false";
+        if(this.ins!=null && this.ins.server_properties!=null){
+            this.ins.server_properties.spawn_npcs=this.spawn_npcs.isSelected()?"true":"false";
         }
     }//GEN-LAST:event_spawn_npcsItemStateChanged
 
     private void resource_pack_prompKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_resource_pack_prompKeyReleased
-        if(this.ins!=null && this.ins.properties!=null){
-            this.ins.properties.resource_pack_promp=this.resource_pack_promp.getText();
+        if(this.ins!=null && this.ins.server_properties!=null){
+            this.ins.server_properties.resource_pack_promp=this.resource_pack_promp.getText();
         }
     }//GEN-LAST:event_resource_pack_prompKeyReleased
 
     private void force_gamemodeItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_force_gamemodeItemStateChanged
-        if(this.ins!=null && this.ins.properties!=null){
-            this.ins.properties.force_gamemode=this.force_gamemode.isSelected()?"true":"false";
+        if(this.ins!=null && this.ins.server_properties!=null){
+            this.ins.server_properties.force_gamemode=this.force_gamemode.isSelected()?"true":"false";
         }
     }//GEN-LAST:event_force_gamemodeItemStateChanged
 

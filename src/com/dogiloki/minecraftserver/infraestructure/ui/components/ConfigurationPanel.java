@@ -1,33 +1,28 @@
-package gui.instance;
+package com.dogiloki.minecraftserver.infraestructure.ui.components;
 
-import dao.Instance;
-import multitaks.Config;
-import multitaks.dataformat.GsonManager;
-import multitaks.StorageOld;
-import multitaks.directory.Storage;
+import com.dogiloki.minecraftserver.application.dao.InstanceCfg;
+import com.dogiloki.minecraftserver.core.services.Instance;
+import com.dogiloki.multitaks.directory.Storage;
 
 /**
  *
  * @author dogi_
  */
 
-public class Configuration extends javax.swing.JPanel {
+public final class ConfigurationPanel extends javax.swing.JPanel {
 
-    private Config cfg_global;
-    private GsonManager version;
     private Instance ins=null;
     
-    public Configuration(Config cfg_global, Instance ins){
+    public ConfigurationPanel(Instance ins){
         initComponents();
-        this.cfg_global=cfg_global;
         this.ins=ins;
         this.getConfig();
     }
     
     public void getConfig(){
-        this.caja_path_java.setText(this.ins.java_path);
-        this.caja_memory_min.setText(this.ins.memory_min);
-        this.caja_memory_max.setText(this.ins.memory_max);
+        this.path_java_box.setText(this.ins.cfg.java_path);
+        this.memory_max_box.setText(this.ins.cfg.memory_min);
+        this.memory_min_box.setText(this.ins.cfg.memory_max);
     }
     
     @SuppressWarnings("unchecked")
@@ -36,19 +31,25 @@ public class Configuration extends javax.swing.JPanel {
 
         jPanel1 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
-        caja_path_java = new javax.swing.JTextField();
+        path_java_box = new javax.swing.JTextField();
         btn_reset_path_java = new javax.swing.JButton();
         btn_path_java_explore = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
-        caja_memory_max = new javax.swing.JTextField();
-        caja_memory_min = new javax.swing.JTextField();
+        memory_min_box = new javax.swing.JTextField();
+        memory_max_box = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
         btn_reset_memory = new javax.swing.JButton();
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Java"));
 
         jLabel2.setText("Instalación de java");
+
+        path_java_box.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                path_java_boxKeyReleased(evt);
+            }
+        });
 
         btn_reset_path_java.setText("Restaurar");
         btn_reset_path_java.addActionListener(new java.awt.event.ActionListener() {
@@ -78,7 +79,7 @@ public class Configuration extends javax.swing.JPanel {
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(btn_reset_path_java))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(caja_path_java)
+                        .addComponent(path_java_box, javax.swing.GroupLayout.DEFAULT_SIZE, 461, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btn_path_java_explore)))
                 .addContainerGap())
@@ -90,16 +91,28 @@ public class Configuration extends javax.swing.JPanel {
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(caja_path_java, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(path_java_box, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btn_path_java_explore))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btn_reset_path_java)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(7, Short.MAX_VALUE))
         );
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Memoria"));
 
         jLabel3.setText("Mínima de memoria");
+
+        memory_min_box.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                memory_min_boxKeyReleased(evt);
+            }
+        });
+
+        memory_max_box.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                memory_max_boxKeyReleased(evt);
+            }
+        });
 
         jLabel4.setText("Máxima de memoria");
 
@@ -117,13 +130,13 @@ public class Configuration extends javax.swing.JPanel {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(caja_memory_min)
+                    .addComponent(memory_max_box)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel3)
                             .addComponent(jLabel4))
-                        .addGap(0, 439, Short.MAX_VALUE))
-                    .addComponent(caja_memory_max)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(memory_min_box)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(btn_reset_memory)))
@@ -135,11 +148,11 @@ public class Configuration extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(caja_memory_max, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(memory_min_box, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(caja_memory_min, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(memory_max_box, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btn_reset_memory)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -149,52 +162,58 @@ public class Configuration extends javax.swing.JPanel {
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
     private void btn_reset_path_javaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_reset_path_javaActionPerformed
-        this.caja_path_java.setText(Instance.JAVA_PATH);
+        this.path_java_box.setText(InstanceCfg.JAVA_PATH);
     }//GEN-LAST:event_btn_reset_path_javaActionPerformed
 
     private void btn_path_java_exploreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_path_java_exploreActionPerformed
         String path_java=Storage.selectFile();
         if(path_java!=null && !path_java.trim().equals("")){
-            this.caja_path_java.setText(path_java);
+            this.path_java_box.setText(path_java);
         }
     }//GEN-LAST:event_btn_path_java_exploreActionPerformed
 
     private void btn_reset_memoryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_reset_memoryActionPerformed
-        this.caja_memory_min.setText(Instance.MEMORY_MIN);
-        this.caja_memory_max.setText(Instance.MEMORY_MAX);
+        this.memory_max_box.setText(InstanceCfg.MEMORY_MIN);
+        this.memory_min_box.setText(InstanceCfg.MEMORY_MAX);
     }//GEN-LAST:event_btn_reset_memoryActionPerformed
+
+    private void path_java_boxKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_path_java_boxKeyReleased
+        this.ins.cfg.java_path=this.path_java_box.getText();
+    }//GEN-LAST:event_path_java_boxKeyReleased
+
+    private void memory_min_boxKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_memory_min_boxKeyReleased
+        this.ins.cfg.memory_min=this.memory_min_box.getText();
+    }//GEN-LAST:event_memory_min_boxKeyReleased
+
+    private void memory_max_boxKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_memory_max_boxKeyReleased
+        this.ins.cfg.memory_max=this.memory_max_box.getText();
+    }//GEN-LAST:event_memory_max_boxKeyReleased
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btn_path_java_explore;
     private javax.swing.JButton btn_reset_memory;
     private javax.swing.JButton btn_reset_path_java;
-    public javax.swing.JTextField caja_memory_max;
-    public javax.swing.JTextField caja_memory_min;
-    public javax.swing.JTextField caja_path_java;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    public javax.swing.JTextField memory_max_box;
+    public javax.swing.JTextField memory_min_box;
+    public javax.swing.JTextField path_java_box;
     // End of variables declaration//GEN-END:variables
 }

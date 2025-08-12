@@ -1,0 +1,181 @@
+package com.dogiloki.minecraftserver.infraestructure.ui.components;
+
+import com.dogiloki.minecraftserver.application.dao.Properties;
+import com.dogiloki.minecraftserver.core.services.Instance;
+import com.dogiloki.minecraftserver.core.services.MinecraftServer;
+import com.dogiloki.minecraftserver.core.services.World;
+import com.dogiloki.multitaks.code.Code;
+import com.dogiloki.multitaks.directory.Storage;
+import com.dogiloki.multitaks.download.DownloadDialog;
+import com.dogiloki.multitaks.persistent.ExecutionObserver;
+import com.sun.tools.attach.VirtualMachine;
+import com.sun.tools.attach.VirtualMachineDescriptor;
+import java.awt.Frame;
+import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
+import javax.swing.JOptionPane;
+
+/**
+ *
+ * @author _dogi
+ */
+
+public class ServerPanel extends javax.swing.JPanel{
+
+    private final Frame parent;
+    private final Instance ins;
+    private final World world;
+    private MinecraftServer minecraft_server;
+    private Storage file_run;
+    private Storage file_eula;
+    private ExecutionObserver execution;
+    
+    public ServerPanel(Frame parent, Instance ins, World world){
+        initComponents();
+        this.parent=parent;
+        this.minecraft_server=new MinecraftServer(ins.cfg.version);
+        this.ins=ins;
+        this.world=world;
+        this.name_instance_label.setText(this.ins.cfg.name+" - "+this.world.getName());
+        // Verificar si ya está iniciado el servidor
+        RuntimeMXBean runtime=ManagementFactory.getRuntimeMXBean();
+        String current_jvm=runtime.getName();
+        for(VirtualMachineDescriptor vm:VirtualMachine.list()){
+            System.out.println(vm.displayName());
+            if(vm.displayName().contains(this.minecraft_server.getNameServerJar())){
+                if(!vm.id().equals(current_jvm.split("@")[0])){
+                    this.start_server_btn.setEnabled(false);
+                    break;
+                }
+            }
+        }
+    }
+    
+    public String getId(){
+        return Code.encode64(this.name_instance_label.getText());
+    }
+    
+    // Verificar que la versión del servidor este descargada
+    public void createMinecraftServer(){
+        Storage manifest_version=MinecraftServer.VERSION_MANIFEST;
+        Storage version_json=this.minecraft_server.version_json;
+        Storage server_jar=this.minecraft_server.server_jar;
+        if(!manifest_version.exists()){
+            DownloadDialog download=new DownloadDialog(null,true,Properties.downloads.version_manifest_url,manifest_version.getSrc());
+            download.setVisible(true);
+        }
+        if(!version_json.exists()){
+            DownloadDialog download=new DownloadDialog(null,true,this.minecraft_server.getUrlMetaJson(),version_json.getSrc());
+            download.setVisible(true);
+        }
+        if(!server_jar.exists()){
+            DownloadDialog download=new DownloadDialog(null,true,this.minecraft_server.getUrlServerJar(),server_jar.getSrc());
+            download.setVisible(true);
+        }
+        this.createFiles();
+    }
+    
+    public void createFiles(){
+        this.file_run=new Storage(this.ins.getSrc()+"/"+Properties.folders.instances_server+"/start.bat");
+        this.file_eula=new Storage(this.file_run.getFolder()+"/eula.txt");
+        String command=this.ins.cfg.java_path+
+                " -Xms"+this.ins.cfg.memory_min+
+                " -Xmx"+this.ins.cfg.memory_max+
+                " -XX:+UseG1GC -XX:+UnlockExperimentalVMOptions -XX:G1NewSizePercent=20 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20 -XX:MaxGCPauseMillis=50 -XX:+DisableExplicitGC"+
+                " -jar"+
+                " ../../../"+this.minecraft_server.server_jar.getSrc()+
+                " nogui";
+        // -Djava.awt.headless=true
+        this.file_run.write(command);
+        this.file_eula.write("#https://account.mojang.com/documents/minecraft_eula \neula=true");
+        this.ins.server_properties.level_name=Properties.folders.instances_worlds+"/"+this.world.getName();
+        this.ins.server_properties.save();
+        this.file_eula.flush();
+        this.file_run.flush();
+        this.start();
+    }
+    
+    public void start(){
+        try{
+            this.execution=new ExecutionObserver("cmd /c start cmd /k \"title "+this.getId()+" && call "+this.file_run.getName()+"\"",this.file_run.getFolder());
+            this.execution.start();
+        }catch(Exception ex){
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null,"Error al iniciar servidor\n"+ex.getMessage(),"Error",JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        name_instance_label = new javax.swing.JLabel();
+        start_server_btn = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
+        jButton1 = new javax.swing.JButton();
+
+        name_instance_label.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+        name_instance_label.setText("jLabel1");
+
+        start_server_btn.setText("Iniciar servidor");
+        start_server_btn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                start_server_btnActionPerformed(evt);
+            }
+        });
+
+        jLabel1.setText("jLabel1");
+
+        jButton1.setText("jButton1");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
+        this.setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(name_instance_label, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(0, 212, Short.MAX_VALUE)
+                .addComponent(jButton1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(start_server_btn))
+            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(name_instance_label)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(start_server_btn)
+                    .addComponent(jButton1))
+                .addContainerGap(217, Short.MAX_VALUE))
+        );
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void start_server_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_start_server_btnActionPerformed
+        this.createMinecraftServer();
+    }//GEN-LAST:event_start_server_btnActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        try{
+            this.execution.sendToProcess("stop");
+        }catch(Exception ex){
+            ex.printStackTrace();
+        }
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButton1;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel name_instance_label;
+    private javax.swing.JButton start_server_btn;
+    // End of variables declaration//GEN-END:variables
+}
