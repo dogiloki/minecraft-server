@@ -1,6 +1,7 @@
 package com.dogiloki.minecraftserver.core.services;
 
-import com.dogiloki.minecraftserver.core.entities.ListWorlds;
+import com.dogiloki.minecraftserver.application.dao.Properties;
+import com.dogiloki.minecraftserver.core.entities.ListMods;
 import com.dogiloki.multitaks.directory.DirectoryList;
 import com.dogiloki.multitaks.directory.ModelDirectory;
 import com.dogiloki.multitaks.directory.Storage;
@@ -13,44 +14,33 @@ import com.dogiloki.multitaks.directory.enums.DirectoryType;
  */
 
 @Directory(type=DirectoryType.FOLDER)
-public final class Worlds extends ModelDirectory{
+public final class PackagesMods extends ModelDirectory{
     
-    private final ListWorlds item=new ListWorlds();
+    private final ListMods item=new ListMods();
     
-    public Worlds(){
-        
-    }
-    
-    public Worlds(String src){
-        super.aim(src);
+    public PackagesMods(){
+        super.aim(Properties.folders.packages_mods_folder);
         this.exists(true);
         this.reload();
     }
     
-    public Worlds createWorld(String name){
+    public PackagesMods createMods(String name){
         Storage.createFolder(this.getSrc()+"/"+name);
-        this.item.append(name,new World(this.getSrc()+"/"+name));
+        this.item.append(name,new Mods(this.getSrc()+"/"+name));
         return this;
     }
     
-    public Worlds reload(){
+    public PackagesMods reload(){
         DirectoryList folders=this.listFolders();
-        boolean was_worlds=false;
         this.item.clear();
         while(folders.hasNext()){
-            was_worlds=true;
             String name=folders.next().getFileName().toString();
-            this.item.append(name,new World(this.getSrc()+"/"+name));
-        }
-        if(!was_worlds){
-            // Crear mundo por defecto (únicamente la carpeta, no un mundo de minecraft)
-            String name=World.DEFAULT_NAME;
-            this.item.append(name,new World(this.getSrc()+"/"+name));
+            this.item.append(name,new Mods(this.getSrc()+"/"+name));
         }
         return this;
     }
     
-    public ListWorlds items(){
+    public ListMods items(){
         return this.item;
     }
     

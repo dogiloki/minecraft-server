@@ -14,5 +14,6 @@ public class Server extends ModelDirectory{
     public InstanceCfg cfg;
     public ServerProperties server_properties;
     public Worlds worlds;
+    public Mods mods=null;
     
 }

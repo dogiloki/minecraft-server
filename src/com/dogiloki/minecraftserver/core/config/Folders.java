@@ -29,6 +29,9 @@ public class Folders{
     @Expose
     public String minecraft_server_folder="minecraft";
     
+    @Expose
+    public String packages_mods_folder="mods";
+    
     public Folders(){
         
     }
