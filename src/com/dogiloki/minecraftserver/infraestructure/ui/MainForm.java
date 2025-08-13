@@ -29,12 +29,12 @@ import javax.swing.tree.TreePath;
  */
 
 
-public final class FormMain extends javax.swing.JFrame {
+public final class MainForm extends javax.swing.JFrame {
     
     private Instance selected_instance=null;
     private Watcher watcher;
 
-    public FormMain(){
+    public MainForm(){
         initComponents();
         ConfigFile.load(Properties.class);
         this.split_panel.setDividerLocation(200);
@@ -59,6 +59,12 @@ public final class FormMain extends javax.swing.JFrame {
             root.add(node_ins);
         }
         model.reload();
+    }
+    
+    public void resetSelection(){
+        this.selected_instance=null;
+        this.panel_server.removeAll();
+        this.panel_server.updateUI();
     }
     
     @SuppressWarnings("unchecked")
@@ -157,7 +163,7 @@ public final class FormMain extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 700, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 834, Short.MAX_VALUE)
             .addComponent(split_panel)
         );
         layout.setVerticalGroup(
@@ -201,6 +207,7 @@ public final class FormMain extends javax.swing.JFrame {
 
     private void new_instance_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_new_instance_btnActionPerformed
         new InstanceDialog(this,true,null).setVisible(true);
+        this.resetSelection();
     }//GEN-LAST:event_new_instance_btnActionPerformed
 
     private void new_world_instance_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_new_world_instance_btnActionPerformed
@@ -208,23 +215,27 @@ public final class FormMain extends javax.swing.JFrame {
         String name=JOptionPane.showInputDialog(null,"Ingresa el nombre del Mundo:","Crear mundo",JOptionPane.QUESTION_MESSAGE);
         if(name==null) return;
         this.selected_instance.worlds.createWorld(name);
+        this.resetSelection();
     }//GEN-LAST:event_new_world_instance_btnActionPerformed
 
     private void delete_instance_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_delete_instance_btnActionPerformed
         JOptionPane.showMessageDialog(null,"Proximamente...","Eliminar Instancia",JOptionPane.ERROR_MESSAGE);
+        this.resetSelection();
     }//GEN-LAST:event_delete_instance_btnActionPerformed
 
     private void edit_instance_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_edit_instance_btnActionPerformed
         if(this.selected_instance==null) return;
         new InstanceDialog(this,true,this.selected_instance).setVisible(true);
+        this.resetSelection();
     }//GEN-LAST:event_edit_instance_btnActionPerformed
 
     private void start_world_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_start_world_btnActionPerformed
-        
+        this.resetSelection();
     }//GEN-LAST:event_start_world_btnActionPerformed
 
     private void packages_mods_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_packages_mods_btnActionPerformed
         new PackagesModsDialog(this,true).setVisible(true);
+        this.resetSelection();
     }//GEN-LAST:event_packages_mods_btnActionPerformed
 
     public static void main(String args[]) {
@@ -233,15 +244,15 @@ public final class FormMain extends javax.swing.JFrame {
                 try {
                     UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
                 } catch (ClassNotFoundException ex) {
-                    Logger.getLogger(FormMain.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(MainForm.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (InstantiationException ex) {
-                    Logger.getLogger(FormMain.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(MainForm.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (IllegalAccessException ex) {
-                    Logger.getLogger(FormMain.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(MainForm.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (UnsupportedLookAndFeelException ex) {
-                    Logger.getLogger(FormMain.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(MainForm.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                new FormMain().setVisible(true);
+                new MainForm().setVisible(true);
             }
         });
     }

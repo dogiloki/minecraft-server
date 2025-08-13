@@ -45,7 +45,6 @@ public final class MinecraftServer{
     }
     
     public MinecraftServer forge(String name){
-        String regex="^forge-\\d+\\.\\d+\\.\\d+-\\d+(\\.\\d+)*-installer\\.jar$";
         this.forge_version=name.replaceAll("forge-","").replaceAll("-installer.jar","");
         this.forge_jar=new Storage(Properties.folders.libraries_folder+"/"+Properties.folders.libraries_forge+"/"+this.forge_version+"/"+name,DirectoryType.FILE).notExists();
         return this;

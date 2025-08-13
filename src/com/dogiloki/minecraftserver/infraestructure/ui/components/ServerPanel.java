@@ -10,6 +10,7 @@ import com.dogiloki.minecraftserver.infraestructure.utils.ComboItemWrapper;
 import com.dogiloki.multitaks.code.Code;
 import com.dogiloki.multitaks.directory.DirectoryList;
 import com.dogiloki.multitaks.directory.Storage;
+import com.dogiloki.multitaks.directory.enums.DirectoryType;
 import com.dogiloki.multitaks.download.DownloadDialog;
 import com.dogiloki.multitaks.persistent.ExecutionObserver;
 import java.awt.Frame;
@@ -93,38 +94,40 @@ public final class ServerPanel extends javax.swing.JPanel{
     public void createFiles(){
         this.file_run=new Storage(this.ins.getSrc()+"/"+Properties.folders.instances_server+"/start.bat");
         this.file_eula=new Storage(this.file_run.getFolder()+"/eula.txt");
+        StringBuilder user_jvm_args=new StringBuilder();
+        user_jvm_args.append("-Xms").append(this.ins.cfg.memory_min)
+                .append(" -Xmx").append(this.ins.cfg.memory_max)
+                .append(" -XX:+UseG1GC")
+                .append(" -XX:+UseG1GC")
+                .append(" -XX:+UnlockExperimentalVMOptions")
+                .append(" -XX:G1NewSizePercent=20")
+                .append(" -XX:G1MaxNewSizePercent=40")
+                .append(" -XX:G1HeapRegionSize=8M")
+                .append(" -XX:G1ReservePercent=20")
+                .append(" -XX:MaxGCPauseMillis=50")
+                .append(" -XX:+DisableExplicitGC");
         String command="\""+this.ins.cfg.java_path+"\""+
-                " -Xms"+this.ins.cfg.memory_min+
-                " -Xmx"+this.ins.cfg.memory_max+
-                " -XX:+UseG1GC -XX:+UnlockExperimentalVMOptions -XX:G1NewSizePercent=20 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20 -XX:MaxGCPauseMillis=50 -XX:+DisableExplicitGC"+
-                " -jar"+
+                " -jar "+user_jvm_args.toString()+
                 " ../../../"+this.minecraft_server.server_jar.getSrc()+
                 " nogui";
         if(this.ins.cfg.usedForge()){
-            Storage read_run=new Storage(this.minecraft_server.forge_jar.getSrc());
-            Scanner scanner=read_run.readIterator();
-            command=null;
-            while(scanner.hasNext()){
-                String line=scanner.next();
-                if(line.startsWith("java")){
-                    command=line
-                            .replace("java","\""+this.ins.cfg.java_path+"\"")
-                            .replace("@user_jvm_args.txt"," -Xms"+this.ins.cfg.memory_min+" -Xmx"+this.ins.cfg.memory_max+" -XX:+UseG1GC -XX:+UnlockExperimentalVMOptions -XX:G1NewSizePercent=20 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20 -XX:MaxGCPauseMillis=50 -XX:+DisableExplicitGC")
-                            .replace("@libraries","@libraries")+" nogui";
-                    break;
-                }
-            }
-            if(command==null){
+            Storage file_args=new Storage(this.minecraft_server.forge_jar.getFolder()+"/user_jvm_args.txt",DirectoryType.FILE).notExists();
+            System.out.println(file_args.getSrc());
+            file_args.write(user_jvm_args.toString());
+            file_args.flush();
+            file_args.close();
+            command=new Storage(this.minecraft_server.forge_jar.getSrc()).read();
+            command=command.replace("java -jar ","\""+this.ins.cfg.java_path+"\" -jar ../../../"+this.minecraft_server.forge_jar.getFolder()+"/");
+            command=command.replace("java @","\""+this.ins.cfg.java_path+"\""+" @../../../"+this.minecraft_server.forge_jar.getFolder()+"/");
+            if(command==null || command.equals("")){
                 DirectoryList jar_files=new Storage(minecraft_server.forge_jar.getFolder()).listFiles();
                 Path jar_file;
                 while((jar_file=jar_files.next())!=null){
                     String name=jar_file.getFileName().toString();
                     if(!name.contains("universal")) continue;
                     command="\""+this.ins.cfg.java_path+"\""+
-                        " -Xms"+this.ins.cfg.memory_min+
-                        " -Xmx"+this.ins.cfg.memory_max+
-                        " -XX:+UseG1GC -XX:+UnlockExperimentalVMOptions -XX:G1NewSizePercent=20 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20 -XX:MaxGCPauseMillis=50 -XX:+DisableExplicitGC"+
-                        " -jar"+
+                        " -jar "+user_jvm_args.toString()+
+                            
                         " ../../../"+jar_file.toString()+
                         " nogui";
                 }
@@ -138,8 +141,8 @@ public final class ServerPanel extends javax.swing.JPanel{
                 );
                 // Mods
                 Mods mods=this.packages_mods_box.getItemAt(this.packages_mods_box.getSelectedIndex()).getValue();
+                Storage.deleteFile(Storage.getDir()+"/"+this.ins.getSrc()+"/"+Properties.folders.instances_server+"/"+Properties.folders.instances_mods);
                 if(mods!=null){
-                    Storage.deleteFile(Storage.getDir()+"/"+this.ins.getSrc()+"/"+Properties.folders.instances_server+"/"+Properties.folders.instances_mods);
                     Files.createSymbolicLink(
                         Paths.get(Storage.getDir()+"/"+this.ins.getSrc()+"/"+Properties.folders.instances_server+"/"+Properties.folders.instances_mods),
                         Paths.get(Storage.getDir()+"/"+mods.getSrc())

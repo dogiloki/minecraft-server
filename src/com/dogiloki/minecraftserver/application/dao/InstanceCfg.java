@@ -1,7 +1,6 @@
 package com.dogiloki.minecraftserver.application.dao;
 
 import com.dogiloki.multitaks.directory.ModelDirectory;
-import com.dogiloki.multitaks.directory.Storage;
 import com.dogiloki.multitaks.directory.annotations.Directory;
 import com.dogiloki.multitaks.directory.enums.DirectoryType;
 import com.google.gson.annotations.Expose;
@@ -18,8 +17,6 @@ public final class InstanceCfg extends ModelDirectory{
     final public static String JAVA_PATH="java";
     final public static String MEMORY_MIN="1024M";
     final public static String MEMORY_MAX="2045M";
-    
-    public Storage file_forge_installer=null;
     
     @Expose
     public String name="";
