@@ -21,8 +21,8 @@ public final class ConfigurationPanel extends javax.swing.JPanel {
     
     public void getConfig(){
         this.path_java_box.setText(this.ins.cfg.java_path);
-        this.memory_max_box.setText(this.ins.cfg.memory_min);
-        this.memory_min_box.setText(this.ins.cfg.memory_max);
+        this.memory_min_box.setText(this.ins.cfg.memory_min);
+        this.memory_max_box.setText(this.ins.cfg.memory_max);
     }
     
     @SuppressWarnings("unchecked")
@@ -179,12 +179,15 @@ public final class ConfigurationPanel extends javax.swing.JPanel {
         String path_java=Storage.selectFile();
         if(path_java!=null && !path_java.trim().equals("")){
             this.path_java_box.setText(path_java);
+            this.ins.cfg.java_path=this.path_java_box.getText();
         }
     }//GEN-LAST:event_btn_path_java_exploreActionPerformed
 
     private void btn_reset_memoryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_reset_memoryActionPerformed
         this.memory_max_box.setText(InstanceCfg.MEMORY_MIN);
         this.memory_min_box.setText(InstanceCfg.MEMORY_MAX);
+        this.ins.cfg.memory_min=this.memory_min_box.getText();
+        this.ins.cfg.memory_max=this.memory_max_box.getText();
     }//GEN-LAST:event_btn_reset_memoryActionPerformed
 
     private void path_java_boxKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_path_java_boxKeyReleased

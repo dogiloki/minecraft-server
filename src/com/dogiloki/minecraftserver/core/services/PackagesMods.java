@@ -37,6 +37,7 @@ public final class PackagesMods extends ModelDirectory{
             String name=folders.next().getFileName().toString();
             this.item.append(name,new Mods(this.getSrc()+"/"+name));
         }
+        this.toString();
         return this;
     }
     

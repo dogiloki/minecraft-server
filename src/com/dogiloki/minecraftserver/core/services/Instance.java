@@ -3,7 +3,7 @@ package com.dogiloki.minecraftserver.core.services;
 import com.dogiloki.minecraftserver.application.dao.InstanceCfg;
 import com.dogiloki.minecraftserver.application.dao.Properties;
 import com.dogiloki.minecraftserver.application.dao.ServerProperties;
-import com.dogiloki.minecraftserver.infraestructure.ui.CopyDialog;
+import com.dogiloki.multitaks.directory.Storage;
 import com.dogiloki.multitaks.directory.annotations.Directory;
 import com.dogiloki.multitaks.directory.enums.DirectoryType;
 import com.dogiloki.multitaks.persistent.ExecutionObserver;
@@ -34,12 +34,14 @@ public final class Instance extends Server{
         try{
             if(this.cfg.file_forge_installer!=null){
                 MinecraftServer minecraft_server=new MinecraftServer(this.cfg).forge(this.cfg.file_forge_installer.getName());
+                Storage.deleteFolder(minecraft_server.forge_jar.getFolder());
+                Storage.createFolder(minecraft_server.forge_jar.getFolder());
                 ExecutionObserver execution=new ExecutionObserver(
-                        "\""+this.cfg.java_path+"\" -jar "+this.cfg.file_forge_installer.getSrc()+" --installServer "+
+                        "\""+this.cfg.java_path+"\" -jar \""+this.cfg.file_forge_installer.getSrc()+"\" --installServer",
                         minecraft_server.forge_jar.getFolder()
                 );
                 execution.start((line,posi)->{
-                    
+                    System.out.println(line);
                 });
                 this.cfg.forge_version=minecraft_server.forge_version;
             }

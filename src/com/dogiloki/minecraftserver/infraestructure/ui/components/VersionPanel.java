@@ -90,7 +90,7 @@ public final class VersionPanel extends javax.swing.JPanel{
         DefaultTableModel model=new DefaultTableModel();
         model.addColumn("Versión");
         model.addColumn("Nombre");
-        DirectoryList forge_versions=new Storage(Properties.folders.libraries_folder+"/"+Properties.folders.libraries_forge,DirectoryType.FOLDER).listFolders();
+        DirectoryList forge_versions=new Storage(Properties.folders.libraries_folder+"/"+Properties.folders.libraries_forge,DirectoryType.FOLDER).notExists().listFolders();
         int default_selected_row=-1;
         int current_row=0;
         while(forge_versions.hasNext()){

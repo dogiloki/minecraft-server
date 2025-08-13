@@ -3,6 +3,7 @@ package com.dogiloki.minecraftserver.infraestructure.ui;
 import com.dogiloki.minecraftserver.application.dao.Properties;
 import com.dogiloki.minecraftserver.core.services.Instance;
 import com.dogiloki.minecraftserver.core.services.World;
+import com.dogiloki.minecraftserver.infraestructure.ui.components.PackagesModsDialog;
 import com.dogiloki.minecraftserver.infraestructure.ui.components.ServerPanel;
 import com.dogiloki.multitaks.Function;
 import com.dogiloki.multitaks.Watcher;
@@ -66,6 +67,7 @@ public final class FormMain extends javax.swing.JFrame {
 
         instances_root_popup = new javax.swing.JPopupMenu();
         new_instance_btn = new javax.swing.JMenuItem();
+        packages_mods_btn = new javax.swing.JMenuItem();
         instances_item_popup = new javax.swing.JPopupMenu();
         edit_instance_btn = new javax.swing.JMenuItem();
         new_world_instance_btn = new javax.swing.JMenuItem();
@@ -86,6 +88,14 @@ public final class FormMain extends javax.swing.JFrame {
             }
         });
         instances_root_popup.add(new_instance_btn);
+
+        packages_mods_btn.setText("Paquetes de Mods");
+        packages_mods_btn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                packages_mods_btnActionPerformed(evt);
+            }
+        });
+        instances_root_popup.add(packages_mods_btn);
 
         edit_instance_btn.setText("Editar Instancia");
         edit_instance_btn.addActionListener(new java.awt.event.ActionListener() {
@@ -201,7 +211,7 @@ public final class FormMain extends javax.swing.JFrame {
     }//GEN-LAST:event_new_world_instance_btnActionPerformed
 
     private void delete_instance_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_delete_instance_btnActionPerformed
-        
+        JOptionPane.showMessageDialog(null,"Proximamente...","Eliminar Instancia",JOptionPane.ERROR_MESSAGE);
     }//GEN-LAST:event_delete_instance_btnActionPerformed
 
     private void edit_instance_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_edit_instance_btnActionPerformed
@@ -212,6 +222,10 @@ public final class FormMain extends javax.swing.JFrame {
     private void start_world_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_start_world_btnActionPerformed
         
     }//GEN-LAST:event_start_world_btnActionPerformed
+
+    private void packages_mods_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_packages_mods_btnActionPerformed
+        new PackagesModsDialog(this,true).setVisible(true);
+    }//GEN-LAST:event_packages_mods_btnActionPerformed
 
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -243,6 +257,7 @@ public final class FormMain extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JMenuItem new_instance_btn;
     private javax.swing.JMenuItem new_world_instance_btn;
+    private javax.swing.JMenuItem packages_mods_btn;
     private javax.swing.JPanel panel_server;
     private javax.swing.JSplitPane split_panel;
     private javax.swing.JMenuItem start_world_btn;
