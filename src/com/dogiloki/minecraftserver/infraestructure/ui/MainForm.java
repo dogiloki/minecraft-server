@@ -12,6 +12,7 @@ import com.dogiloki.multitaks.directory.ConfigFile;
 import com.dogiloki.multitaks.directory.DirectoryList;
 import com.dogiloki.multitaks.directory.Storage;
 import com.dogiloki.multitaks.directory.enums.DirectoryType;
+import com.dogiloki.multitaks.download.DownloadDialog;
 import com.dogiloki.multitaks.logger.AppLogger;
 import com.dogiloki.multitaks.logger.LogEntry;
 import com.dogiloki.multitaks.logger.contracts.LogListener;
@@ -245,25 +246,6 @@ public final class MainForm extends javax.swing.JFrame {
             }    
         }
     }//GEN-LAST:event_instances_treeMousePressed
-
-    public static void main(String args[]) {
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                try {
-                    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-                } catch (ClassNotFoundException ex) {
-                    Logger.getLogger(MainForm.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (InstantiationException ex) {
-                    Logger.getLogger(MainForm.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (IllegalAccessException ex) {
-                    Logger.getLogger(MainForm.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (UnsupportedLookAndFeelException ex) {
-                    Logger.getLogger(MainForm.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                new MainForm().setVisible(true);
-            }
-        });
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem delete_instance_btn;

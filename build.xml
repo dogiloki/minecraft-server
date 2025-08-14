@@ -9,7 +9,32 @@
 <!-- in the project's Project Properties dialog box.-->
 <project name="minecraftServer" default="default" basedir=".">
     <description>Builds, tests, and runs the project minecraftServer.</description>
-    <import file="nbproject/build-impl.xml"/>
+    <import file="nbproject/build-impl.xml"/>    
+    
+    <target name="-post-jar">
+        <!-- Generar core.jar por separado -->
+        <jar destfile="${dist.dir}/core.jar" basedir="${build.classes.dir}">
+            <include name="com/dogiloki/minecraftserver/core/**"/>
+            <exclude name="com/dogiloki/minecraftserver/*.*"/>
+            <exclude name="com/dogiloki/minecraftserver/*.*"/>
+        </jar>
+        
+        <!-- Generar application.jar por separado -->
+        <jar destfile="${dist.dir}/application.jar" basedir="${build.classes.dir}">
+            <include name="com/dogiloki/minecraftserver/application/**"/>
+            <exclude name="com/dogiloki/minecraftserver/*.*"/>
+            <exclude name="com/dogiloki/minecraftserver/*.*"/>
+        </jar>
+        
+        <!-- Generar infraestructure.jar por separado -->
+        <jar destfile="${dist.dir}/infraestructure.jar" basedir="${build.classes.dir}">
+            <include name="com/dogiloki/minecraftserver/infraestructure/**"/>
+            <exclude name="com/dogiloki/minecraftserver/*.*"/>
+            <exclude name="com/dogiloki/minecraftserver/*.*"/>
+        </jar>
+    </target>
+
+
     <!--
 
     There exist several targets which are by default empty and which can be 
