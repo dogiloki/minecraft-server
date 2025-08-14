@@ -12,12 +12,14 @@ import com.dogiloki.multitaks.directory.DirectoryList;
 import com.dogiloki.multitaks.directory.Storage;
 import com.dogiloki.multitaks.directory.enums.DirectoryType;
 import com.dogiloki.multitaks.download.DownloadDialog;
+import com.dogiloki.multitaks.logger.AppLogger;
 import com.dogiloki.multitaks.persistent.ExecutionObserver;
 import java.awt.Frame;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Scanner;
 import javax.swing.JOptionPane;
 
 /**
@@ -44,6 +46,7 @@ public final class ServerPanel extends javax.swing.JPanel{
         this.name_instance_label.setText(this.ins.cfg.name+" - "+this.world.getName());
         this.version_label.setText(this.ins.cfg.version);
         this.forge_version_label.setText(this.ins.cfg.forge_version);
+        this.world_label.setText(this.world.toString());
         /*
         // Verificar si ya está iniciado el servidor
         RuntimeMXBean runtime=ManagementFactory.getRuntimeMXBean();
@@ -57,6 +60,7 @@ public final class ServerPanel extends javax.swing.JPanel{
             }
         }
         */
+        this.canStart(this.isStarted());
         this.loadPackagesMods();
     }
     
@@ -70,7 +74,35 @@ public final class ServerPanel extends javax.swing.JPanel{
     }
     
     public String getId(){
-        return Code.encode64(this.name_instance_label.getText());
+        return Code.encode64(this.ins.cfg.id);
+    }
+    
+    public void canStart(boolean can){
+        if(can){
+            this.start_server_btn.setEnabled(false);
+            this.packages_mods_box.setEnabled(false);
+        }else{
+            this.start_server_btn.setEnabled(true);
+            this.packages_mods_box.setEnabled(true);
+        }
+    }
+    
+    public boolean isStarted(){
+        try{
+            Process process=Runtime.getRuntime().exec("cmd /c wmic process where \"name='cmd.exe'\" get CommandLine");
+            BufferedReader reader=new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String line;
+            while((line=reader.readLine())!=null){
+                // Si la línea contine el título (id) ya esta abierto
+                if(line.contains(this.getId())){
+                    return true;
+                }
+            }
+        }catch(Exception ex){
+            ex.printStackTrace();
+            AppLogger.error(ex.getMessage());
+        }
+        return false;
     }
     
     // Verificar que la versión del servidor este descargada
@@ -126,7 +158,7 @@ public final class ServerPanel extends javax.swing.JPanel{
                 Path jar_file;
                 while((jar_file=jar_files.next())!=null){
                     String name=jar_file.getFileName().toString();
-                    if(!name.contains("universal")) continue;
+                    if(!name.contains("universal") && !name.contains("forge")) continue;
                     command="\""+this.ins.cfg.java_path+"\""+
                         " -jar "+user_jvm_args.toString()+
                             
@@ -168,6 +200,7 @@ public final class ServerPanel extends javax.swing.JPanel{
         try{
             this.execution=new ExecutionObserver("cmd /c start cmd /k \"title "+this.getId()+" && call "+this.file_run.getName()+"\"",this.file_run.getFolder());
             this.execution.start();
+            this.canStart(true);
         }catch(Exception ex){
             ex.printStackTrace();
             JOptionPane.showMessageDialog(null,"Error al iniciar servidor\n"+ex.getMessage(),"Error",JOptionPane.ERROR_MESSAGE);
@@ -180,13 +213,14 @@ public final class ServerPanel extends javax.swing.JPanel{
 
         name_instance_label = new javax.swing.JLabel();
         start_server_btn = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
         packages_mods_box = new javax.swing.JComboBox<>();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         version_label = new javax.swing.JLabel();
         forge_version_label = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        world_label = new javax.swing.JLabel();
 
         name_instance_label.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         name_instance_label.setText("jLabel1");
@@ -198,22 +232,23 @@ public final class ServerPanel extends javax.swing.JPanel{
             }
         });
 
-        jButton1.setText("Detener servidor");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
-
+        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel1.setText("Paquete de Mods");
 
+        jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel2.setText("Versión Minecraft");
 
+        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel3.setText("Versión Forge");
 
         version_label.setText("jLabel4");
 
         forge_version_label.setText("jLabel4");
+
+        jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLabel4.setText("Mundo");
+
+        world_label.setText("jLabel4");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -222,22 +257,31 @@ public final class ServerPanel extends javax.swing.JPanel{
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(name_instance_label, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(packages_mods_box, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 248, Short.MAX_VALUE)
-                        .addComponent(jButton1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(start_server_btn))
+                        .addComponent(jLabel3)
+                        .addGap(5, 5, 5)
+                        .addComponent(forge_version_label)
+                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel3)
-                            .addComponent(version_label)
-                            .addComponent(forge_version_label))
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
+                            .addComponent(name_instance_label, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel1)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel2)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(version_label))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel4)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(world_label)))
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(packages_mods_box, 0, 364, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(start_server_btn)))
+                        .addContainerGap())))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -247,20 +291,22 @@ public final class ServerPanel extends javax.swing.JPanel{
                 .addGap(18, 18, 18)
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(packages_mods_box, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(packages_mods_box, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(start_server_btn))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(start_server_btn)
-                    .addComponent(jButton1))
+                    .addComponent(jLabel2)
+                    .addComponent(version_label))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel2)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(forge_version_label))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(version_label)
-                .addGap(18, 18, 18)
-                .addComponent(jLabel3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(forge_version_label)
-                .addContainerGap(35, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel4)
+                    .addComponent(world_label))
+                .addContainerGap(153, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -268,24 +314,17 @@ public final class ServerPanel extends javax.swing.JPanel{
         this.createMinecraftServer();
     }//GEN-LAST:event_start_server_btnActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        try{
-            this.execution.sendToProcess("stop");
-        }catch(Exception ex){
-            ex.printStackTrace();
-        }
-    }//GEN-LAST:event_jButton1ActionPerformed
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel forge_version_label;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel name_instance_label;
     private javax.swing.JComboBox<ComboItemWrapper<Mods>> packages_mods_box;
     private javax.swing.JButton start_server_btn;
     private javax.swing.JLabel version_label;
+    private javax.swing.JLabel world_label;
     // End of variables declaration//GEN-END:variables
 }

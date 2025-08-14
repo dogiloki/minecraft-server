@@ -1,5 +1,6 @@
 package com.dogiloki.minecraftserver.application.dao;
 
+import com.dogiloki.multitaks.ObjectId;
 import com.dogiloki.multitaks.directory.ModelDirectory;
 import com.dogiloki.multitaks.directory.annotations.Directory;
 import com.dogiloki.multitaks.directory.enums.DirectoryType;
@@ -18,6 +19,8 @@ public final class InstanceCfg extends ModelDirectory{
     final public static String MEMORY_MIN="1024M";
     final public static String MEMORY_MAX="2045M";
     
+    @Expose
+    public String id=ObjectId.generate();
     @Expose
     public String name="";
     @Expose
