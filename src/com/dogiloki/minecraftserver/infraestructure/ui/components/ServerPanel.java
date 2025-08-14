@@ -42,6 +42,8 @@ public final class ServerPanel extends javax.swing.JPanel{
         this.ins=ins;
         this.world=world;
         this.name_instance_label.setText(this.ins.cfg.name+" - "+this.world.getName());
+        this.version_label.setText(this.ins.cfg.version);
+        this.forge_version_label.setText(this.ins.cfg.forge_version);
         /*
         // Verificar si ya está iniciado el servidor
         RuntimeMXBean runtime=ManagementFactory.getRuntimeMXBean();
@@ -112,13 +114,13 @@ public final class ServerPanel extends javax.swing.JPanel{
                 " nogui";
         if(this.ins.cfg.usedForge()){
             Storage file_args=new Storage(this.minecraft_server.forge_jar.getFolder()+"/user_jvm_args.txt",DirectoryType.FILE).notExists();
-            System.out.println(file_args.getSrc());
             file_args.write(user_jvm_args.toString());
             file_args.flush();
             file_args.close();
             command=new Storage(this.minecraft_server.forge_jar.getSrc()).read();
             command=command.replace("java -jar ","\""+this.ins.cfg.java_path+"\" -jar ../../../"+this.minecraft_server.forge_jar.getFolder()+"/");
             command=command.replace("java @","\""+this.ins.cfg.java_path+"\""+" @../../../"+this.minecraft_server.forge_jar.getFolder()+"/");
+            command=command.replace("%*"," nogui %*");
             if(command==null || command.equals("")){
                 DirectoryList jar_files=new Storage(minecraft_server.forge_jar.getFolder()).listFiles();
                 Path jar_file;
@@ -180,6 +182,11 @@ public final class ServerPanel extends javax.swing.JPanel{
         start_server_btn = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
         packages_mods_box = new javax.swing.JComboBox<>();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        version_label = new javax.swing.JLabel();
+        forge_version_label = new javax.swing.JLabel();
 
         name_instance_label.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         name_instance_label.setText("jLabel1");
@@ -191,35 +198,69 @@ public final class ServerPanel extends javax.swing.JPanel{
             }
         });
 
-        jButton1.setText("jButton1");
+        jButton1.setText("Detener servidor");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
             }
         });
 
+        jLabel1.setText("Paquete de Mods");
+
+        jLabel2.setText("Versión Minecraft");
+
+        jLabel3.setText("Versión Forge");
+
+        version_label.setText("jLabel4");
+
+        forge_version_label.setText("jLabel4");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(name_instance_label, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(packages_mods_box, 0, 206, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(start_server_btn))
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(name_instance_label, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(packages_mods_box, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 248, Short.MAX_VALUE)
+                        .addComponent(jButton1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(start_server_btn))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel3)
+                            .addComponent(version_label)
+                            .addComponent(forge_version_label))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
                 .addComponent(name_instance_label)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(packages_mods_box, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(start_server_btn)
-                    .addComponent(jButton1)
-                    .addComponent(packages_mods_box, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(239, Short.MAX_VALUE))
+                    .addComponent(jButton1))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(version_label)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(forge_version_label)
+                .addContainerGap(35, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -237,9 +278,14 @@ public final class ServerPanel extends javax.swing.JPanel{
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel forge_version_label;
     private javax.swing.JButton jButton1;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel name_instance_label;
     private javax.swing.JComboBox<ComboItemWrapper<Mods>> packages_mods_box;
     private javax.swing.JButton start_server_btn;
+    private javax.swing.JLabel version_label;
     // End of variables declaration//GEN-END:variables
 }

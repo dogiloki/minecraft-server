@@ -143,8 +143,8 @@ public final class MainForm extends javax.swing.JFrame {
         });
 
         instances_tree.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                instances_treeMouseClicked(evt);
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                instances_treeMousePressed(evt);
             }
         });
         jScrollPane2.setViewportView(instances_tree);
@@ -163,15 +163,15 @@ public final class MainForm extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 834, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 889, Short.MAX_VALUE)
             .addComponent(split_panel)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(split_panel, javax.swing.GroupLayout.DEFAULT_SIZE, 294, Short.MAX_VALUE)
+                .addComponent(split_panel, javax.swing.GroupLayout.DEFAULT_SIZE, 295, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 202, Short.MAX_VALUE))
         );
 
         pack();
@@ -180,30 +180,6 @@ public final class MainForm extends javax.swing.JFrame {
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         
     }//GEN-LAST:event_formWindowClosing
-
-    private void instances_treeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_instances_treeMouseClicked
-        TreePath path=this.instances_tree.getPathForLocation(evt.getX(),evt.getY());
-        if(path==null){
-            return;
-        }
-        DefaultMutableTreeNode node=(DefaultMutableTreeNode)path.getLastPathComponent();
-        DefaultMutableTreeNode parent=(DefaultMutableTreeNode)node.getParent();
-        this.instances_tree.setSelectionPath(path);
-        if(SwingUtilities.isRightMouseButton(evt)){
-            if(node==this.instances_tree.getModel().getRoot()){
-                this.instances_root_popup.show(this.instances_tree,evt.getX(),evt.getY());
-            }else if(parent!=null && parent==node.getRoot()){
-                this.instances_item_popup.show(this.instances_tree,evt.getX(),evt.getY());
-                this.selected_instance=(Instance)node.getUserObject();
-            }
-        }else{
-            if(node.isLeaf()){
-                this.selected_instance=(Instance)parent.getUserObject();
-                Function.setPanel(this.panel_server,new ServerPanel(this,this.selected_instance,(World)node.getUserObject()));
-            }
-            
-        }
-    }//GEN-LAST:event_instances_treeMouseClicked
 
     private void new_instance_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_new_instance_btnActionPerformed
         new InstanceDialog(this,true,null).setVisible(true);
@@ -237,6 +213,29 @@ public final class MainForm extends javax.swing.JFrame {
         new PackagesModsDialog(this,true).setVisible(true);
         this.resetSelection();
     }//GEN-LAST:event_packages_mods_btnActionPerformed
+
+    private void instances_treeMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_instances_treeMousePressed
+        TreePath path=this.instances_tree.getPathForLocation(evt.getX(),evt.getY());
+        if(path==null){
+            return;
+        }
+        DefaultMutableTreeNode node=(DefaultMutableTreeNode)path.getLastPathComponent();
+        DefaultMutableTreeNode parent=(DefaultMutableTreeNode)node.getParent();
+        this.instances_tree.setSelectionPath(path);
+        if(SwingUtilities.isRightMouseButton(evt)){
+            if(node==this.instances_tree.getModel().getRoot()){
+                this.instances_root_popup.show(this.instances_tree,evt.getX(),evt.getY());
+            }else if(parent!=null && parent==node.getRoot()){
+                this.instances_item_popup.show(this.instances_tree,evt.getX(),evt.getY());
+                this.selected_instance=(Instance)node.getUserObject();
+            }
+        }else{
+            if(node.isLeaf()){
+                this.selected_instance=(Instance)parent.getUserObject();
+                Function.setPanel(this.panel_server,new ServerPanel(this,this.selected_instance,(World)node.getUserObject()));
+            }    
+        }
+    }//GEN-LAST:event_instances_treeMousePressed
 
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
