@@ -6,8 +6,7 @@ import com.dogiloki.minecraftserver.infraestructure.ui.components.ConfigurationP
 import com.dogiloki.minecraftserver.infraestructure.ui.components.ServerPropertiesPanel;
 import com.dogiloki.minecraftserver.infraestructure.ui.components.VersionPanel;
 import com.dogiloki.multitaks.Function;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
+import com.dogiloki.multitaks.logger.AppLogger;
 
 /**
  *
@@ -42,12 +41,6 @@ public final class InstanceDialog extends javax.swing.JDialog{
     
     public void getConfig(){
         this.caja_nombre.setText(this.ins.cfg.name);
-    }
-    
-    public JPanel resizablePanel(JPanel panel){
-        panel.setSize(this.panel_frame.getWidth(),this.panel_frame.getHeight());
-        panel.setLocation(0,0);
-        return panel;
     }
     
     @SuppressWarnings("unchecked")
@@ -160,7 +153,8 @@ public final class InstanceDialog extends javax.swing.JDialog{
 
     private void btn_saveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_saveActionPerformed
         if(!this.ins.save(Properties.folders.instances_folder+"/"+this.ins.cfg.name)){
-            JOptionPane.showMessageDialog(null,"Error al crear instancia","Error",JOptionPane.ERROR_MESSAGE);
+            AppLogger.logger().showMessage();
+            AppLogger.error("Error al crear instancia");
         }
         dispose();
     }//GEN-LAST:event_btn_saveActionPerformed

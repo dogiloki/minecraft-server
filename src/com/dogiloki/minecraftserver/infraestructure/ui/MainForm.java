@@ -12,6 +12,9 @@ import com.dogiloki.multitaks.directory.ConfigFile;
 import com.dogiloki.multitaks.directory.DirectoryList;
 import com.dogiloki.multitaks.directory.Storage;
 import com.dogiloki.multitaks.directory.enums.DirectoryType;
+import com.dogiloki.multitaks.logger.AppLogger;
+import com.dogiloki.multitaks.logger.LogEntry;
+import com.dogiloki.multitaks.logger.contracts.LogListener;
 import java.nio.file.Path;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -37,6 +40,12 @@ public final class MainForm extends javax.swing.JFrame {
     public MainForm(){
         initComponents();
         ConfigFile.load(Properties.class);
+        AppLogger.logger().getLog().addListener(new LogListener(){
+            @Override
+            public void onLogAdded(LogEntry entry){
+                log_server_text.setText(entry.toString()+"\n"+log_server_text.getText());
+            }
+        });
         this.split_panel.setDividerLocation(200);
         this.setLocationRelativeTo(null);
         this.loadInstances();
@@ -63,8 +72,8 @@ public final class MainForm extends javax.swing.JFrame {
     
     public void resetSelection(){
         this.selected_instance=null;
-        this.panel_server.removeAll();
-        this.panel_server.updateUI();
+        this.server_panel.removeAll();
+        this.server_panel.updateUI();
     }
     
     @SuppressWarnings("unchecked")
@@ -83,9 +92,9 @@ public final class MainForm extends javax.swing.JFrame {
         split_panel = new javax.swing.JSplitPane();
         jScrollPane2 = new javax.swing.JScrollPane();
         instances_tree = new javax.swing.JTree();
-        panel_server = new javax.swing.JPanel();
+        server_panel = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        text_serve_log = new javax.swing.JTextArea();
+        log_server_text = new javax.swing.JTextArea();
 
         new_instance_btn.setText("Nuevo");
         new_instance_btn.addActionListener(new java.awt.event.ActionListener() {
@@ -151,13 +160,13 @@ public final class MainForm extends javax.swing.JFrame {
 
         split_panel.setLeftComponent(jScrollPane2);
 
-        panel_server.setLayout(new java.awt.GridLayout(1, 0));
-        split_panel.setRightComponent(panel_server);
+        server_panel.setLayout(new java.awt.GridLayout(1, 0));
+        split_panel.setRightComponent(server_panel);
 
-        text_serve_log.setColumns(20);
-        text_serve_log.setRows(5);
-        text_serve_log.setWrapStyleWord(true);
-        jScrollPane1.setViewportView(text_serve_log);
+        log_server_text.setColumns(20);
+        log_server_text.setRows(5);
+        log_server_text.setWrapStyleWord(true);
+        jScrollPane1.setViewportView(log_server_text);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -232,7 +241,7 @@ public final class MainForm extends javax.swing.JFrame {
         }else{
             if(node.isLeaf()){
                 this.selected_instance=(Instance)parent.getUserObject();
-                Function.setPanel(this.panel_server,new ServerPanel(this,this.selected_instance,(World)node.getUserObject()));
+                Function.setPanel(this.server_panel,new ServerPanel(this,this.selected_instance,(World)node.getUserObject()));
             }    
         }
     }//GEN-LAST:event_instances_treeMousePressed
@@ -265,12 +274,12 @@ public final class MainForm extends javax.swing.JFrame {
     private javax.swing.JPopupMenu instances_world_popup;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JTextArea log_server_text;
     private javax.swing.JMenuItem new_instance_btn;
     private javax.swing.JMenuItem new_world_instance_btn;
     private javax.swing.JMenuItem packages_mods_btn;
-    private javax.swing.JPanel panel_server;
+    private javax.swing.JPanel server_panel;
     private javax.swing.JSplitPane split_panel;
     private javax.swing.JMenuItem start_world_btn;
-    private javax.swing.JTextArea text_serve_log;
     // End of variables declaration//GEN-END:variables
 }

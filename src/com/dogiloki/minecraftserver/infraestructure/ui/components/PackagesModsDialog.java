@@ -3,7 +3,6 @@ package com.dogiloki.minecraftserver.infraestructure.ui.components;
 import com.dogiloki.minecraftserver.application.dao.Properties;
 import com.dogiloki.minecraftserver.core.services.Mods;
 import com.dogiloki.minecraftserver.core.services.PackagesMods;
-import com.dogiloki.minecraftserver.infraestructure.ui.CopyDialog;
 import com.dogiloki.minecraftserver.infraestructure.utils.ListElementWrapper;
 import com.dogiloki.multitaks.directory.DirectoryList;
 import com.dogiloki.multitaks.directory.Storage;

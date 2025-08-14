@@ -1,0 +1,3 @@
+[21:28:37] [INFO] Obteniendo instancias
+[21:47:15] [INFO] Obteniendo instancias
+[22:14:43] [ERROR] Error al crear instancia

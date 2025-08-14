@@ -38,6 +38,9 @@ public class Folders{
     @Expose
     public String packages_mods_folder="mods";
     
+    @Expose
+    public String logger="logs";
+    
     public Folders(){
         
     }
