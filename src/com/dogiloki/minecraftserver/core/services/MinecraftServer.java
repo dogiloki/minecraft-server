@@ -55,6 +55,9 @@ public final class MinecraftServer{
     }
     
     public Storage getForgeJar(){
+        if(!this.cfg.usedForge()){
+            return null;
+        }
         Storage forge_file=new Storage(Properties.folders.libraries_folder+"/"+Properties.folders.libraries_forge+"/"+this.forge_version+"/run.bat",DirectoryType.FILE);
         if(forge_file.exists(true)){
             return forge_file;
