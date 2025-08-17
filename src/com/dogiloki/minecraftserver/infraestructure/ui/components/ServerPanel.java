@@ -3,10 +3,7 @@ package com.dogiloki.minecraftserver.infraestructure.ui.components;
 import com.dogiloki.minecraftserver.application.dao.Properties;
 import com.dogiloki.minecraftserver.core.services.Instance;
 import com.dogiloki.minecraftserver.core.services.MinecraftServer;
-import com.dogiloki.minecraftserver.core.services.Mods;
-import com.dogiloki.minecraftserver.core.services.PackagesMods;
 import com.dogiloki.minecraftserver.core.services.World;
-import com.dogiloki.minecraftserver.infraestructure.utils.ComboItemWrapper;
 import com.dogiloki.multitaks.code.Code;
 import com.dogiloki.multitaks.directory.DirectoryList;
 import com.dogiloki.multitaks.directory.Storage;
@@ -17,7 +14,6 @@ import com.dogiloki.multitaks.persistent.ExecutionObserver;
 import java.awt.Frame;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import javax.swing.JOptionPane;
 
@@ -43,7 +39,6 @@ public final class ServerPanel extends javax.swing.JPanel{
         this.ins=ins;
         this.world=world;
         this.name_instance_label.setText(this.ins.cfg.name+" - "+this.world.getName());
-        this.package_mods_label.setText(this.ins.cfg.mods);
         this.version_label.setText(this.ins.cfg.version);
         this.forge_version_label.setText(this.ins.cfg.forge_version);
         this.world_label.setText(this.world.toString());
@@ -201,27 +196,24 @@ public final class ServerPanel extends javax.swing.JPanel{
 
         name_instance_label = new javax.swing.JLabel();
         start_server_btn = new javax.swing.JButton();
-        jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         version_label = new javax.swing.JLabel();
         forge_version_label = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         world_label = new javax.swing.JLabel();
-        package_mods_label = new javax.swing.JLabel();
+        packages_mods_btn = new javax.swing.JButton();
 
         name_instance_label.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         name_instance_label.setText("jLabel1");
 
+        start_server_btn.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         start_server_btn.setText("Iniciar servidor");
         start_server_btn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 start_server_btnActionPerformed(evt);
             }
         });
-
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel1.setText("Paquete de Mods");
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel2.setText("Versión Minecraft");
@@ -238,7 +230,13 @@ public final class ServerPanel extends javax.swing.JPanel{
 
         world_label.setText("jLabel4");
 
-        package_mods_label.setText("jLabel4");
+        packages_mods_btn.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        packages_mods_btn.setText("Mods");
+        packages_mods_btn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                packages_mods_btnActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -250,6 +248,8 @@ public final class ServerPanel extends javax.swing.JPanel{
                     .addComponent(name_instance_label, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(packages_mods_btn)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(start_server_btn))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -262,13 +262,9 @@ public final class ServerPanel extends javax.swing.JPanel{
                                     .addComponent(forge_version_label)
                                     .addComponent(world_label)))
                             .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel1)
-                                    .addComponent(jLabel2))
+                                .addComponent(jLabel2)
                                 .addGap(26, 26, 26)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(version_label)
-                                    .addComponent(package_mods_label))))
+                                .addComponent(version_label)))
                         .addGap(0, 314, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -278,10 +274,6 @@ public final class ServerPanel extends javax.swing.JPanel{
                 .addContainerGap()
                 .addComponent(name_instance_label)
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(package_mods_label))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(version_label))
@@ -294,8 +286,10 @@ public final class ServerPanel extends javax.swing.JPanel{
                     .addComponent(jLabel4)
                     .addComponent(world_label))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(start_server_btn)
-                .addContainerGap(153, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(start_server_btn)
+                    .addComponent(packages_mods_btn))
+                .addContainerGap(171, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -303,15 +297,18 @@ public final class ServerPanel extends javax.swing.JPanel{
         this.createMinecraftServer();
     }//GEN-LAST:event_start_server_btnActionPerformed
 
+    private void packages_mods_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_packages_mods_btnActionPerformed
+        new PackagesModsDialog(null,true,this.ins).setVisible(true);
+    }//GEN-LAST:event_packages_mods_btnActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel forge_version_label;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel name_instance_label;
-    private javax.swing.JLabel package_mods_label;
+    private javax.swing.JButton packages_mods_btn;
     private javax.swing.JButton start_server_btn;
     private javax.swing.JLabel version_label;
     private javax.swing.JLabel world_label;

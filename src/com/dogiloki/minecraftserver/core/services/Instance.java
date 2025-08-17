@@ -34,6 +34,7 @@ public final class Instance extends Server{
         this.cfg=new InstanceCfg(this.getSrc()+"/"+Properties.files.instance_cfg).builder();
         this.server_properties=new ServerProperties(this.getSrc()+"/"+Properties.folders.instances_server+"/"+Properties.files.instance_properties).builder();
         this.worlds=new Worlds(this.getSrc()+"/"+Properties.folders.instances_server+"/"+Properties.folders.instances_worlds);
+        this.mods=new Mods(this.getSrc()+"/"+Properties.folders.instances_server+"/"+Properties.folders.instances_mods);
     }
     
     public boolean save(String path){
@@ -52,30 +53,6 @@ public final class Instance extends Server{
             }
             if(!this.cfg.save()){
                 AppLogger.error("Error al guardar configuración de la Instancia "+this.getSrc());
-            }else{
-                String mods_dir=this.getSrc()+"/"+Properties.folders.instances_server+"/"+Properties.folders.instances_mods;
-                if(this.cfg.usedForge() && this.cfg.usedMods() && this.cfg.change_mods){
-                    Storage.deleteFolder(mods_dir);
-                    Storage.createFolder(mods_dir);
-                    Mods mods=new Mods(Properties.folders.instances_mods+"/"+this.cfg.mods);
-                    DirectoryList mods_files=mods.listFiles();
-                    while(mods_files.hasNext()){
-                        Storage existing=new Storage(mods_files.next().toString());
-                        Storage link=new Storage(mods_dir+"/"+existing.getName());
-                        if(!existing.exists()){
-                            AppLogger.debug("No existe "+existing.getSrc());
-                            continue;
-                        }
-                        if(!existing.hashing().equals(link.hashing())){
-                            Files.createLink(link.asPath(),existing.asPath());
-
-                        }
-                    }
-                }else{
-                    if(!this.cfg.usedMods()){
-                        Storage.deleteFolder(mods_dir);
-                    }
-                }
             }
             if(this.server_properties.getSrc()==null){
                 this.server_properties.aim(this.getSrc()+"/"+Properties.folders.instances_server+"/"+Properties.files.instance_properties);

@@ -1,7 +1,9 @@
 package com.dogiloki.minecraftserver.infraestructure.ui.components;
 
 import com.dogiloki.minecraftserver.application.dao.Properties;
+import com.dogiloki.minecraftserver.core.entities.ListModFiles;
 import com.dogiloki.minecraftserver.core.services.Instance;
+import com.dogiloki.minecraftserver.core.services.ModFile;
 import com.dogiloki.minecraftserver.core.services.Mods;
 import com.dogiloki.minecraftserver.core.services.PackagesMods;
 import com.dogiloki.minecraftserver.infraestructure.utils.ComboItemWrapper;
@@ -9,11 +11,10 @@ import com.dogiloki.minecraftserver.infraestructure.utils.ListElementWrapper;
 import com.dogiloki.multitaks.directory.DirectoryList;
 import com.dogiloki.multitaks.directory.Storage;
 import com.dogiloki.multitaks.directory.enums.DirectoryType;
-import java.awt.event.ItemEvent;
+import com.dogiloki.multitaks.logger.AppLogger;
 import java.io.File;
+import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Map;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -27,13 +28,13 @@ public final class PackagesModsPanel extends javax.swing.JPanel{
 
     private final Instance ins;
     private final PackagesMods packages_mods=new PackagesMods();
-    private final String ins_cfg_mods_old;
     private Mods selected_mods=null;
+    private final Mods instance_mods;
     
     public PackagesModsPanel(Instance ins){
         initComponents();
         this.ins=ins;
-        this.ins_cfg_mods_old=this.ins.cfg.mods;
+        this.instance_mods=this.ins.mods;
         this.loadPackagesMods();
     }
     
@@ -44,49 +45,70 @@ public final class PackagesModsPanel extends javax.swing.JPanel{
         this.selected_mods=null;
         this.packages_mods.reload();
         
-        this.packages_mods_box.setLoading(true);
-        this.packages_mods_box.removeAll();
-        this.packages_mods_box.addItem(new ComboItemWrapper<Mods>(null,Mods.WITHOUT_MODS));
         this.packages_mods.items().iterate((name,mods)->{
             model.addElement(new ListElementWrapper(mods));
             ComboItemWrapper item=new ComboItemWrapper<Mods>(mods);
-            this.packages_mods_box.addItem(item);
-            if(this.ins.cfg.mods.equals(item.toString())){
-                this.packages_mods_box.setSelectedItem(item);
-            }
         });
         
-        this.packages_mods_box.setLoading(false);
         this.packages_mods_list.setModel(model);
+        this.loadMods();
+        this.loadInstanceMods();
     }
     
     public void loadMods(){
+        DefaultTableModel model_mods=new DefaultTableModel();
+        model_mods.addColumn("Nombre");
         if(this.selected_mods==null){
+            this.mods_table.setModel(model_mods);
             return;
         }
-        DefaultTableModel model_mods=new DefaultTableModel();
-        model_mods.addColumn("Activo");
-        model_mods.addColumn("Nombre");
         DirectoryList mods=this.selected_mods.listFiles();
         Path folder;
         if(mods==null){
             return;
         }
         while((folder=mods.next())!=null){
-            boolean status=new Storage(folder.toString()).getExtension().equals("disabled");
-            Object[] data={(status?"":"Activo"),folder.getFileName().toString().replace(".disabled","")};
+            Object[] data={new ModFile(folder.toString())};
             model_mods.addRow(data);
         }
         this.mods_table.setModel(model_mods);
     }
     
-    public Map<Integer,String> getSelecctionMods(){
-        int[] rows=this.mods_table.getSelectedRows();
-        Map<Integer,String> mods=new HashMap<>();
-        for(int row:rows){
-            mods.put(row,this.mods_table.getValueAt(row,1).toString());
+    public void loadInstanceMods(){
+        DefaultTableModel model_mods=new DefaultTableModel();
+        model_mods.addColumn("Activar");
+        model_mods.addColumn("Nombre");
+        DirectoryList mods=this.instance_mods.listFiles();
+        Path folder;
+        if(mods==null){
+            return;
         }
-        return mods;
+        while((folder=mods.next())!=null){
+            ModFile mod_file=new ModFile(folder.toString());
+            Object[] data={mod_file.isEnable()?"Activo":"",mod_file};
+            model_mods.addRow(data);
+        }
+        this.instance_mods_table.setModel(model_mods);
+    }
+    
+    public ListModFiles getSelectedMods(){
+        int[] rows=this.mods_table.getSelectedRows();
+        ListModFiles mod_files=new ListModFiles();
+        for(int row:rows){
+            ModFile mod_file=(ModFile)this.mods_table.getValueAt(row,0);
+            mod_files.append(mod_file.toString(),mod_file);
+        }
+        return mod_files;
+    }
+    
+    public ListModFiles getSelectedInstanceMods(){
+        int[] rows=this.instance_mods_table.getSelectedRows();
+        ListModFiles mod_files=new ListModFiles();
+        for(int row:rows){
+            ModFile mod_file=(ModFile)this.instance_mods_table.getValueAt(row,1);
+            mod_files.append(mod_file.toString(),mod_file);
+        }
+        return mod_files;
     }
     
     @SuppressWarnings("unchecked")
@@ -97,14 +119,18 @@ public final class PackagesModsPanel extends javax.swing.JPanel{
         packages_mods_list = new javax.swing.JList<>();
         new_package_mods_btn = new javax.swing.JButton();
         delete_packages_mods_btn = new javax.swing.JButton();
+        jPanel3 = new javax.swing.JPanel();
+        add_mods_btn = new javax.swing.JButton();
+        delete_mods_btn = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         mods_table = new javax.swing.JTable();
+        jPanel1 = new javax.swing.JPanel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        instance_mods_table = new javax.swing.JTable();
         active_mods_btn = new javax.swing.JButton();
         desactive_mods_btn = new javax.swing.JButton();
-        delete_mods_btn = new javax.swing.JButton();
-        add_mods_btn = new javax.swing.JButton();
-        packages_mods_box = new com.dogiloki.minecraftserver.infraestructure.utils.ComboBoxWrapper<>();
-        jLabel1 = new javax.swing.JLabel();
+        add_mod_btn = new javax.swing.JButton();
+        remove_mod_btn = new javax.swing.JButton();
 
         packages_mods_list.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         packages_mods_list.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
@@ -123,10 +149,26 @@ public final class PackagesModsPanel extends javax.swing.JPanel{
         });
 
         delete_packages_mods_btn.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
-        delete_packages_mods_btn.setText("Eliminar Paquete");
+        delete_packages_mods_btn.setText("- Eliminar Paquete");
         delete_packages_mods_btn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 delete_packages_mods_btnActionPerformed(evt);
+            }
+        });
+
+        add_mods_btn.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
+        add_mods_btn.setText("+ Agregar mods");
+        add_mods_btn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                add_mods_btnActionPerformed(evt);
+            }
+        });
+
+        delete_mods_btn.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
+        delete_mods_btn.setText("- Eliminar");
+        delete_mods_btn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                delete_mods_btnActionPerformed(evt);
             }
         });
 
@@ -142,6 +184,37 @@ public final class PackagesModsPanel extends javax.swing.JPanel{
             }
         ));
         jScrollPane1.setViewportView(mods_table);
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 375, Short.MAX_VALUE)
+            .addComponent(add_mods_btn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(delete_mods_btn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addComponent(add_mods_btn)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 430, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(delete_mods_btn))
+        );
+
+        instance_mods_table.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {},
+                {},
+                {},
+                {}
+            },
+            new String [] {
+
+            }
+        ));
+        jScrollPane3.setViewportView(instance_mods_table);
 
         active_mods_btn.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
         active_mods_btn.setText("Activar");
@@ -159,77 +232,78 @@ public final class PackagesModsPanel extends javax.swing.JPanel{
             }
         });
 
-        delete_mods_btn.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
-        delete_mods_btn.setText("Eliminar");
-        delete_mods_btn.addActionListener(new java.awt.event.ActionListener() {
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 429, Short.MAX_VALUE)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addComponent(desactive_mods_btn)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(active_mods_btn))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addComponent(jScrollPane3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(active_mods_btn)
+                    .addComponent(desactive_mods_btn)))
+        );
+
+        add_mod_btn.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        add_mod_btn.setText(">");
+        add_mod_btn.setToolTipText("Agregar");
+        add_mod_btn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                delete_mods_btnActionPerformed(evt);
+                add_mod_btnActionPerformed(evt);
             }
         });
 
-        add_mods_btn.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
-        add_mods_btn.setText("Agregar mods");
-        add_mods_btn.addActionListener(new java.awt.event.ActionListener() {
+        remove_mod_btn.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        remove_mod_btn.setText("<");
+        remove_mod_btn.setToolTipText("Eliminar");
+        remove_mod_btn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                add_mods_btnActionPerformed(evt);
+                remove_mod_btnActionPerformed(evt);
             }
         });
-
-        packages_mods_box.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                packages_mods_boxItemStateChanged(evt);
-            }
-        });
-
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel1.setText("Usar Paquete de Mods:");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addComponent(new_package_mods_btn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(delete_packages_mods_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(delete_packages_mods_btn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(new_package_mods_btn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 391, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(packages_mods_box, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addComponent(add_mod_btn)
+                    .addComponent(remove_mod_btn))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(add_mods_btn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(delete_mods_btn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(active_mods_btn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(desactive_mods_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(new_package_mods_btn)
-                    .addComponent(packages_mods_box, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 294, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(delete_packages_mods_btn))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
             .addGroup(layout.createSequentialGroup()
-                .addComponent(add_mods_btn)
-                .addGap(18, 18, 18)
-                .addComponent(delete_mods_btn)
+                .addComponent(new_package_mods_btn)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(active_mods_btn)
+                .addComponent(jScrollPane2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(desactive_mods_btn)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addComponent(delete_packages_mods_btn))
+            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(140, 140, 140)
+                .addComponent(add_mod_btn)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(remove_mod_btn)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -259,24 +333,25 @@ public final class PackagesModsPanel extends javax.swing.JPanel{
     }//GEN-LAST:event_delete_packages_mods_btnActionPerformed
 
     private void active_mods_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_active_mods_btnActionPerformed
-        this.getSelecctionMods().forEach((key,item)->{
-            Storage.rename(this.selected_mods.getSrc()+"/"+item+".disabled",this.selected_mods.getSrc()+"/"+item);
+        this.getSelectedInstanceMods().forEach((key,item)->{
+            item.enable();
         });
-        this.loadMods();
+        this.loadInstanceMods();
     }//GEN-LAST:event_active_mods_btnActionPerformed
 
     private void desactive_mods_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_desactive_mods_btnActionPerformed
-        this.getSelecctionMods().forEach((key,item)->{
-            Storage.rename(this.selected_mods.getSrc()+"/"+item,this.selected_mods.getSrc()+"/"+item+".disabled");
+        this.getSelectedInstanceMods().forEach((key,item)->{
+            item.disable();
         });
-        this.loadMods();
+        this.loadInstanceMods();
     }//GEN-LAST:event_desactive_mods_btnActionPerformed
 
     private void delete_mods_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_delete_mods_btnActionPerformed
-        this.getSelecctionMods().forEach((key,item)->{
-            Storage.deleteFile(this.selected_mods.getSrc()+"/"+item);
+        this.getSelectedMods().forEach((key,item)->{
+            item.delete();
         });
         this.loadMods();
+        this.loadInstanceMods();
     }//GEN-LAST:event_delete_mods_btnActionPerformed
 
     private void add_mods_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_add_mods_btnActionPerformed
@@ -301,26 +376,48 @@ public final class PackagesModsPanel extends javax.swing.JPanel{
             this.loadMods();
     }//GEN-LAST:event_add_mods_btnActionPerformed
 
-    private void packages_mods_boxItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_packages_mods_boxItemStateChanged
-        if(evt.getStateChange()==ItemEvent.SELECTED && !this.packages_mods_box.isLoading()){
-            this.ins.cfg.mods=this.packages_mods_box.getSelectedItem().toString();
-            this.ins.cfg.change_mods=!this.ins_cfg_mods_old.equals(this.ins.cfg.mods);
-        }
-    }//GEN-LAST:event_packages_mods_boxItemStateChanged
+    private void add_mod_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_add_mod_btnActionPerformed
+        this.getSelectedMods().forEach((name,existing)->{
+            try{
+                Storage link=new Storage(this.instance_mods.getSrc()+"/"+existing.getName());
+                if(!existing.exists()){
+                    AppLogger.debug("No existe "+existing.getSrc());
+                }else{
+                    if(!existing.hashing().equals(link.hashing())){
+                        Files.createLink(link.asPath(),existing.asPath());
+                    }
+                }
+            }catch(Exception ex){
+                ex.printStackTrace();
+            }
+        });
+        this.loadInstanceMods();
+    }//GEN-LAST:event_add_mod_btnActionPerformed
+
+    private void remove_mod_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_remove_mod_btnActionPerformed
+        this.getSelectedInstanceMods().forEach((name,mod_file)->{
+            mod_file.delete();
+        });
+        this.loadInstanceMods();
+    }//GEN-LAST:event_remove_mod_btnActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton active_mods_btn;
+    private javax.swing.JButton add_mod_btn;
     private javax.swing.JButton add_mods_btn;
     private javax.swing.JButton delete_mods_btn;
     private javax.swing.JButton delete_packages_mods_btn;
     private javax.swing.JButton desactive_mods_btn;
-    private javax.swing.JLabel jLabel1;
+    private javax.swing.JTable instance_mods_table;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTable mods_table;
     private javax.swing.JButton new_package_mods_btn;
-    private com.dogiloki.minecraftserver.infraestructure.utils.ComboBoxWrapper<ComboItemWrapper<Mods>> packages_mods_box;
     private javax.swing.JList<ListElementWrapper<Mods>> packages_mods_list;
+    private javax.swing.JButton remove_mod_btn;
     // End of variables declaration//GEN-END:variables
 }

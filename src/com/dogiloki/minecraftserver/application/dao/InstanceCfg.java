@@ -29,15 +29,11 @@ public final class InstanceCfg extends ModelDirectory{
     @Expose
     public String forge_version="";
     @Expose
-    public String mods="";
-    @Expose
     public String java_path;
     @Expose
     public String memory_min;
     @Expose
     public String memory_max;
-    
-    public boolean change_mods=false;
     
     public InstanceCfg(){
         this.reset();
@@ -48,10 +44,6 @@ public final class InstanceCfg extends ModelDirectory{
         super.aim(path);
     }
     
-    public boolean usedMods(){
-        return this.mods!=null && !this.mods.trim().equals("null") && !this.mods.trim().equals("") && !this.mods.trim().equals(Mods.WITHOUT_MODS);
-    }
-    
     public boolean usedForge(){
         return this.forge_version!=null && !this.forge_version.trim().equals("null") && !this.forge_version.trim().equals("");
     }
@@ -60,6 +52,11 @@ public final class InstanceCfg extends ModelDirectory{
         this.java_path=InstanceCfg.JAVA_PATH;
         this.memory_min=InstanceCfg.MEMORY_MIN;
         this.memory_max=InstanceCfg.MEMORY_MAX;
+    }
+    
+    @Override
+    public String toString(){
+        return this.name+" - "+this.version+(this.usedForge()?" ("+this.forge_version+")":"");
     }
 
 }

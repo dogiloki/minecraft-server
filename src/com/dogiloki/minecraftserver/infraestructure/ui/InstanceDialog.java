@@ -19,7 +19,6 @@ public final class InstanceDialog extends javax.swing.JDialog{
     private Instance ins;
     private final VersionPanel panel_version;
     private final ServerPropertiesPanel panel_server_properties;
-    private final PackagesModsPanel panel_packages_mods;
     private final ConfigurationPanel panel_configuration;
     
     public InstanceDialog(java.awt.Frame parent, boolean modal, Instance ins){
@@ -37,7 +36,6 @@ public final class InstanceDialog extends javax.swing.JDialog{
         // Agregar paneles
         this.panel_version=new VersionPanel(this.ins,this);
         this.panel_server_properties=new ServerPropertiesPanel(this.ins);
-        this.panel_packages_mods=new PackagesModsPanel(this.ins);
         this.panel_configuration=new ConfigurationPanel(this.ins);
         Function.setPanel(this.panel_frame,this.panel_version);
     }
@@ -56,7 +54,6 @@ public final class InstanceDialog extends javax.swing.JDialog{
         panel_menu = new javax.swing.JPanel();
         btn_version = new javax.swing.JButton();
         btn_properties = new javax.swing.JButton();
-        btn_mods = new javax.swing.JButton();
         btn_configuration = new javax.swing.JButton();
         panel_frame = new javax.swing.JPanel();
 
@@ -75,6 +72,7 @@ public final class InstanceDialog extends javax.swing.JDialog{
             }
         });
 
+        btn_save.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btn_save.setText("Guardar");
         btn_save.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -106,17 +104,6 @@ public final class InstanceDialog extends javax.swing.JDialog{
         });
         panel_menu.add(btn_properties);
 
-        btn_mods.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
-        btn_mods.setText("Paquetes de Mods");
-        btn_mods.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        btn_mods.setHorizontalTextPosition(javax.swing.SwingConstants.LEADING);
-        btn_mods.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_modsActionPerformed(evt);
-            }
-        });
-        panel_menu.add(btn_mods);
-
         btn_configuration.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
         btn_configuration.setText("Configuración");
         btn_configuration.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
@@ -144,9 +131,9 @@ public final class InstanceDialog extends javax.swing.JDialog{
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(caja_nombre))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(panel_menu, javax.swing.GroupLayout.PREFERRED_SIZE, 211, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(panel_menu, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(panel_frame, javax.swing.GroupLayout.DEFAULT_SIZE, 700, Short.MAX_VALUE))
+                        .addComponent(panel_frame, javax.swing.GroupLayout.DEFAULT_SIZE, 770, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(btn_save)))
@@ -161,7 +148,7 @@ public final class InstanceDialog extends javax.swing.JDialog{
                     .addComponent(caja_nombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(panel_menu, javax.swing.GroupLayout.DEFAULT_SIZE, 406, Short.MAX_VALUE)
+                    .addComponent(panel_menu, javax.swing.GroupLayout.DEFAULT_SIZE, 402, Short.MAX_VALUE)
                     .addComponent(panel_frame, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btn_save)
@@ -196,10 +183,6 @@ public final class InstanceDialog extends javax.swing.JDialog{
         this.setTitle(this.ins.cfg.name+" - "+(this.ins.cfg.version==null?"":this.ins.cfg.version));
     }//GEN-LAST:event_caja_nombreKeyReleased
 
-    private void btn_modsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_modsActionPerformed
-        Function.setPanel(this.panel_frame,this.panel_packages_mods);
-    }//GEN-LAST:event_btn_modsActionPerformed
-
     private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
         this.ins.reload();
     }//GEN-LAST:event_formWindowClosed
@@ -221,7 +204,6 @@ public final class InstanceDialog extends javax.swing.JDialog{
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btn_configuration;
-    private javax.swing.JButton btn_mods;
     private javax.swing.JButton btn_properties;
     private javax.swing.JButton btn_save;
     private javax.swing.JButton btn_version;
