@@ -27,11 +27,13 @@ public final class PackagesModsPanel extends javax.swing.JPanel{
 
     private final Instance ins;
     private final PackagesMods packages_mods=new PackagesMods();
+    private final String ins_cfg_mods_old;
     private Mods selected_mods=null;
     
     public PackagesModsPanel(Instance ins){
         initComponents();
         this.ins=ins;
+        this.ins_cfg_mods_old=this.ins.cfg.mods;
         this.loadPackagesMods();
     }
     
@@ -44,7 +46,7 @@ public final class PackagesModsPanel extends javax.swing.JPanel{
         
         this.packages_mods_box.setLoading(true);
         this.packages_mods_box.removeAll();
-        this.packages_mods_box.addItem(new ComboItemWrapper<Mods>(null,"-- Sin Mods --"));
+        this.packages_mods_box.addItem(new ComboItemWrapper<Mods>(null,Mods.WITHOUT_MODS));
         this.packages_mods.items().iterate((name,mods)->{
             model.addElement(new ListElementWrapper(mods));
             ComboItemWrapper item=new ComboItemWrapper<Mods>(mods);
@@ -302,6 +304,7 @@ public final class PackagesModsPanel extends javax.swing.JPanel{
     private void packages_mods_boxItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_packages_mods_boxItemStateChanged
         if(evt.getStateChange()==ItemEvent.SELECTED && !this.packages_mods_box.isLoading()){
             this.ins.cfg.mods=this.packages_mods_box.getSelectedItem().toString();
+            this.ins.cfg.change_mods=!this.ins_cfg_mods_old.equals(this.ins.cfg.mods);
         }
     }//GEN-LAST:event_packages_mods_boxItemStateChanged
 

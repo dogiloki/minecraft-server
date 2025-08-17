@@ -1,5 +1,6 @@
 package com.dogiloki.minecraftserver.application.dao;
 
+import com.dogiloki.minecraftserver.core.services.Mods;
 import com.dogiloki.multitaks.ObjectId;
 import com.dogiloki.multitaks.directory.ModelDirectory;
 import com.dogiloki.multitaks.directory.annotations.Directory;
@@ -36,6 +37,8 @@ public final class InstanceCfg extends ModelDirectory{
     @Expose
     public String memory_max;
     
+    public boolean change_mods=false;
+    
     public InstanceCfg(){
         this.reset();
     }
@@ -46,7 +49,7 @@ public final class InstanceCfg extends ModelDirectory{
     }
     
     public boolean usedMods(){
-        return this.mods!=null && !this.mods.trim().equals("null") && !this.mods.trim().equals("");
+        return this.mods!=null && !this.mods.trim().equals("null") && !this.mods.trim().equals("") && !this.mods.trim().equals(Mods.WITHOUT_MODS);
     }
     
     public boolean usedForge(){

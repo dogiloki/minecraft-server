@@ -116,6 +116,7 @@ public final class ServerPanel extends javax.swing.JPanel{
     public void createFiles(){
         this.file_run=new Storage(this.ins.getSrc()+"/"+Properties.folders.instances_server+"/start.bat");
         this.file_eula=new Storage(this.file_run.getFolder()+"/eula.txt");
+        String game_dir=this.file_run.getFile().getParentFile().getAbsolutePath();
         StringBuilder user_jvm_args=new StringBuilder();
         user_jvm_args.append("-Xms").append(this.ins.cfg.memory_min)
                 .append(" -Xmx").append(this.ins.cfg.memory_max)
@@ -130,7 +131,7 @@ public final class ServerPanel extends javax.swing.JPanel{
                 .append(" -XX:+DisableExplicitGC");
         String command="\""+this.ins.cfg.java_path+"\""+
                 " -jar "+user_jvm_args.toString()+
-                " ../../../"+this.minecraft_server.server_jar.getSrc()+
+                " "+this.minecraft_server.server_jar.getSrc()+
                 " nogui";
         if(this.ins.cfg.usedForge()){
             Storage file_args=new Storage(this.minecraft_server.forge_jar.getFolder()+"/user_jvm_args.txt",DirectoryType.FILE).notExists();
@@ -138,9 +139,9 @@ public final class ServerPanel extends javax.swing.JPanel{
             file_args.flush();
             file_args.close();
             command=new Storage(this.minecraft_server.forge_jar.getSrc()).read();
-            command=command.replace("java -jar ","\""+this.ins.cfg.java_path+"\" -jar ../../../"+this.minecraft_server.forge_jar.getFolder()+"/");
-            command=command.replace("java @","\""+this.ins.cfg.java_path+"\""+" @../../../"+this.minecraft_server.forge_jar.getFolder()+"/");
-            command=command.replace("%*"," nogui %*");
+            command=command.replace("java -jar ","\""+this.ins.cfg.java_path+"\" -jar ");
+            command=command.replace("java","\""+this.ins.cfg.java_path+"\"");
+            command=command.replace("%*"," --gameDir \""+game_dir+"\" nogui %*");
             if(command==null || command.equals("")){
                 DirectoryList jar_files=new Storage(minecraft_server.forge_jar.getFolder()).listFiles();
                 Path jar_file;
@@ -149,10 +150,14 @@ public final class ServerPanel extends javax.swing.JPanel{
                     if(!name.contains("universal") && !name.contains("forge")) continue;
                     command="\""+this.ins.cfg.java_path+"\""+
                         " -jar "+user_jvm_args.toString()+
-                            
-                        " ../../../"+jar_file.toString()+
+                        " "+jar_file.toString()+
+                        " --gameDir \""+game_dir+"\""+
                         " nogui";
                 }
+            }else{
+                AppLogger.logger().showMessage();
+                AppLogger.debug("No compatible la versión de forge");
+                return;
             }
             try{
                 /*
@@ -201,7 +206,11 @@ public final class ServerPanel extends javax.swing.JPanel{
     
     public void start(){
         try{
-            this.execution=new ExecutionObserver("cmd /c start cmd /k \"title "+this.getId()+" && call "+this.file_run.getName()+"\"",this.file_run.getFolder());
+            this.execution=new ExecutionObserver(
+                    "cmd /c start cmd /k \"title "+this.getId()+" && call \""+this.file_run.getFile().getAbsolutePath()+"\"",
+                    this.minecraft_server.forge_jar.getFolder()
+                    //this.file_run.getFolder()
+            );
             this.execution.start();
             this.canStart(true);
         }catch(Exception ex){

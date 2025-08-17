@@ -66,6 +66,7 @@ public final class MainForm extends javax.swing.JFrame {
     }
     
     public void resetSelection(){
+        this.loadInstances();
         this.selected_instance=null;
         this.server_panel.removeAll();
         this.server_panel.updateUI();

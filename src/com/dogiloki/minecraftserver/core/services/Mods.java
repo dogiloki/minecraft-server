@@ -12,6 +12,8 @@ import com.dogiloki.multitaks.directory.enums.DirectoryType;
 @Directory(type=DirectoryType.FOLDER)
 public class Mods extends ModelDirectory{
     
+    public static String WITHOUT_MODS="-- Sin Mods --";
+    
     public Mods(String path){
         super.aim(path);
         this.exists(true);

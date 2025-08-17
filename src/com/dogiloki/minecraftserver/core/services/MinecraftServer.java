@@ -32,7 +32,7 @@ public final class MinecraftServer{
     public Storage server_json;
     public Storage server_jar;
     
-    public Storage forge_json;
+    //public Storage forge_json;
     public Storage forge_jar;
     
     public MinecraftServer(InstanceCfg cfg){
