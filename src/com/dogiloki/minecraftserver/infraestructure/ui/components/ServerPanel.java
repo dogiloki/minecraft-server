@@ -166,28 +166,6 @@ public final class ServerPanel extends javax.swing.JPanel{
                     Paths.get(Storage.getDir()+"/"+this.minecraft_server.forge_jar.getFolder()+"/libraries")
                 );
                 */
-                // Mods
-                Mods mods=new Mods(Properties.folders.instances_mods+"/"+this.ins.cfg.mods);
-                if(mods!=null){
-                    DirectoryList mods_files=mods.listFiles();
-                    int index=0;
-                    while(mods_files.hasNext()){
-                        Storage existing=new Storage(mods_files.next().toString());
-                        Storage link=new Storage(this.ins.getSrc()+"/"+Properties.folders.instances_server+"/"+Properties.folders.instances_mods+"/"+existing.getName());
-                        if(!existing.exists()){
-                            AppLogger.debug("No existe "+existing.getSrc());
-                            continue;
-                        }
-                        if(index==0){
-                            Storage.deleteFolder(link.getFolder());
-                            Storage.createFolder(link.getFolder());
-                        }
-                        if(!existing.hashing().equals(link.hashing())){
-                            Files.createLink(link.asPath(),existing.asPath());
-                        }
-                        index++;
-                    }
-                }
             }catch(Exception ex){
                 ex.printStackTrace();
             }
