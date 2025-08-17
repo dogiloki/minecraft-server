@@ -15,7 +15,6 @@ import com.dogiloki.multitaks.download.DownloadDialog;
 import com.dogiloki.multitaks.logger.AppLogger;
 import com.dogiloki.multitaks.persistent.ExecutionObserver;
 import java.awt.Frame;
-import java.awt.event.ItemEvent;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
@@ -44,6 +43,7 @@ public final class ServerPanel extends javax.swing.JPanel{
         this.ins=ins;
         this.world=world;
         this.name_instance_label.setText(this.ins.cfg.name+" - "+this.world.getName());
+        this.package_mods_label.setText(this.ins.cfg.mods);
         this.version_label.setText(this.ins.cfg.version);
         this.forge_version_label.setText(this.ins.cfg.forge_version);
         this.world_label.setText(this.world.toString());
@@ -61,22 +61,6 @@ public final class ServerPanel extends javax.swing.JPanel{
         }
         */
         this.canStart(this.isStarted());
-        this.loadPackagesMods();
-    }
-    
-    public void loadPackagesMods(){
-        PackagesMods packages_mods=new PackagesMods();
-        this.packages_mods_box.setLoading(true);
-        this.packages_mods_box.removeAll();
-        this.packages_mods_box.addItem(new ComboItemWrapper<Mods>(null,"-- Sin Mods --"));
-        packages_mods.items().iterate((name,mods)->{
-            ComboItemWrapper item=new ComboItemWrapper<Mods>(mods);
-            this.packages_mods_box.addItem(item);
-            if(this.ins.cfg.mods.equals(item.toString())){
-                this.packages_mods_box.setSelectedItem(item);
-            }
-        });
-        this.packages_mods_box.setLoading(false);
     }
     
     public String getId(){
@@ -86,10 +70,8 @@ public final class ServerPanel extends javax.swing.JPanel{
     public void canStart(boolean can){
         if(can){
             this.start_server_btn.setEnabled(false);
-            this.packages_mods_box.setEnabled(false);
         }else{
             this.start_server_btn.setEnabled(true);
-            this.packages_mods_box.setEnabled(true);
         }
     }
     
@@ -182,7 +164,7 @@ public final class ServerPanel extends javax.swing.JPanel{
                 );
                 */
                 // Mods
-                Mods mods=this.packages_mods_box.getItemAt(this.packages_mods_box.getSelectedIndex()).getValue();
+                Mods mods=new Mods(Properties.folders.instances_mods+"/"+this.ins.cfg.mods);
                 if(mods!=null){
                     DirectoryList mods_files=mods.listFiles();
                     int index=0;
@@ -194,6 +176,7 @@ public final class ServerPanel extends javax.swing.JPanel{
                             continue;
                         }
                         if(index==0){
+                            Storage.deleteFolder(link.getFolder());
                             Storage.createFolder(link.getFolder());
                         }
                         if(!existing.hashing().equals(link.hashing())){
@@ -213,7 +196,7 @@ public final class ServerPanel extends javax.swing.JPanel{
         this.ins.server_properties.save();
         this.file_eula.flush();
         this.file_run.flush();
-        //this.start();
+        this.start();
     }
     
     public void start(){
@@ -240,7 +223,7 @@ public final class ServerPanel extends javax.swing.JPanel{
         forge_version_label = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         world_label = new javax.swing.JLabel();
-        packages_mods_box = new com.dogiloki.minecraftserver.infraestructure.utils.ComboBoxWrapper<>();
+        package_mods_label = new javax.swing.JLabel();
 
         name_instance_label.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         name_instance_label.setText("jLabel1");
@@ -270,11 +253,7 @@ public final class ServerPanel extends javax.swing.JPanel{
 
         world_label.setText("jLabel4");
 
-        packages_mods_box.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                packages_mods_boxItemStateChanged(evt);
-            }
-        });
+        package_mods_label.setText("jLabel4");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -283,31 +262,30 @@ public final class ServerPanel extends javax.swing.JPanel{
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel3)
-                        .addGap(5, 5, 5)
-                        .addComponent(forge_version_label)
-                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(name_instance_label, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(start_server_btn))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(name_instance_label, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(packages_mods_box, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(start_server_btn))
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(jLabel2)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(version_label))
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(jLabel4)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(world_label))
-                                    .addComponent(jLabel1))
-                                .addGap(0, 334, Short.MAX_VALUE)))
-                        .addContainerGap())))
+                                    .addComponent(jLabel3)
+                                    .addComponent(jLabel4))
+                                .addGap(49, 49, 49)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(forge_version_label)
+                                    .addComponent(world_label)))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel1)
+                                    .addComponent(jLabel2))
+                                .addGap(26, 26, 26)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(version_label)
+                                    .addComponent(package_mods_label))))
+                        .addGap(0, 314, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -315,11 +293,9 @@ public final class ServerPanel extends javax.swing.JPanel{
                 .addContainerGap()
                 .addComponent(name_instance_label)
                 .addGap(18, 18, 18)
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(start_server_btn)
-                    .addComponent(packages_mods_box, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel1)
+                    .addComponent(package_mods_label))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
@@ -332,6 +308,8 @@ public final class ServerPanel extends javax.swing.JPanel{
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
                     .addComponent(world_label))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(start_server_btn)
                 .addContainerGap(153, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -339,12 +317,6 @@ public final class ServerPanel extends javax.swing.JPanel{
     private void start_server_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_start_server_btnActionPerformed
         this.createMinecraftServer();
     }//GEN-LAST:event_start_server_btnActionPerformed
-
-    private void packages_mods_boxItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_packages_mods_boxItemStateChanged
-        if(evt.getStateChange()==ItemEvent.SELECTED && !this.packages_mods_box.isLoading()){
-            this.ins.cfg.mods=this.packages_mods_box.getSelectedItem().toString();
-        }
-    }//GEN-LAST:event_packages_mods_boxItemStateChanged
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -354,7 +326,7 @@ public final class ServerPanel extends javax.swing.JPanel{
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel name_instance_label;
-    private com.dogiloki.minecraftserver.infraestructure.utils.ComboBoxWrapper<ComboItemWrapper<Mods>> packages_mods_box;
+    private javax.swing.JLabel package_mods_label;
     private javax.swing.JButton start_server_btn;
     private javax.swing.JLabel version_label;
     private javax.swing.JLabel world_label;
