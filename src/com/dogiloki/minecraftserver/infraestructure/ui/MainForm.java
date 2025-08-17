@@ -3,7 +3,6 @@ package com.dogiloki.minecraftserver.infraestructure.ui;
 import com.dogiloki.minecraftserver.application.dao.Properties;
 import com.dogiloki.minecraftserver.core.services.Instance;
 import com.dogiloki.minecraftserver.core.services.World;
-import com.dogiloki.minecraftserver.infraestructure.ui.components.PackagesModsDialog;
 import com.dogiloki.minecraftserver.infraestructure.ui.components.ServerPanel;
 import com.dogiloki.multitaks.Function;
 import com.dogiloki.multitaks.Watcher;
@@ -12,17 +11,12 @@ import com.dogiloki.multitaks.directory.ConfigFile;
 import com.dogiloki.multitaks.directory.DirectoryList;
 import com.dogiloki.multitaks.directory.Storage;
 import com.dogiloki.multitaks.directory.enums.DirectoryType;
-import com.dogiloki.multitaks.download.DownloadDialog;
 import com.dogiloki.multitaks.logger.AppLogger;
 import com.dogiloki.multitaks.logger.LogEntry;
 import com.dogiloki.multitaks.logger.contracts.LogListener;
 import java.nio.file.Path;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
@@ -83,7 +77,6 @@ public final class MainForm extends javax.swing.JFrame {
 
         instances_root_popup = new javax.swing.JPopupMenu();
         new_instance_btn = new javax.swing.JMenuItem();
-        packages_mods_btn = new javax.swing.JMenuItem();
         instances_item_popup = new javax.swing.JPopupMenu();
         edit_instance_btn = new javax.swing.JMenuItem();
         new_world_instance_btn = new javax.swing.JMenuItem();
@@ -104,14 +97,6 @@ public final class MainForm extends javax.swing.JFrame {
             }
         });
         instances_root_popup.add(new_instance_btn);
-
-        packages_mods_btn.setText("Paquetes de Mods");
-        packages_mods_btn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                packages_mods_btnActionPerformed(evt);
-            }
-        });
-        instances_root_popup.add(packages_mods_btn);
 
         edit_instance_btn.setText("Editar Instancia");
         edit_instance_btn.addActionListener(new java.awt.event.ActionListener() {
@@ -219,11 +204,6 @@ public final class MainForm extends javax.swing.JFrame {
         this.resetSelection();
     }//GEN-LAST:event_start_world_btnActionPerformed
 
-    private void packages_mods_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_packages_mods_btnActionPerformed
-        new PackagesModsDialog(this,true).setVisible(true);
-        this.resetSelection();
-    }//GEN-LAST:event_packages_mods_btnActionPerformed
-
     private void instances_treeMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_instances_treeMousePressed
         TreePath path=this.instances_tree.getPathForLocation(evt.getX(),evt.getY());
         if(path==null){
@@ -259,7 +239,6 @@ public final class MainForm extends javax.swing.JFrame {
     private javax.swing.JTextArea log_server_text;
     private javax.swing.JMenuItem new_instance_btn;
     private javax.swing.JMenuItem new_world_instance_btn;
-    private javax.swing.JMenuItem packages_mods_btn;
     private javax.swing.JPanel server_panel;
     private javax.swing.JSplitPane split_panel;
     private javax.swing.JMenuItem start_world_btn;

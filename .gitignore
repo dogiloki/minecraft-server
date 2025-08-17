@@ -3,6 +3,8 @@ instances
 libraries
 git
 mods
+logs
+log
 
 nbproject/private
 build

@@ -22,6 +22,11 @@ public final class Instance extends Server{
     
     public Instance(String path){
         super.aim(path);
+        this.reload();
+    }
+    
+    public void reload(){
+        if(!this.exists()) return;
         this.cfg=new InstanceCfg(this.getSrc()+"/"+Properties.files.instance_cfg).builder();
         this.server_properties=new ServerProperties(this.getSrc()+"/"+Properties.folders.instances_server+"/"+Properties.files.instance_properties).builder();
         this.worlds=new Worlds(this.getSrc()+"/"+Properties.folders.instances_server+"/"+Properties.folders.instances_worlds);

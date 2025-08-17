@@ -28,6 +28,8 @@ public final class InstanceCfg extends ModelDirectory{
     @Expose
     public String forge_version="";
     @Expose
+    public String mods="";
+    @Expose
     public String java_path;
     @Expose
     public String memory_min;
@@ -41,6 +43,10 @@ public final class InstanceCfg extends ModelDirectory{
     public InstanceCfg(String path){
         this.reset();
         super.aim(path);
+    }
+    
+    public boolean usedMods(){
+        return this.mods!=null && !this.mods.trim().equals("null") && !this.mods.trim().equals("");
     }
     
     public boolean usedForge(){

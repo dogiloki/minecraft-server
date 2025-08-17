@@ -21,7 +21,6 @@ public final class PackagesMods extends ModelDirectory{
     public PackagesMods(){
         super.aim(Properties.folders.packages_mods_folder);
         this.exists(true);
-        this.reload();
     }
     
     public PackagesMods createMods(String name){
