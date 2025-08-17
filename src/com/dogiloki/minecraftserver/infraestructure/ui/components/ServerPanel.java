@@ -131,7 +131,7 @@ public final class ServerPanel extends javax.swing.JPanel{
                 .append(" -XX:+DisableExplicitGC");
         String command="\""+this.ins.cfg.java_path+"\""+
                 " -jar "+user_jvm_args.toString()+
-                " "+this.minecraft_server.server_jar.getSrc()+
+                " ../../../"+this.minecraft_server.server_jar.getSrc()+
                 " nogui";
         if(this.ins.cfg.usedForge()){
             Storage file_args=new Storage(this.minecraft_server.forge_jar.getFolder()+"/user_jvm_args.txt",DirectoryType.FILE).notExists();
@@ -141,7 +141,6 @@ public final class ServerPanel extends javax.swing.JPanel{
             command=new Storage(this.minecraft_server.forge_jar.getSrc()).read();
             command=command.replace("java -jar ","\""+this.ins.cfg.java_path+"\" -jar ");
             command=command.replace("java","\""+this.ins.cfg.java_path+"\"");
-            command=command.replace("%*"," --gameDir \""+game_dir+"\" nogui %*");
             if(command==null || command.equals("")){
                 DirectoryList jar_files=new Storage(minecraft_server.forge_jar.getFolder()).listFiles();
                 Path jar_file;
@@ -150,8 +149,7 @@ public final class ServerPanel extends javax.swing.JPanel{
                     if(!name.contains("universal") && !name.contains("forge")) continue;
                     command="\""+this.ins.cfg.java_path+"\""+
                         " -jar "+user_jvm_args.toString()+
-                        " "+jar_file.toString()+
-                        " --gameDir \""+game_dir+"\""+
+                        " ../../../"+jar_file.toString()+
                         " nogui";
                 }
             }else{
@@ -208,8 +206,8 @@ public final class ServerPanel extends javax.swing.JPanel{
         try{
             this.execution=new ExecutionObserver(
                     "cmd /c start cmd /k \"title "+this.getId()+" && call \""+this.file_run.getFile().getAbsolutePath()+"\"",
-                    this.minecraft_server.forge_jar.getFolder()
-                    //this.file_run.getFolder()
+                    //this.minecraft_server.forge_jar.getFolder()
+                    this.file_run.getFolder()
             );
             this.execution.start();
             this.canStart(true);
