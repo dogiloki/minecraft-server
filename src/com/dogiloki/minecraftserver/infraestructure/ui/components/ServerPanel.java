@@ -408,6 +408,7 @@ public final class ServerPanel extends javax.swing.JPanel{
         Snapshot snapshot=this.getSelectedSnapshot();
         if(snapshot==null) return;
         this.world.checkout(snapshot);
+        this.loadSnapshots();
     }//GEN-LAST:event_load_snapshot_btnActionPerformed
 
 
