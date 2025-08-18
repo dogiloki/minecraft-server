@@ -17,7 +17,7 @@ public class PackagesModsDialog extends javax.swing.JDialog {
         initComponents();
         this.setLocationRelativeTo(null);
         this.setResizable(false);
-        this.setTitle(ins.cfg.toString());
+        this.setTitle(ins.cfg.toAlias());
         Function.setPanel(this.frame_panel,new PackagesModsPanel(ins));
     }
     

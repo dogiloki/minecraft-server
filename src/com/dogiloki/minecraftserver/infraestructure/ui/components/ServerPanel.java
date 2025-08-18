@@ -3,8 +3,9 @@ package com.dogiloki.minecraftserver.infraestructure.ui.components;
 import com.dogiloki.minecraftserver.application.dao.Properties;
 import com.dogiloki.minecraftserver.core.services.Instance;
 import com.dogiloki.minecraftserver.core.services.MinecraftServer;
+import com.dogiloki.minecraftserver.core.services.Snapshot;
 import com.dogiloki.minecraftserver.core.services.World;
-import com.dogiloki.multitaks.code.Code;
+import com.dogiloki.minecraftserver.infraestructure.utils.ListElementWrapper;
 import com.dogiloki.multitaks.directory.DirectoryList;
 import com.dogiloki.multitaks.directory.Storage;
 import com.dogiloki.multitaks.directory.enums.DirectoryType;
@@ -15,7 +16,9 @@ import java.awt.Frame;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.file.Path;
+import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -56,17 +59,20 @@ public final class ServerPanel extends javax.swing.JPanel{
         }
         */
         this.canStart(this.isStarted());
+        this.loadSnapshots();
     }
     
     public String getId(){
-        return Code.encode64(this.ins.cfg.id);
+        return this.ins.cfg.id;
     }
     
     public void canStart(boolean can){
         if(can){
             this.start_server_btn.setEnabled(false);
+            this.packages_mods_btn.setEnabled(false);
         }else{
             this.start_server_btn.setEnabled(true);
+            this.packages_mods_btn.setEnabled(true);
         }
     }
     
@@ -190,6 +196,33 @@ public final class ServerPanel extends javax.swing.JPanel{
         }
     }
     
+    public Snapshot getSelectedSnapshot(){
+        ListElementWrapper<Snapshot> selected=this.snapshot_list.getSelectedValue();
+        if(selected==null){
+            AppLogger.logger().showMessage();
+            AppLogger.alert("Seleccione un respaldo");
+            return null;
+        }
+        return selected.getValue();
+    }
+    
+    public void loadSnapshots(){
+        this.snapshot_list.removeAll();
+        this.snapshot_message_box.setText("");
+        if(this.world.isGit()){
+            this.create_backup_system_btn.setEnabled(false);
+        }else{
+            this.create_backup_system_btn.setEnabled(true);
+            return;
+        }
+        DefaultListModel model=new DefaultListModel();
+        for(Snapshot snapshot:this.world.listSnapshots()){
+            ListElementWrapper<Snapshot> element=new ListElementWrapper(snapshot);
+            model.addElement(element);
+        }
+        this.snapshot_list.setModel(model);
+    }
+    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -203,6 +236,12 @@ public final class ServerPanel extends javax.swing.JPanel{
         jLabel4 = new javax.swing.JLabel();
         world_label = new javax.swing.JLabel();
         packages_mods_btn = new javax.swing.JButton();
+        create_backup_system_btn = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        snapshot_list = new javax.swing.JList<>();
+        snapshot_message_box = new javax.swing.JTextField();
+        create_snapshot_btn = new javax.swing.JButton();
+        load_snapshot_btn = new javax.swing.JButton();
 
         name_instance_label.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         name_instance_label.setText("jLabel1");
@@ -238,6 +277,36 @@ public final class ServerPanel extends javax.swing.JPanel{
             }
         });
 
+        create_backup_system_btn.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        create_backup_system_btn.setText("Crear repositorio de respaldos");
+        create_backup_system_btn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                create_backup_system_btnActionPerformed(evt);
+            }
+        });
+
+        snapshot_list.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jScrollPane2.setViewportView(snapshot_list);
+
+        snapshot_message_box.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        snapshot_message_box.setToolTipText("Mensaje del respaldo");
+
+        create_snapshot_btn.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        create_snapshot_btn.setText("Crear respaldo");
+        create_snapshot_btn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                create_snapshot_btnActionPerformed(evt);
+            }
+        });
+
+        load_snapshot_btn.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        load_snapshot_btn.setText("Cargar respaldo");
+        load_snapshot_btn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                load_snapshot_btnActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -246,8 +315,17 @@ public final class ServerPanel extends javax.swing.JPanel{
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(name_instance_label, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(snapshot_message_box)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(create_snapshot_btn))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(create_backup_system_btn, javax.swing.GroupLayout.DEFAULT_SIZE, 233, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(load_snapshot_btn)))
+                        .addGap(130, 130, 130)
                         .addComponent(packages_mods_btn)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(start_server_btn))
@@ -264,8 +342,9 @@ public final class ServerPanel extends javax.swing.JPanel{
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel2)
                                 .addGap(26, 26, 26)
-                                .addComponent(version_label)))
-                        .addGap(0, 314, Short.MAX_VALUE)))
+                                .addComponent(version_label))
+                            .addComponent(jScrollPane2))
+                        .addGap(327, 327, 327)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -288,8 +367,16 @@ public final class ServerPanel extends javax.swing.JPanel{
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(start_server_btn)
-                    .addComponent(packages_mods_btn))
-                .addContainerGap(171, Short.MAX_VALUE))
+                    .addComponent(packages_mods_btn)
+                    .addComponent(create_backup_system_btn)
+                    .addComponent(load_snapshot_btn))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 223, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(snapshot_message_box, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(create_snapshot_btn))
+                .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -301,14 +388,42 @@ public final class ServerPanel extends javax.swing.JPanel{
         new PackagesModsDialog(null,true,this.ins).setVisible(true);
     }//GEN-LAST:event_packages_mods_btnActionPerformed
 
+    private void create_backup_system_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_create_backup_system_btnActionPerformed
+        this.world.initGit();
+        this.loadSnapshots();
+    }//GEN-LAST:event_create_backup_system_btnActionPerformed
+
+    private void create_snapshot_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_create_snapshot_btnActionPerformed
+        String message=this.snapshot_message_box.getText();
+        if(message.trim().equals("")){
+            AppLogger.logger().showMessage();
+            AppLogger.warning("No hay mensaje para hacer el respaldo: "+this.world.getSrc());
+        }else{
+            this.world.snapshot(message);
+            this.loadSnapshots();
+        }
+    }//GEN-LAST:event_create_snapshot_btnActionPerformed
+
+    private void load_snapshot_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_load_snapshot_btnActionPerformed
+        Snapshot snapshot=this.getSelectedSnapshot();
+        if(snapshot==null) return;
+        this.world.checkout(snapshot);
+    }//GEN-LAST:event_load_snapshot_btnActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton create_backup_system_btn;
+    private javax.swing.JButton create_snapshot_btn;
     private javax.swing.JLabel forge_version_label;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JButton load_snapshot_btn;
     private javax.swing.JLabel name_instance_label;
     private javax.swing.JButton packages_mods_btn;
+    private javax.swing.JList<ListElementWrapper<Snapshot>> snapshot_list;
+    private javax.swing.JTextField snapshot_message_box;
     private javax.swing.JButton start_server_btn;
     private javax.swing.JLabel version_label;
     private javax.swing.JLabel world_label;

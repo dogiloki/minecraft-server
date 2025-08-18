@@ -1,6 +1,8 @@
 package com.dogiloki.minecraftserver;
 
+import com.dogiloki.minecraftserver.application.dao.Properties;
 import com.dogiloki.minecraftserver.infraestructure.ui.MainForm;
+import com.dogiloki.multitaks.directory.ConfigFile;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.UIManager;
@@ -16,6 +18,7 @@ public class MainLaucher{
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
+                ConfigFile.load(Properties.class);
                 try {
                     UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
                 } catch (ClassNotFoundException ex) {

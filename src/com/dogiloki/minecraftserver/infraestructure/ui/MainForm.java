@@ -7,7 +7,6 @@ import com.dogiloki.minecraftserver.infraestructure.ui.components.ServerPanel;
 import com.dogiloki.multitaks.Function;
 import com.dogiloki.multitaks.Watcher;
 import com.dogiloki.multitaks.datastructure.tree.TreeNodeWrapper;
-import com.dogiloki.multitaks.directory.ConfigFile;
 import com.dogiloki.multitaks.directory.DirectoryList;
 import com.dogiloki.multitaks.directory.Storage;
 import com.dogiloki.multitaks.directory.enums.DirectoryType;
@@ -34,11 +33,10 @@ public final class MainForm extends javax.swing.JFrame {
 
     public MainForm(){
         initComponents();
-        ConfigFile.load(Properties.class);
         AppLogger.logger().getLog().addListener(new LogListener(){
             @Override
             public void onLogAdded(LogEntry entry){
-                log_server_text.setText(entry.toString()+"\n"+log_server_text.getText());
+                log_server_text.setText(log_server_text.getText()+"\n"+entry.toString());
             }
         });
         this.split_panel.setDividerLocation(200);
@@ -165,9 +163,9 @@ public final class MainForm extends javax.swing.JFrame {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(split_panel, javax.swing.GroupLayout.DEFAULT_SIZE, 255, Short.MAX_VALUE)
+                .addComponent(split_panel, javax.swing.GroupLayout.PREFERRED_SIZE, 330, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 239, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 164, Short.MAX_VALUE))
         );
 
         pack();
