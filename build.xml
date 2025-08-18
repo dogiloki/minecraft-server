@@ -13,21 +13,21 @@
     
     <target name="-post-jar">
         <!-- Generar core.jar por separado -->
-        <jar destfile="${dist.dir}/core.jar" basedir="${build.classes.dir}">
+        <jar destfile="${dist.dir}/launcher/modules/core.jar" basedir="${build.classes.dir}">
             <include name="com/dogiloki/minecraftserver/core/**"/>
             <exclude name="com/dogiloki/minecraftserver/*.*"/>
             <exclude name="com/dogiloki/minecraftserver/*.*"/>
         </jar>
         
         <!-- Generar application.jar por separado -->
-        <jar destfile="${dist.dir}/application.jar" basedir="${build.classes.dir}">
+        <jar destfile="${dist.dir}/launcher/modules/application.jar" basedir="${build.classes.dir}">
             <include name="com/dogiloki/minecraftserver/application/**"/>
             <exclude name="com/dogiloki/minecraftserver/*.*"/>
             <exclude name="com/dogiloki/minecraftserver/*.*"/>
         </jar>
         
         <!-- Generar infraestructure.jar por separado -->
-        <jar destfile="${dist.dir}/infraestructure.jar" basedir="${build.classes.dir}">
+        <jar destfile="${dist.dir}/launcher/modules/infraestructure.jar" basedir="${build.classes.dir}">
             <include name="com/dogiloki/minecraftserver/infraestructure/**"/>
             <exclude name="com/dogiloki/minecraftserver/*.*"/>
             <exclude name="com/dogiloki/minecraftserver/*.*"/>
