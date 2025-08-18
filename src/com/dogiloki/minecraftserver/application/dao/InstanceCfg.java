@@ -1,6 +1,5 @@
 package com.dogiloki.minecraftserver.application.dao;
 
-import com.dogiloki.minecraftserver.core.services.Mods;
 import com.dogiloki.multitaks.ObjectId;
 import com.dogiloki.multitaks.directory.ModelDirectory;
 import com.dogiloki.multitaks.directory.annotations.Directory;
@@ -54,8 +53,7 @@ public final class InstanceCfg extends ModelDirectory{
         this.memory_max=InstanceCfg.MEMORY_MAX;
     }
     
-    @Override
-    public String toString(){
+    public String toAlias(){
         return this.name+" - "+this.version+(this.usedForge()?" ("+this.forge_version+")":"");
     }
 
