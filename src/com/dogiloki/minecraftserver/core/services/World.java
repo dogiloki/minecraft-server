@@ -2,17 +2,15 @@ package com.dogiloki.minecraftserver.core.services;
 
 import com.dogiloki.minecraftserver.core.entities.ListSnapshots;
 import com.dogiloki.minecraftserver.core.entities.enums.WorldState;
-import static com.dogiloki.minecraftserver.core.entities.enums.WorldState.CLEAN;
-import static com.dogiloki.minecraftserver.core.entities.enums.WorldState.COMMIT_IN_PROGRESS;
-import static com.dogiloki.minecraftserver.core.entities.enums.WorldState.DIRTY;
-import static com.dogiloki.minecraftserver.core.entities.enums.WorldState.ERROR;
-import static com.dogiloki.minecraftserver.core.entities.enums.WorldState.NOT_INITIALIZED;
 import com.dogiloki.multitaks.directory.ModelDirectory;
 import com.dogiloki.multitaks.directory.annotations.Directory;
 import com.dogiloki.multitaks.directory.enums.DirectoryType;
 import com.dogiloki.multitaks.logger.AppLogger;
 import com.dogiloki.multitaks.persistent.ExecutionObserver;
 import java.io.File;
+import java.io.FileInputStream;
+import java.nio.channels.FileChannel;
+import java.nio.channels.FileLock;
 import javax.swing.Icon;
 
 /**
@@ -26,18 +24,40 @@ public class World extends ModelDirectory{
     public static String DEFAULT_NAME="world";
     public static String GIT_PATH="git";
     
-    public final Icon icon=null;
-    public final File git;
-    public String branch="master";
-    public String tmp_branch="tmp";
-    public File lock;
+    private final Icon icon=null;
+    private final File git;
+    private String main_branch="master";
+    private String tmp_branch="tmp";
+    private File git_lock;
+    private File world_lock;
     
     public World(String path){
         super.aim(path);
         this.exists(true);
         this.git=new File(this.getSrc()+"/.git");
-        this.lock=new File(this.git.getPath()+"/index.lock");
+        this.git_lock=new File(this.git.getPath(),"index.lock");
+        this.world_lock=new File(this.getSrc(),"session.lock");
         //this.icon= // Pendiente a obtener el icono
+    }
+    
+    public boolean isWorldLocked(){
+        if(!this.world_lock.exists()) return false;
+        try(FileInputStream fis=new FileInputStream(this.world_lock)){
+            FileChannel channel=fis.getChannel();
+            // Intentar obtener lock exclusivo
+            FileLock lock=channel.tryLock(0L,Long.MAX_VALUE,true); // true = modo compartido
+            if(lock==null){
+                return true; // Otro proceso lo está usando
+            }else{
+                // Se pudo tomar => No se está usando por otro proceso
+                lock.release();
+                return false;
+            }
+        }catch(Exception ex){
+            ex.printStackTrace();
+            AppLogger.error(ex.getMessage());
+            return true;
+        }
     }
     
     public boolean hasGitRepository(){
@@ -60,7 +80,7 @@ public class World extends ModelDirectory{
     }
     
     public boolean isGitLocked(){
-        return this.lock.exists();
+        return this.git_lock.exists() || this.isWorldLocked();
     }
     
     public WorldState getState(){
@@ -109,7 +129,7 @@ public class World extends ModelDirectory{
             if(this.hasGitRepository()) return WorldState.INITIALIZED;
             
             // Iniciar repositorio
-            ExecutionObserver init=this.executeGitCommand("init");
+            ExecutionObserver init=this.executeGitCommand("init -b "+this.main_branch);
             init.start();
             if(init.exitCode()==0){
                 AppLogger.info("Se creó repositorio: "+this.getSrc());
@@ -173,7 +193,7 @@ public class World extends ModelDirectory{
                     }
                     if(this.getCurrentBranch().equals(this.tmp_branch)){
                         System.out.println(this.getCurrentBranch());
-                        ExecutionObserver checkout=this.executeGitCommand("checkout "+this.branch);
+                        ExecutionObserver checkout=this.executeGitCommand("checkout "+this.main_branch);
                         checkout.start();
                         ExecutionObserver temp_checkout=this.executeGitCommand("checkout "+this.tmp_branch+" -- .");
                         temp_checkout.start();
