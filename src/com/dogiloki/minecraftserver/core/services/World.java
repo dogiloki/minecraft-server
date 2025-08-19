@@ -2,7 +2,9 @@ package com.dogiloki.minecraftserver.core.services;
 
 import com.dogiloki.minecraftserver.core.entities.ListSnapshots;
 import com.dogiloki.minecraftserver.core.entities.enums.WorldState;
+import static com.dogiloki.minecraftserver.core.entities.enums.WorldState.CLEAN;
 import static com.dogiloki.minecraftserver.core.entities.enums.WorldState.COMMIT_IN_PROGRESS;
+import static com.dogiloki.minecraftserver.core.entities.enums.WorldState.DIRTY;
 import static com.dogiloki.minecraftserver.core.entities.enums.WorldState.ERROR;
 import static com.dogiloki.minecraftserver.core.entities.enums.WorldState.NOT_INITIALIZED;
 import com.dogiloki.multitaks.directory.ModelDirectory;
@@ -38,7 +40,7 @@ public class World extends ModelDirectory{
         //this.icon= // Pendiente a obtener el icono
     }
     
-    public boolean isGit(){
+    public boolean hasGitRepository(){
         try{
             /*
             boolean rev_parse=false;
@@ -57,30 +59,30 @@ public class World extends ModelDirectory{
         return this.git.exists();
     }
     
-    public boolean isLock(){
+    public boolean isGitLocked(){
         return this.lock.exists();
     }
     
     public WorldState getState(){
         try{
-            if(!this.isGit()){
+            if(!this.hasGitRepository()){
                 return WorldState.NOT_INITIALIZED;
             }
-            if(this.isLock()){
+            if(this.isGitLocked()){
                 return WorldState.COMMIT_IN_PROGRESS;
             }
-            ExecutionObserver check_head=this.executionGit("rev-parse --verify HEAD");
+            ExecutionObserver check_head=this.executeGitCommand("rev-parse --verify HEAD");
             check_head.start();
             if(check_head.exitCode()!=0){
                 return WorldState.DIRTY;
             }
-            ExecutionObserver check=this.executionGit("diff --quiet");
+            ExecutionObserver check=this.executeGitCommand("diff --quiet");
             check.start();
             if(check.exitCode()!=0){
                 return WorldState.DIRTY;
             }
             final boolean[] dirty={false};
-            ExecutionObserver status=this.executionGit("status --porcelain");
+            ExecutionObserver status=this.executeGitCommand("status --porcelain");
             status.start((line,posi)->{
                 if(!line.trim().isEmpty()){
                     dirty[0]=true;
@@ -94,7 +96,7 @@ public class World extends ModelDirectory{
         }
     }
     
-    public ExecutionObserver executionGit(String command){
+    public ExecutionObserver executeGitCommand(String command){
         return new ExecutionObserver()
                     .context(this.getSrc())
                     .waitCompletion()
@@ -102,12 +104,12 @@ public class World extends ModelDirectory{
     }
     
     // Iniciar repositorio si no existe
-    public WorldState initGit(){
+    public WorldState initializeRepository(){
         try{
-            if(this.isGit()) return WorldState.INITIALIZED;
+            if(this.hasGitRepository()) return WorldState.INITIALIZED;
             
             // Iniciar repositorio
-            ExecutionObserver init=this.executionGit("init");
+            ExecutionObserver init=this.executeGitCommand("init");
             init.start();
             if(init.exitCode()==0){
                 AppLogger.info("Se creó repositorio: "+this.getSrc());
@@ -116,7 +118,7 @@ public class World extends ModelDirectory{
                 return WorldState.NOT_INITIALIZED;
             }
             // Agregar todo el contenido inicial al mundo y crear commit inicial
-            return this.snapshot("Initial copy of the world");
+            return this.createSnapshot("Initial copy of the world");
         }catch(Exception ex){
             ex.printStackTrace();
             AppLogger.error(ex.getMessage());
@@ -127,7 +129,7 @@ public class World extends ModelDirectory{
     public String getCurrentBranch(){
         try{
             StringBuilder str=new StringBuilder();
-            ExecutionObserver branch=this.executionGit("rev-parse --abbrev-ref HEAD");
+            ExecutionObserver branch=this.executeGitCommand("rev-parse --abbrev-ref HEAD");
             branch.start((line,posi)->{
                 str.append(line.trim());
             });
@@ -139,7 +141,7 @@ public class World extends ModelDirectory{
         return null;
     }
     
-    public WorldState snapshot(String message){
+    public WorldState createSnapshot(String message){
         try{
             WorldState state=this.getState();
             switch(state){
@@ -151,7 +153,7 @@ public class World extends ModelDirectory{
                 }
                 case DIRTY:{
                     // Aregar cambios
-                    ExecutionObserver add=this.executionGit("add .");
+                    ExecutionObserver add=this.executeGitCommand("add .");
                     add.start();
                     if(add.exitCode()==0){
                         AppLogger.info("Se agregó el contenido del mundo: "+this.getSrc());
@@ -160,7 +162,7 @@ public class World extends ModelDirectory{
                         return state;
                     }
                     //  Hacer commit
-                    ExecutionObserver commit=this.executionGit("commit -m \""+message+"\"");
+                    ExecutionObserver commit=this.executeGitCommand("commit -m \""+message+"\"");
                     commit.start();
                     AppLogger.logger().showMessage();
                     if(commit.exitCode()==0){
@@ -171,13 +173,13 @@ public class World extends ModelDirectory{
                     }
                     if(this.getCurrentBranch().equals(this.tmp_branch)){
                         System.out.println(this.getCurrentBranch());
-                        ExecutionObserver checkout=this.executionGit("checkout "+this.branch);
+                        ExecutionObserver checkout=this.executeGitCommand("checkout "+this.branch);
                         checkout.start();
-                        ExecutionObserver temp_checkout=this.executionGit("checkout "+this.tmp_branch+" -- .");
+                        ExecutionObserver temp_checkout=this.executeGitCommand("checkout "+this.tmp_branch+" -- .");
                         temp_checkout.start();
-                        ExecutionObserver branch=this.executionGit("branch -D "+this.tmp_branch);
+                        ExecutionObserver branch=this.executeGitCommand("branch -D "+this.tmp_branch);
                         branch.start();
-                        return this.snapshot(message);
+                        return this.createSnapshot(message);
                     }
                     return WorldState.COMMITTED;
                 }
@@ -200,10 +202,10 @@ public class World extends ModelDirectory{
         return WorldState.ERROR;
     }
     
-    public ListSnapshots listSnapshots(){
+    public ListSnapshots getSnapshots(){
         ListSnapshots list=new ListSnapshots();
         try{
-            ExecutionObserver log=this.executionGit(" log --pretty=format:\"%H %s\"");
+            ExecutionObserver log=this.executeGitCommand("log --pretty=format:\"%H %s\" -10");
             log.start((line,posi)->{
                 int first_space=line.indexOf(" ");
                 if(first_space>0){
@@ -217,7 +219,7 @@ public class World extends ModelDirectory{
         return list;
     }
     
-    public WorldState checkout(Snapshot snap){
+    public WorldState restoreSnapshot(Snapshot snap){
         try{
             WorldState state=this.getState();
             switch(state){
@@ -229,7 +231,7 @@ public class World extends ModelDirectory{
                     return state;
                 }
                 case CLEAN:{
-                    ExecutionObserver checkout=this.executionGit("checkout -b "+this.tmp_branch+" "+snap.getHash());
+                    ExecutionObserver checkout=this.executeGitCommand("checkout -b "+this.tmp_branch+" "+snap.getHash());
                     checkout.start();
                     AppLogger.logger().showMessage();
                     if(checkout.exitCode()==0){
@@ -254,8 +256,44 @@ public class World extends ModelDirectory{
         return WorldState.ERROR;
     }
     
-    public void branch(String name){
-        
+    public WorldState discardChanges(){
+        try{
+            WorldState state=this.getState();
+            switch(state){
+                case NOT_INITIALIZED:
+                case COMMIT_IN_PROGRESS:{
+                    AppLogger.logger().showMessage();
+                    AppLogger.warning(state.toString());
+                    return state;
+                }
+                case DIRTY:{
+                    ExecutionObserver checkout=this.executeGitCommand("checkout .");
+                    checkout.start();
+                    AppLogger.logger().showMessage();
+                    if(checkout.exitCode()==0){
+                        AppLogger.info("Se descartarón los cambios actuales: "+this.getSrc());
+                        return WorldState.CLEAN;
+                    }else{
+                        AppLogger.error("Error al descartar los cambios actuales: "+this.getSrc());
+                        return WorldState.ERROR;
+                    }
+                }
+                case CLEAN:{
+                    AppLogger.logger().showMessage();
+                    AppLogger.info(state.toString());
+                    return state;
+                }
+                case ERROR:{
+                    AppLogger.logger().showMessage();
+                    AppLogger.error(state.toString());
+                    return state;
+                }
+                default: return WorldState.ERROR;
+            }
+        }catch(Exception ex){
+            AppLogger.error(ex.getMessage());
+        }
+        return WorldState.ERROR;
     }
     
 }
