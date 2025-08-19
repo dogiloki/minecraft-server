@@ -5,6 +5,7 @@ import com.dogiloki.minecraftserver.core.services.Instance;
 import com.dogiloki.minecraftserver.core.services.MinecraftServer;
 import com.dogiloki.minecraftserver.core.services.Snapshot;
 import com.dogiloki.minecraftserver.core.services.World;
+import com.dogiloki.minecraftserver.core.services.Worlds;
 import com.dogiloki.minecraftserver.infraestructure.utils.ListElementWrapper;
 import com.dogiloki.multitaks.directory.DirectoryList;
 import com.dogiloki.multitaks.directory.Storage;
@@ -85,14 +86,9 @@ public final class ServerPanel extends javax.swing.JPanel{
     
     public boolean isStarted(){
         try{
-            Process process=Runtime.getRuntime().exec("cmd /c wmic process where \"name='cmd.exe'\" get CommandLine");
-            BufferedReader reader=new BufferedReader(new InputStreamReader(process.getInputStream()));
-            String line;
-            while((line=reader.readLine())!=null){
-                // Si la línea contine el título (id) ya esta abierto
-                if(line.contains(this.getId())){
-                    return true;
-                }
+            Worlds worlds=this.ins.worlds;
+            for(World world:worlds.items().values()){
+                if(world.isWorldLocked()) return true;
             }
         }catch(Exception ex){
             ex.printStackTrace();

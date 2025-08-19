@@ -8,6 +8,8 @@
             <file>file:/E:/Github/Netbeans/minecraftServer/src/com/dogiloki/minecraftserver/infraestructure/utils/ListElementWrapper.java</file>
             <file>file:/E:/Github/Netbeans/minecraftServer/src/com/dogiloki/minecraftserver/MainLaucher.java</file>
             <file>file:/E:/Github/Netbeans/minecraftServer/src/com/dogiloki/minecraftserver/infraestructure/ui/MainForm.java</file>
+            <file>file:/E:/Github/Netbeans/minecraftServer/src/com/dogiloki/minecraftserver/core/services/Worlds.java</file>
+            <file>file:/E:/Github/Netbeans/minecraftServer/src/com/dogiloki/minecraftserver/core/entities/ListWorlds.java</file>
         </group>
     </open-files>
 </project-private>
