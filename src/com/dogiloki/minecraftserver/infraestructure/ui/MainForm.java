@@ -1,5 +1,6 @@
 package com.dogiloki.minecraftserver.infraestructure.ui;
 
+import com.dogiloki.minecraftserver.MainLaucher;
 import com.dogiloki.minecraftserver.application.dao.Properties;
 import com.dogiloki.minecraftserver.core.services.Instance;
 import com.dogiloki.minecraftserver.core.services.World;
@@ -13,6 +14,8 @@ import com.dogiloki.multitaks.directory.enums.DirectoryType;
 import com.dogiloki.multitaks.logger.AppLogger;
 import com.dogiloki.multitaks.logger.LogEntry;
 import com.dogiloki.multitaks.logger.contracts.LogListener;
+import com.dogiloki.multitaks.updater.UpdaterConfig;
+import com.dogiloki.multitaks.updater.UpdaterDialog;
 import java.nio.file.Path;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -30,6 +33,7 @@ public final class MainForm extends javax.swing.JFrame {
     
     private Instance selected_instance=null;
     private Watcher watcher;
+    private UpdaterConfig update_cfg=new UpdaterConfig(MainLaucher.class).builder();
 
     public MainForm(){
         initComponents();
@@ -42,6 +46,7 @@ public final class MainForm extends javax.swing.JFrame {
         this.split_panel.setDividerLocation(200);
         this.setLocationRelativeTo(null);
         this.loadInstances();
+        this.setTitle(this.update_cfg.project+" - "+this.update_cfg.version);
     }
     
     public void loadInstances(){
@@ -88,6 +93,7 @@ public final class MainForm extends javax.swing.JFrame {
         server_panel = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         log_server_text = new javax.swing.JTextArea();
+        updater_btn = new javax.swing.JButton();
 
         new_instance_btn.setText("Nueva Instancia");
         new_instance_btn.addActionListener(new java.awt.event.ActionListener() {
@@ -153,19 +159,34 @@ public final class MainForm extends javax.swing.JFrame {
         log_server_text.setWrapStyleWord(true);
         jScrollPane1.setViewportView(log_server_text);
 
+        updater_btn.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        updater_btn.setText("Actualizar");
+        updater_btn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                updater_btnActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 950, Short.MAX_VALUE)
             .addComponent(split_panel)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(updater_btn)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(split_panel, javax.swing.GroupLayout.PREFERRED_SIZE, 330, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(7, 7, 7)
+                .addComponent(updater_btn)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 164, Short.MAX_VALUE))
+                .addComponent(split_panel, javax.swing.GroupLayout.PREFERRED_SIZE, 294, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 160, Short.MAX_VALUE))
         );
 
         pack();
@@ -226,6 +247,10 @@ public final class MainForm extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_instances_treeMousePressed
 
+    private void updater_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updater_btnActionPerformed
+        new UpdaterDialog(this,true,".",this.update_cfg).setVisible(true);
+    }//GEN-LAST:event_updater_btnActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem delete_instance_btn;
     private javax.swing.JMenuItem edit_instance_btn;
@@ -241,5 +266,6 @@ public final class MainForm extends javax.swing.JFrame {
     private javax.swing.JPanel server_panel;
     private javax.swing.JSplitPane split_panel;
     private javax.swing.JMenuItem start_world_btn;
+    private javax.swing.JButton updater_btn;
     // End of variables declaration//GEN-END:variables
 }
