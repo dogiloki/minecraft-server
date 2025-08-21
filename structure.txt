@@ -1,6 +1,6 @@
 com/
-└── organismo/
-    └── asistencia/
+└── dogiloki/
+    └── minecraftserver/
         ├── core/                  # Capa de dominio
         │   ├── entities/          # Entidades de negocio
         │   ├── repositories/      # Interfaces de repositorio
