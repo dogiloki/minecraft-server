@@ -3,6 +3,7 @@ package com.dogiloki.minecraftserver.core.services;
 import com.dogiloki.minecraftserver.core.entities.ListSnapshots;
 import com.dogiloki.minecraftserver.core.entities.enums.WorldState;
 import com.dogiloki.multitaks.directory.ModelDirectory;
+import com.dogiloki.multitaks.directory.Storage;
 import com.dogiloki.multitaks.directory.annotations.Directory;
 import com.dogiloki.multitaks.directory.enums.DirectoryType;
 import com.dogiloki.multitaks.logger.AppLogger;
@@ -138,7 +139,7 @@ public class World extends ModelDirectory{
                 return WorldState.NOT_INITIALIZED;
             }
             // Agregar todo el contenido inicial al mundo y crear commit inicial
-            return this.createSnapshot("Initial copy of the world");
+            return new Storage(this.getSrc()+"/level.dat").exists()?this.createSnapshot("Initial copy of the world"):this.getState();
         }catch(Exception ex){
             ex.printStackTrace();
             AppLogger.error(ex.getMessage());
@@ -192,7 +193,6 @@ public class World extends ModelDirectory{
                         return state;
                     }
                     if(this.getCurrentBranch().equals(this.tmp_branch)){
-                        System.out.println(this.getCurrentBranch());
                         ExecutionObserver checkout=this.executeGitCommand("checkout "+this.main_branch);
                         checkout.start();
                         ExecutionObserver temp_checkout=this.executeGitCommand("checkout "+this.tmp_branch+" -- .");
