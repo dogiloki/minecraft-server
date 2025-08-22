@@ -16,6 +16,8 @@ import com.google.gson.annotations.Expose;
 public class Properties{
     
     @Expose
+    public static boolean mode_debug=false;
+    @Expose
     public static Folders folders=new Folders();
     @Expose
     public static Files files=new Files();

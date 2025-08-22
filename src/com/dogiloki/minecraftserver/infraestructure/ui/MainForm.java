@@ -5,6 +5,7 @@ import com.dogiloki.minecraftserver.application.dao.Properties;
 import com.dogiloki.minecraftserver.core.services.Instance;
 import com.dogiloki.minecraftserver.core.services.World;
 import com.dogiloki.minecraftserver.infraestructure.ui.components.ServerPanel;
+import com.dogiloki.minecraftserver.infraestructure.utils.LogTextPane;
 import com.dogiloki.multitaks.Function;
 import com.dogiloki.multitaks.Watcher;
 import com.dogiloki.multitaks.datastructure.tree.TreeNodeWrapper;
@@ -12,8 +13,6 @@ import com.dogiloki.multitaks.directory.DirectoryList;
 import com.dogiloki.multitaks.directory.Storage;
 import com.dogiloki.multitaks.directory.enums.DirectoryType;
 import com.dogiloki.multitaks.logger.AppLogger;
-import com.dogiloki.multitaks.logger.LogEntry;
-import com.dogiloki.multitaks.logger.contracts.LogListener;
 import com.dogiloki.multitaks.updater.UpdaterConfig;
 import com.dogiloki.multitaks.updater.UpdaterDialog;
 import java.nio.file.Path;
@@ -29,7 +28,7 @@ import javax.swing.tree.TreePath;
  */
 
 
-public final class MainForm extends javax.swing.JFrame {
+public final class MainForm extends javax.swing.JFrame{
     
     private Instance selected_instance=null;
     private Watcher watcher;
@@ -37,35 +36,41 @@ public final class MainForm extends javax.swing.JFrame {
 
     public MainForm(){
         initComponents();
-        AppLogger.logger().getLog().addListener(new LogListener(){
-            @Override
-            public void onLogAdded(LogEntry entry){
-                log_server_text.setText(log_server_text.getText()+"\n"+entry.toString());
-            }
-        });
-        this.split_panel.setDividerLocation(200);
         this.setLocationRelativeTo(null);
+    }
+    
+    public void run(){
+        this.split_panel.setDividerLocation(200);
         this.loadInstances();
         this.setTitle(this.update_cfg.project+" - "+this.update_cfg.version);
     }
     
+    public LogTextPane getLogInstancePane(){
+        return this.log_instance_pane;
+    }
+    
     public void loadInstances(){
-        DirectoryList folders=new Storage(Properties.folders.instances_folder,DirectoryType.FOLDER).notExists().listFolders();
-        DefaultMutableTreeNode root=new DefaultMutableTreeNode("Instancias");
-        DefaultTreeModel model=new DefaultTreeModel(root);
-        this.instances_tree.setModel(model);
-        Path folder;
-        while(folders.hasNext()){
-            folder=folders.next();
-            Instance ins=new Instance(folder.toString());
-            DefaultMutableTreeNode node_ins=new TreeNodeWrapper(ins,folder.getFileName().toString());
-            ins.worlds.items().iterate((name,world)->{
-                DefaultMutableTreeNode node_world=new TreeNodeWrapper(world,name);
-                node_ins.add(node_world);
-            });
-            root.add(node_ins);
+        try{
+            AppLogger.debug("Cargando instancias");
+            DirectoryList folders=new Storage(Properties.folders.instances_folder,DirectoryType.FOLDER).notExists().listFolders();
+            DefaultMutableTreeNode root=new DefaultMutableTreeNode("Instancias");
+            DefaultTreeModel model=new DefaultTreeModel(root);
+            this.instances_tree.setModel(model);
+            Path folder;
+            while(folders.hasNext()){
+                folder=folders.next();
+                Instance ins=new Instance(folder.toString());
+                DefaultMutableTreeNode node_ins=new TreeNodeWrapper(ins,folder.getFileName().toString());
+                ins.worlds.items().iterate((name,world)->{
+                    DefaultMutableTreeNode node_world=new TreeNodeWrapper(world,name);
+                    node_ins.add(node_world);
+                });
+                root.add(node_ins);
+            }
+            model.reload();
+        }catch(Exception ex){
+            AppLogger.debug(ex.getMessage());
         }
-        model.reload();
     }
     
     public void resetSelection(){
@@ -91,9 +96,9 @@ public final class MainForm extends javax.swing.JFrame {
         jScrollPane2 = new javax.swing.JScrollPane();
         instances_tree = new javax.swing.JTree();
         server_panel = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        log_server_text = new javax.swing.JTextArea();
         updater_btn = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        log_instance_pane = new com.dogiloki.minecraftserver.infraestructure.utils.LogTextPane();
 
         new_instance_btn.setText("Nueva Instancia");
         new_instance_btn.addActionListener(new java.awt.event.ActionListener() {
@@ -155,11 +160,6 @@ public final class MainForm extends javax.swing.JFrame {
         server_panel.setLayout(new java.awt.GridLayout(1, 0));
         split_panel.setRightComponent(server_panel);
 
-        log_server_text.setColumns(20);
-        log_server_text.setRows(5);
-        log_server_text.setWrapStyleWord(true);
-        jScrollPane1.setViewportView(log_server_text);
-
         updater_btn.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         updater_btn.setText("Actualizar");
         updater_btn.addActionListener(new java.awt.event.ActionListener() {
@@ -168,16 +168,18 @@ public final class MainForm extends javax.swing.JFrame {
             }
         });
 
+        jScrollPane1.setViewportView(log_instance_pane);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 950, Short.MAX_VALUE)
             .addComponent(split_panel)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap(855, Short.MAX_VALUE)
                 .addComponent(updater_btn)
                 .addContainerGap())
+            .addComponent(jScrollPane1)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -261,7 +263,7 @@ public final class MainForm extends javax.swing.JFrame {
     private javax.swing.JPopupMenu instances_world_popup;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTextArea log_server_text;
+    private com.dogiloki.minecraftserver.infraestructure.utils.LogTextPane log_instance_pane;
     private javax.swing.JMenuItem new_instance_btn;
     private javax.swing.JMenuItem new_world_instance_btn;
     private javax.swing.JPanel server_panel;

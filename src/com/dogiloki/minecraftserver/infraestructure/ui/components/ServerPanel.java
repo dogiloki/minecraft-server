@@ -14,8 +14,6 @@ import com.dogiloki.multitaks.download.DownloadDialog;
 import com.dogiloki.multitaks.logger.AppLogger;
 import com.dogiloki.multitaks.persistent.ExecutionObserver;
 import java.awt.Frame;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.nio.file.Path;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
