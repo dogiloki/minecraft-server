@@ -52,7 +52,12 @@ public final class MainForm extends javax.swing.JFrame{
     public void loadInstances(){
         try{
             AppLogger.debug("Cargando instancias");
-            DirectoryList folders=new Storage(Properties.folders.instances_folder,DirectoryType.FOLDER).notExists().listFolders();
+            DirectoryList folders=new Storage(Properties.folders.instances_folder,DirectoryType.FOLDER)
+                    .notExists()
+                    .listFolders()
+                    .filter((path)->{
+                        return new Storage(path.toString()+"/"+Properties.files.instance_cfg).exists();
+                    });
             DefaultMutableTreeNode root=new DefaultMutableTreeNode("Instancias");
             DefaultTreeModel model=new DefaultTreeModel(root);
             this.instances_tree.setModel(model);
@@ -69,15 +74,25 @@ public final class MainForm extends javax.swing.JFrame{
             }
             model.reload();
         }catch(Exception ex){
-            AppLogger.debug(ex.getMessage());
+            AppLogger.debug("Error al crear instancias").exception(ex);
         }
     }
     
     public void resetSelection(){
+        AppLogger.debug("Resetear selección de Instancia");
         this.loadInstances();
         this.selected_instance=null;
         this.server_panel.removeAll();
         this.server_panel.updateUI();
+    }
+    
+    public void newInstance(){
+        try{
+            new InstanceDialog(this,true,null).setVisible(true);
+            this.resetSelection();
+        }catch(Exception ex){
+            AppLogger.debug("Error en Nueva Instancia").exception(ex);
+        }
     }
     
     @SuppressWarnings("unchecked")
@@ -85,7 +100,7 @@ public final class MainForm extends javax.swing.JFrame{
     private void initComponents() {
 
         instances_root_popup = new javax.swing.JPopupMenu();
-        new_instance_btn = new javax.swing.JMenuItem();
+        new_instance_btn_menu = new javax.swing.JMenuItem();
         instances_item_popup = new javax.swing.JPopupMenu();
         edit_instance_btn = new javax.swing.JMenuItem();
         new_world_instance_btn = new javax.swing.JMenuItem();
@@ -99,14 +114,15 @@ public final class MainForm extends javax.swing.JFrame{
         updater_btn = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         log_instance_pane = new com.dogiloki.minecraftserver.infraestructure.utils.LogTextPane();
+        new_instance_btn = new javax.swing.JButton();
 
-        new_instance_btn.setText("Nueva Instancia");
-        new_instance_btn.addActionListener(new java.awt.event.ActionListener() {
+        new_instance_btn_menu.setText("Nueva Instancia");
+        new_instance_btn_menu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                new_instance_btnActionPerformed(evt);
+                new_instance_btn_menuActionPerformed(evt);
             }
         });
-        instances_root_popup.add(new_instance_btn);
+        instances_root_popup.add(new_instance_btn_menu);
 
         edit_instance_btn.setText("Editar Instancia");
         edit_instance_btn.addActionListener(new java.awt.event.ActionListener() {
@@ -170,13 +186,23 @@ public final class MainForm extends javax.swing.JFrame{
 
         jScrollPane1.setViewportView(log_instance_pane);
 
+        new_instance_btn.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        new_instance_btn.setText("Nueva Instancia");
+        new_instance_btn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                new_instance_btnActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(split_panel)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(855, Short.MAX_VALUE)
+                .addContainerGap()
+                .addComponent(new_instance_btn)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 740, Short.MAX_VALUE)
                 .addComponent(updater_btn)
                 .addContainerGap())
             .addComponent(jScrollPane1)
@@ -185,11 +211,13 @@ public final class MainForm extends javax.swing.JFrame{
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(7, 7, 7)
-                .addComponent(updater_btn)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(updater_btn)
+                    .addComponent(new_instance_btn))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(split_panel, javax.swing.GroupLayout.DEFAULT_SIZE, 294, Short.MAX_VALUE)
+                .addComponent(split_panel, javax.swing.GroupLayout.DEFAULT_SIZE, 310, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 160, Short.MAX_VALUE))
         );
 
         pack();
@@ -199,10 +227,9 @@ public final class MainForm extends javax.swing.JFrame{
         
     }//GEN-LAST:event_formWindowClosing
 
-    private void new_instance_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_new_instance_btnActionPerformed
-        new InstanceDialog(this,true,null).setVisible(true);
-        this.resetSelection();
-    }//GEN-LAST:event_new_instance_btnActionPerformed
+    private void new_instance_btn_menuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_new_instance_btn_menuActionPerformed
+        this.newInstance();
+    }//GEN-LAST:event_new_instance_btn_menuActionPerformed
 
     private void new_world_instance_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_new_world_instance_btnActionPerformed
         if(this.selected_instance==null) return;
@@ -213,7 +240,7 @@ public final class MainForm extends javax.swing.JFrame{
     }//GEN-LAST:event_new_world_instance_btnActionPerformed
 
     private void delete_instance_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_delete_instance_btnActionPerformed
-        JOptionPane.showMessageDialog(null,"Proximamente...","Eliminar Instancia",JOptionPane.ERROR_MESSAGE);
+        this.selected_instance.cfg.delete();
         this.resetSelection();
     }//GEN-LAST:event_delete_instance_btnActionPerformed
 
@@ -254,6 +281,10 @@ public final class MainForm extends javax.swing.JFrame{
         new UpdaterDialog(this,true,".",this.update_cfg).setVisible(true);
     }//GEN-LAST:event_updater_btnActionPerformed
 
+    private void new_instance_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_new_instance_btnActionPerformed
+        this.newInstance();
+    }//GEN-LAST:event_new_instance_btnActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem delete_instance_btn;
     private javax.swing.JMenuItem edit_instance_btn;
@@ -264,7 +295,8 @@ public final class MainForm extends javax.swing.JFrame{
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private com.dogiloki.minecraftserver.infraestructure.utils.LogTextPane log_instance_pane;
-    private javax.swing.JMenuItem new_instance_btn;
+    private javax.swing.JButton new_instance_btn;
+    private javax.swing.JMenuItem new_instance_btn_menu;
     private javax.swing.JMenuItem new_world_instance_btn;
     private javax.swing.JPanel server_panel;
     private javax.swing.JSplitPane split_panel;

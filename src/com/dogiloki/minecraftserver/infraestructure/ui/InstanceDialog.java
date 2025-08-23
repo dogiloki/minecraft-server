@@ -3,7 +3,6 @@ package com.dogiloki.minecraftserver.infraestructure.ui;
 import com.dogiloki.minecraftserver.application.dao.Properties;
 import com.dogiloki.minecraftserver.core.services.Instance;
 import com.dogiloki.minecraftserver.infraestructure.ui.components.ConfigurationPanel;
-import com.dogiloki.minecraftserver.infraestructure.ui.components.PackagesModsPanel;
 import com.dogiloki.minecraftserver.infraestructure.ui.components.ServerPropertiesPanel;
 import com.dogiloki.minecraftserver.infraestructure.ui.components.VersionPanel;
 import com.dogiloki.multitaks.Function;
@@ -28,9 +27,12 @@ public final class InstanceDialog extends javax.swing.JDialog{
         this.setResizable(false);
         this.ins=ins;
         if(this.ins==null){
+            AppLogger.debug("Nueva Instancia");
             this.ins=new Instance();
         }else{
-            this.setTitle(this.ins.cfg.name+" - "+this.ins.cfg.version);
+            this.ins.reload();
+            this.name_box.setEnabled(false);
+            AppLogger.debug("Editando Instancia: "+this.ins.getName());
         }
         this.getConfig();
         // Agregar paneles
@@ -41,7 +43,9 @@ public final class InstanceDialog extends javax.swing.JDialog{
     }
     
     public void getConfig(){
-        this.caja_nombre.setText(this.ins.cfg.name);
+        AppLogger.debug("Obtener configuración de la instancia");
+        this.setTitle(this.ins.cfg.name+" - "+(this.ins.cfg.version==null?"":this.ins.cfg.version));
+        this.name_box.setText(this.ins.cfg.name);
     }
     
     @SuppressWarnings("unchecked")
@@ -49,7 +53,7 @@ public final class InstanceDialog extends javax.swing.JDialog{
     private void initComponents() {
 
         jLabel1 = new javax.swing.JLabel();
-        caja_nombre = new javax.swing.JTextField();
+        name_box = new javax.swing.JTextField();
         btn_save = new javax.swing.JButton();
         panel_menu = new javax.swing.JPanel();
         btn_version = new javax.swing.JButton();
@@ -58,17 +62,12 @@ public final class InstanceDialog extends javax.swing.JDialog{
         panel_frame = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        addWindowListener(new java.awt.event.WindowAdapter() {
-            public void windowClosed(java.awt.event.WindowEvent evt) {
-                formWindowClosed(evt);
-            }
-        });
 
         jLabel1.setText("Nombre:");
 
-        caja_nombre.addKeyListener(new java.awt.event.KeyAdapter() {
+        name_box.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
-                caja_nombreKeyReleased(evt);
+                name_boxKeyReleased(evt);
             }
         });
 
@@ -129,7 +128,7 @@ public final class InstanceDialog extends javax.swing.JDialog{
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(caja_nombre))
+                        .addComponent(name_box))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(panel_menu, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -145,7 +144,7 @@ public final class InstanceDialog extends javax.swing.JDialog{
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(caja_nombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(name_box, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(panel_menu, javax.swing.GroupLayout.DEFAULT_SIZE, 402, Short.MAX_VALUE)
@@ -159,11 +158,9 @@ public final class InstanceDialog extends javax.swing.JDialog{
     }// </editor-fold>//GEN-END:initComponents
 
     private void btn_saveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_saveActionPerformed
-        if(!this.ins.save(Properties.folders.instances_folder+"/"+this.ins.cfg.name)){
-            AppLogger.logger().showMessage();
-            AppLogger.error("Error al crear instancia");
+        if(this.ins.save(Properties.folders.instances_folder+"/"+this.ins.cfg.name)){
+            dispose();
         }
-        dispose();
     }//GEN-LAST:event_btn_saveActionPerformed
 
     private void btn_versionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_versionActionPerformed
@@ -178,14 +175,10 @@ public final class InstanceDialog extends javax.swing.JDialog{
         Function.setPanel(this.panel_frame,this.panel_configuration);
     }//GEN-LAST:event_btn_configurationActionPerformed
 
-    private void caja_nombreKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_caja_nombreKeyReleased
-        this.ins.cfg.name=this.caja_nombre.getText();
-        this.setTitle(this.ins.cfg.name+" - "+(this.ins.cfg.version==null?"":this.ins.cfg.version));
-    }//GEN-LAST:event_caja_nombreKeyReleased
-
-    private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
-        this.ins.reload();
-    }//GEN-LAST:event_formWindowClosed
+    private void name_boxKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_name_boxKeyReleased
+        this.ins.cfg.name=this.name_box.getText();
+        this.getConfig();
+    }//GEN-LAST:event_name_boxKeyReleased
 
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -207,8 +200,8 @@ public final class InstanceDialog extends javax.swing.JDialog{
     private javax.swing.JButton btn_properties;
     private javax.swing.JButton btn_save;
     private javax.swing.JButton btn_version;
-    private javax.swing.JTextField caja_nombre;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JTextField name_box;
     private javax.swing.JPanel panel_frame;
     private javax.swing.JPanel panel_menu;
     // End of variables declaration//GEN-END:variables

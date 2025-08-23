@@ -168,8 +168,7 @@ public class World extends ModelDirectory{
             switch(state){
                 case NOT_INITIALIZED:
                 case COMMIT_IN_PROGRESS:{
-                    AppLogger.logger().showMessage();
-                    AppLogger.warning(state.toString());
+                    AppLogger.warning(state.toString()).showMessage();
                     return state;
                 }
                 case DIRTY:{
@@ -185,11 +184,10 @@ public class World extends ModelDirectory{
                     //  Hacer commit
                     ExecutionObserver commit=this.executeGitCommand("commit -m \""+message+"\"");
                     commit.start();
-                    AppLogger.logger().showMessage();
                     if(commit.exitCode()==0){
-                        AppLogger.info("Se creó el respaldo mundo: "+this.getSrc());
+                        AppLogger.info("Se creó el respaldo mundo: "+this.getSrc()).showMessage();
                     }else{
-                        AppLogger.error("Error al crear respaldo del mundo: "+this.getSrc());
+                        AppLogger.error("Error al crear respaldo del mundo: "+this.getSrc()).showMessage();
                         return state;
                     }
                     if(this.getCurrentBranch().equals(this.tmp_branch)){
@@ -204,13 +202,11 @@ public class World extends ModelDirectory{
                     return WorldState.COMMITTED;
                 }
                 case CLEAN:{
-                    AppLogger.logger().showMessage();
-                    AppLogger.info(state.toString());
+                    AppLogger.info(state.toString()).showMessage();
                     return state;
                 }
                 case ERROR:{
-                    AppLogger.logger().showMessage();
-                    AppLogger.error(state.toString());
+                    AppLogger.error(state.toString()).showMessage();
                     return state;
                 }
                 default: return WorldState.ERROR;
@@ -246,25 +242,22 @@ public class World extends ModelDirectory{
                 case NOT_INITIALIZED:
                 case COMMIT_IN_PROGRESS:
                 case DIRTY:{
-                    AppLogger.logger().showMessage();
-                    AppLogger.warning(state.toString());
+                    AppLogger.warning(state.toString()).showMessage();
                     return state;
                 }
                 case CLEAN:{
                     ExecutionObserver checkout=this.executeGitCommand("checkout -b "+this.tmp_branch+" "+snap.getHash());
                     checkout.start();
-                    AppLogger.logger().showMessage();
                     if(checkout.exitCode()==0){
-                        AppLogger.info("Se cargo el respaldo \""+snap.getMessage()+"\" ("+snap.getHash()+"): "+this.getSrc());
+                        AppLogger.info("Se cargo el respaldo \""+snap.getMessage()+"\" ("+snap.getHash()+"): "+this.getSrc()).showMessage();
                         return WorldState.CHECKED_OUT;
                     }else{
-                        AppLogger.error("Error cargar el respaldo \""+snap.getMessage()+"\" ("+snap.getHash()+"): "+this.getSrc());
+                        AppLogger.error("Error cargar el respaldo \""+snap.getMessage()+"\" ("+snap.getHash()+"): "+this.getSrc()).showMessage();
                         return state;
                     }
                 }
                 case ERROR:{
-                    AppLogger.logger().showMessage();
-                    AppLogger.error(state.toString());
+                    AppLogger.error(state.toString()).showMessage();
                     return state;
                 }
                 default: return WorldState.ERROR;
@@ -282,30 +275,26 @@ public class World extends ModelDirectory{
             switch(state){
                 case NOT_INITIALIZED:
                 case COMMIT_IN_PROGRESS:{
-                    AppLogger.logger().showMessage();
-                    AppLogger.warning(state.toString());
+                    AppLogger.warning(state.toString()).showMessage();
                     return state;
                 }
                 case DIRTY:{
                     ExecutionObserver checkout=this.executeGitCommand("checkout .");
                     checkout.start();
-                    AppLogger.logger().showMessage();
                     if(checkout.exitCode()==0){
-                        AppLogger.info("Se descartarón los cambios actuales: "+this.getSrc());
+                        AppLogger.info("Se descartarón los cambios actuales: "+this.getSrc()).showMessage();
                         return WorldState.CLEAN;
                     }else{
-                        AppLogger.error("Error al descartar los cambios actuales: "+this.getSrc());
+                        AppLogger.error("Error al descartar los cambios actuales: "+this.getSrc()).showMessage();
                         return WorldState.ERROR;
                     }
                 }
                 case CLEAN:{
-                    AppLogger.logger().showMessage();
-                    AppLogger.info(state.toString());
+                    AppLogger.info(state.toString()).showMessage();
                     return state;
                 }
                 case ERROR:{
-                    AppLogger.logger().showMessage();
-                    AppLogger.error(state.toString());
+                    AppLogger.error(state.toString()).showMessage();
                     return state;
                 }
                 default: return WorldState.ERROR;

@@ -155,8 +155,7 @@ public final class ServerPanel extends javax.swing.JPanel{
                         " nogui";
                 }
             }else{
-                AppLogger.logger().showMessage();
-                AppLogger.debug("No compatible la versión de forge");
+                AppLogger.error("No es compatible la versión de forge").showMessage();
                 return;
             }
             try{
@@ -173,13 +172,17 @@ public final class ServerPanel extends javax.swing.JPanel{
             }
         }
         // -Djava.awt.headless=true
-        this.file_run.write(command);
-        this.file_eula.write("#https://account.mojang.com/documents/minecraft_eula \neula=true");
-        this.ins.server_properties.level_name=Properties.folders.instances_worlds+"/"+this.world.getName();
-        this.ins.server_properties.save();
-        this.file_eula.flush();
-        this.file_run.flush();
-        this.start();
+        try{
+            this.file_run.write(command);
+            this.file_eula.write("#https://account.mojang.com/documents/minecraft_eula \neula=true");
+            this.ins.server_properties.level_name=Properties.folders.instances_worlds+"/"+this.world.getName();
+            this.ins.server_properties.save();
+            this.file_eula.flush();
+            this.file_run.flush();
+            this.start();
+        }catch(Exception ex){
+            AppLogger.error(ex.getMessage()).showMessage().exception(ex);
+        }
     }
     
     public void start(){
@@ -200,8 +203,7 @@ public final class ServerPanel extends javax.swing.JPanel{
     public Snapshot getSelectedSnapshot(){
         ListElementWrapper<Snapshot> selected=this.snapshot_list.getSelectedValue();
         if(selected==null){
-            AppLogger.logger().showMessage();
-            AppLogger.alert("Seleccione un respaldo");
+            AppLogger.alert("Seleccione un respaldo").showMessage();
             return null;
         }
         return selected.getValue();
@@ -337,10 +339,6 @@ public final class ServerPanel extends javax.swing.JPanel{
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(create_snapshot_btn))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(discard_changes_btn)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(restore_snapshot_btn))
-                    .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(version_label)
@@ -352,7 +350,11 @@ public final class ServerPanel extends javax.swing.JPanel{
                         .addComponent(jLabel4)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(world_label)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(discard_changes_btn)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(restore_snapshot_btn)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -378,7 +380,7 @@ public final class ServerPanel extends javax.swing.JPanel{
                     .addComponent(snapshot_message_box, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(create_snapshot_btn))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 234, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 170, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(discard_changes_btn)
@@ -403,8 +405,7 @@ public final class ServerPanel extends javax.swing.JPanel{
     private void create_snapshot_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_create_snapshot_btnActionPerformed
         String message=this.snapshot_message_box.getText();
         if(message.trim().equals("")){
-            AppLogger.logger().showMessage();
-            AppLogger.warning("No hay mensaje para hacer el respaldo: "+this.world.getSrc());
+            AppLogger.warning("No hay mensaje para hacer el respaldo: "+this.world.getSrc()).showMessage();
         }else{
             this.world.createSnapshot(message);
             this.loadSnapshots();

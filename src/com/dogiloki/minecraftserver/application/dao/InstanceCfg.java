@@ -4,6 +4,9 @@ import com.dogiloki.multitaks.ObjectId;
 import com.dogiloki.multitaks.directory.ModelDirectory;
 import com.dogiloki.multitaks.directory.annotations.Directory;
 import com.dogiloki.multitaks.directory.enums.DirectoryType;
+import com.dogiloki.multitaks.validator.annotations.Validatable;
+import com.dogiloki.multitaks.validator.annotations.ValidationRule;
+import com.dogiloki.multitaks.validator.enums.ValidatorRule;
 import com.google.gson.annotations.Expose;
 
 /**
@@ -22,8 +25,18 @@ public final class InstanceCfg extends ModelDirectory{
     @Expose
     public String id=ObjectId.generate();
     @Expose
+    @Validatable(
+            rules={
+                @ValidationRule(type=ValidatorRule.NOT_NULL)
+            }
+    )
     public String name="";
     @Expose
+    @Validatable(
+            rules={
+                @ValidationRule(type=ValidatorRule.NOT_NULL)
+            }
+    )
     public String version="";
     @Expose
     public String forge_version="";

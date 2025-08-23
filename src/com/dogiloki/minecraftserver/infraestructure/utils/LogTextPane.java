@@ -21,8 +21,7 @@ public class LogTextPane<T extends LogEntry> extends JTextPane{
     private StyledDocument doc;
     private Style style;
     private Integer line=null;
-    private Integer default_line=0;
-    private Color default_color=null;
+    private Color color=null;
     
     public LogTextPane(){
         super();
@@ -34,23 +33,14 @@ public class LogTextPane<T extends LogEntry> extends JTextPane{
         this.setBackground(new Color(245,245,245));
     }
     
-    public LogTextPane defaultLine(Integer line){
-        this.default_line=line;
-        return this;
-    }
-    
-    public LogTextPane defaultColor(Color color){
-        this.default_color=color;
-        return this;
-    }
-    
     public LogTextPane line(Integer line){
         this.line=line;
         return this;
     }
     
-    public Integer getLine(){
-        return Function.set(this.line,this.default_line);
+    public LogTextPane color(Color color){
+        this.color=color;
+        return this;
     }
     
     public boolean insert(LogEntry entry){
@@ -58,7 +48,7 @@ public class LogTextPane<T extends LogEntry> extends JTextPane{
     }
     
     public boolean insert(LogEntry entry, Color color){
-        this.defaultColor(color);
+        this.color(color);
         return this._insert(entry);
     }
     
@@ -69,7 +59,7 @@ public class LogTextPane<T extends LogEntry> extends JTextPane{
     
     public boolean insertLine(Integer line, LogEntry entry, Color color){
         this.line(line);
-        this.defaultColor(color);
+        this.color(color);
         return this._insert(entry);
     }
     
@@ -78,10 +68,14 @@ public class LogTextPane<T extends LogEntry> extends JTextPane{
     }
     
     private boolean _insert(LogEntry entry){
-        StyleConstants.setForeground(this.style,Function.set(this.default_color,entry.type().getColor()));
+        StyleConstants.setForeground(this.style,Function.set(this.color,entry.type().getColor()));
         try{
-            this.doc.insertString(this.getLine(),entry.toString()+"\n",this.style);
+            // Insertar al final si no se especifica línea
+            int pos=Function.set(this.line,this.doc.getLength());
+            this.doc.insertString(pos,entry.toString()+"\n",this.style);
+            this.setCaretPosition(this.doc.getLength());
             this.line(null);
+            this.color(null);
             return true;
         }catch(Exception ex){
             ex.printStackTrace();
