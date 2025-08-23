@@ -1,11 +1,13 @@
 package com.dogiloki.minecraftserver.infraestructure.ui.components;
 
 import com.dogiloki.minecraftserver.application.dao.Properties;
+import com.dogiloki.minecraftserver.core.entities.enums.WorldState;
 import com.dogiloki.minecraftserver.core.services.Instance;
 import com.dogiloki.minecraftserver.core.services.MinecraftServer;
 import com.dogiloki.minecraftserver.core.services.Snapshot;
 import com.dogiloki.minecraftserver.core.services.World;
 import com.dogiloki.minecraftserver.core.services.Worlds;
+import com.dogiloki.minecraftserver.infraestructure.utils.ConfirmHelper;
 import com.dogiloki.minecraftserver.infraestructure.utils.ListElementWrapper;
 import com.dogiloki.multitaks.directory.DirectoryList;
 import com.dogiloki.multitaks.directory.Storage;
@@ -407,20 +409,25 @@ public final class ServerPanel extends javax.swing.JPanel{
         if(message.trim().equals("")){
             AppLogger.warning("No hay mensaje para hacer el respaldo: "+this.world.getSrc()).showMessage();
         }else{
-            this.world.createSnapshot(message);
+            WorldState state=this.world.createSnapshot(message);
             this.loadSnapshots();
         }
     }//GEN-LAST:event_create_snapshot_btnActionPerformed
 
     private void restore_snapshot_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_restore_snapshot_btnActionPerformed
-        Snapshot snapshot=this.getSelectedSnapshot();
-        if(snapshot==null) return;
-        this.world.restoreSnapshot(snapshot);
-        this.loadSnapshots();
+        ConfirmHelper.runWithConfirm("¿Cargar respaldo? Asegúrese de respaldar o descargar los cambios actuales",()->{
+            Snapshot snapshot=this.getSelectedSnapshot();
+            if(snapshot==null) return;
+            this.world.restoreSnapshot(snapshot);
+            this.loadSnapshots();
+        });
     }//GEN-LAST:event_restore_snapshot_btnActionPerformed
 
     private void discard_changes_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_discard_changes_btnActionPerformed
-        this.world.discardChanges();
+        ConfirmHelper.runWithConfirm("¿Eliminar cambios sin respaldar? Dejará el mundo en base al último respaldo",()->{
+            this.world.discardChanges();
+            this.loadSnapshots();
+        });
     }//GEN-LAST:event_discard_changes_btnActionPerformed
 
 

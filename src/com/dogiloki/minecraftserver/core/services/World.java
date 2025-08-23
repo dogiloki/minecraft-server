@@ -139,7 +139,7 @@ public class World extends ModelDirectory{
                 return WorldState.NOT_INITIALIZED;
             }
             // Agregar todo el contenido inicial al mundo y crear commit inicial
-            return new Storage(this.getSrc()+"/level.dat").exists()?this.createSnapshot("Initial copy of the world"):this.getState();
+            return new Storage(this.getSrc()+"/level.dat").exists()?this.createSnapshot("Respaldo inicial del mundo"):this.getState();
         }catch(Exception ex){
             ex.printStackTrace();
             AppLogger.error(ex.getMessage());
@@ -178,9 +178,10 @@ public class World extends ModelDirectory{
                     if(add.exitCode()==0){
                         AppLogger.info("Se agregó el contenido del mundo: "+this.getSrc());
                     }else{
-                        AppLogger.error("Error al agregar el contenido del mundo: "+this.getSrc());
+                        AppLogger.error("Error al agregar el contenido del mundo: "+this.getSrc()).showMessage();
                         return state;
                     }
+                    
                     //  Hacer commit
                     ExecutionObserver commit=this.executeGitCommand("commit -m \""+message+"\"");
                     commit.start();
@@ -278,20 +279,21 @@ public class World extends ModelDirectory{
                     AppLogger.warning(state.toString()).showMessage();
                     return state;
                 }
+                case CLEAN:
                 case DIRTY:{
                     ExecutionObserver checkout=this.executeGitCommand("checkout .");
+                    ExecutionObserver branch=this.executeGitCommand("checkout "+this.main_branch);
+                    ExecutionObserver branch_tmp=this.executeGitCommand("branch -D "+this.tmp_branch);
                     checkout.start();
-                    if(checkout.exitCode()==0){
+                    branch.start();
+                    branch_tmp.start();
+                    if(branch.exitCode()==0){
                         AppLogger.info("Se descartarón los cambios actuales: "+this.getSrc()).showMessage();
                         return WorldState.CLEAN;
                     }else{
                         AppLogger.error("Error al descartar los cambios actuales: "+this.getSrc()).showMessage();
                         return WorldState.ERROR;
                     }
-                }
-                case CLEAN:{
-                    AppLogger.info(state.toString()).showMessage();
-                    return state;
                 }
                 case ERROR:{
                     AppLogger.error(state.toString()).showMessage();

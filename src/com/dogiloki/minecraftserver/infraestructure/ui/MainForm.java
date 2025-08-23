@@ -5,6 +5,7 @@ import com.dogiloki.minecraftserver.application.dao.Properties;
 import com.dogiloki.minecraftserver.core.services.Instance;
 import com.dogiloki.minecraftserver.core.services.World;
 import com.dogiloki.minecraftserver.infraestructure.ui.components.ServerPanel;
+import com.dogiloki.minecraftserver.infraestructure.utils.ConfirmHelper;
 import com.dogiloki.minecraftserver.infraestructure.utils.LogTextPane;
 import com.dogiloki.multitaks.Function;
 import com.dogiloki.multitaks.Watcher;
@@ -202,7 +203,7 @@ public final class MainForm extends javax.swing.JFrame{
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(new_instance_btn)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 740, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 777, Short.MAX_VALUE)
                 .addComponent(updater_btn)
                 .addContainerGap())
             .addComponent(jScrollPane1)
@@ -215,9 +216,9 @@ public final class MainForm extends javax.swing.JFrame{
                     .addComponent(updater_btn)
                     .addComponent(new_instance_btn))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(split_panel, javax.swing.GroupLayout.DEFAULT_SIZE, 310, Short.MAX_VALUE)
+                .addComponent(split_panel, javax.swing.GroupLayout.DEFAULT_SIZE, 301, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 160, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 153, Short.MAX_VALUE))
         );
 
         pack();
@@ -240,8 +241,10 @@ public final class MainForm extends javax.swing.JFrame{
     }//GEN-LAST:event_new_world_instance_btnActionPerformed
 
     private void delete_instance_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_delete_instance_btnActionPerformed
-        this.selected_instance.cfg.delete();
-        this.resetSelection();
+        ConfirmHelper.runWithConfirm("¿Eliminar instancia? No elimina la carpeta",()->{
+            this.selected_instance.cfg.delete();
+            this.resetSelection();
+        });
     }//GEN-LAST:event_delete_instance_btnActionPerformed
 
     private void edit_instance_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_edit_instance_btnActionPerformed
@@ -278,7 +281,7 @@ public final class MainForm extends javax.swing.JFrame{
     }//GEN-LAST:event_instances_treeMousePressed
 
     private void updater_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updater_btnActionPerformed
-        new UpdaterDialog(this,true,".",this.update_cfg).setVisible(true);
+        new UpdaterDialog(this,true,"probe",this.update_cfg).setVisible(true);
     }//GEN-LAST:event_updater_btnActionPerformed
 
     private void new_instance_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_new_instance_btnActionPerformed

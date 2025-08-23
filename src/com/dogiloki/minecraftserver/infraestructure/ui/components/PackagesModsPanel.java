@@ -7,6 +7,7 @@ import com.dogiloki.minecraftserver.core.services.ModFile;
 import com.dogiloki.minecraftserver.core.services.Mods;
 import com.dogiloki.minecraftserver.core.services.PackagesMods;
 import com.dogiloki.minecraftserver.infraestructure.utils.ComboItemWrapper;
+import com.dogiloki.minecraftserver.infraestructure.utils.ConfirmHelper;
 import com.dogiloki.minecraftserver.infraestructure.utils.ListElementWrapper;
 import com.dogiloki.multitaks.directory.DirectoryList;
 import com.dogiloki.multitaks.directory.Storage;
@@ -316,7 +317,7 @@ public final class PackagesModsPanel extends javax.swing.JPanel{
     }//GEN-LAST:event_packages_mods_listValueChanged
 
     private void new_package_mods_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_new_package_mods_btnActionPerformed
-        String name=JOptionPane.showInputDialog(null,"Ingrese el nombre:","Nuvo Paquete de Mods",JOptionPane.QUESTION_MESSAGE);
+        String name=JOptionPane.showInputDialog(null,"Ingrese el nombre:","Nuevo Paquete de Mods",JOptionPane.QUESTION_MESSAGE);
         if(name==null) return;
         new Storage(Properties.folders.instances_mods+"/"+name,DirectoryType.FOLDER).notExists();
         this.loadPackagesMods();
@@ -326,9 +327,11 @@ public final class PackagesModsPanel extends javax.swing.JPanel{
         if(this.selected_mods==null){
             JOptionPane.showMessageDialog(null,"No hay un elemento seleccionado","Error al eliminar",JOptionPane.ERROR_MESSAGE);
         }else{
-            this.selected_mods.delete();
-            this.selected_mods=null;
-            this.loadPackagesMods();
+            ConfirmHelper.runWithConfirm("¿Eliminar paquete de Mods? Elimina la carpeta y los archivos",()->{
+                this.selected_mods.delete();
+                this.selected_mods=null;
+                this.loadPackagesMods();
+            });
         }
     }//GEN-LAST:event_delete_packages_mods_btnActionPerformed
 
@@ -347,11 +350,13 @@ public final class PackagesModsPanel extends javax.swing.JPanel{
     }//GEN-LAST:event_desactive_mods_btnActionPerformed
 
     private void delete_mods_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_delete_mods_btnActionPerformed
-        this.getSelectedMods().forEach((key,item)->{
-            item.delete();
+        ConfirmHelper.runWithConfirm("¿Eliminar mod? Elimina el archivo",()->{
+            this.getSelectedMods().forEach((key,item)->{
+                item.delete();
+            });
+            this.loadMods();
+            this.loadInstanceMods();
         });
-        this.loadMods();
-        this.loadInstanceMods();
     }//GEN-LAST:event_delete_mods_btnActionPerformed
 
     private void add_mods_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_add_mods_btnActionPerformed
