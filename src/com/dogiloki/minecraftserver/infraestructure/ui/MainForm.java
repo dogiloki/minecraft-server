@@ -281,7 +281,7 @@ public final class MainForm extends javax.swing.JFrame{
     }//GEN-LAST:event_instances_treeMousePressed
 
     private void updater_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updater_btnActionPerformed
-        new UpdaterDialog(this,true,"probe",this.update_cfg).setVisible(true);
+        new UpdaterDialog(this,true,".",this.update_cfg).setVisible(true);
     }//GEN-LAST:event_updater_btnActionPerformed
 
     private void new_instance_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_new_instance_btnActionPerformed
