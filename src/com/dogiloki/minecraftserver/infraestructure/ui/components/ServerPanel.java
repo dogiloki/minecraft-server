@@ -157,7 +157,7 @@ public final class ServerPanel extends javax.swing.JPanel{
                         " nogui";
                 }
             }else{
-                AppLogger.error("No es compatible la versión de forge").showMessage();
+                AppLogger.error("Actualmente la aplicación no es compatible con la versión de server-forge "+this.ins.cfg.forge_version).showMessage();
                 return;
             }
             try{

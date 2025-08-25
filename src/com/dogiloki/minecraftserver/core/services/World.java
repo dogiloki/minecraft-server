@@ -281,9 +281,11 @@ public class World extends ModelDirectory{
                 }
                 case CLEAN:
                 case DIRTY:{
+                    ExecutionObserver clean=this.executeGitCommand("clean -fd");
                     ExecutionObserver checkout=this.executeGitCommand("checkout .");
                     ExecutionObserver branch=this.executeGitCommand("checkout "+this.main_branch);
                     ExecutionObserver branch_tmp=this.executeGitCommand("branch -D "+this.tmp_branch);
+                    clean.start();
                     checkout.start();
                     branch.start();
                     branch_tmp.start();
