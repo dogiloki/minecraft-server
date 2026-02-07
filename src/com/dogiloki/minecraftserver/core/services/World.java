@@ -13,6 +13,24 @@ import java.io.FileInputStream;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 import javax.swing.Icon;
+import org.eclipse.jgit.api.CherryPickResult;
+import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.ResetCommand;
+import org.eclipse.jgit.api.Status;
+import org.eclipse.jgit.dircache.DirCache;
+import org.eclipse.jgit.dircache.DirCacheBuilder;
+import org.eclipse.jgit.dircache.DirCacheCheckout;
+import org.eclipse.jgit.dircache.DirCacheEntry;
+import org.eclipse.jgit.lib.Constants;
+import org.eclipse.jgit.lib.ObjectId;
+import org.eclipse.jgit.lib.Ref;
+import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.lib.RepositoryBuilder;
+import org.eclipse.jgit.revwalk.RevCommit;
+import org.eclipse.jgit.revwalk.RevTree;
+import org.eclipse.jgit.revwalk.RevWalk;
+import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
+import org.eclipse.jgit.treewalk.TreeWalk;
 
 /**
  *
@@ -20,13 +38,15 @@ import javax.swing.Icon;
  */
 
 @Directory(type=DirectoryType.FOLDER)
-public class World extends ModelDirectory{
+public final class World extends ModelDirectory{
     
     public static String DEFAULT_NAME="world";
     public static String GIT_PATH="git";
     
     private final Icon icon=null;
-    private final File git;
+    private File git_dir;
+    private Repository repo;
+    private Git git;
     private String main_branch="master";
     private String tmp_branch="tmp";
     private File git_lock;
@@ -35,12 +55,39 @@ public class World extends ModelDirectory{
     public World(String path){
         super.aim(path);
         this.exists(true);
-        this.git=new File(this.getSrc()+"/.git");
-        this.git_lock=new File(this.git.getPath(),"index.lock");
         this.world_lock=new File(this.getSrc(),"session.lock");
+        this.git_dir=new File(this.getSrc()+"/.git");
+        this.git_lock=new File(this.git_dir,"index.lock");
         //this.icon= // Pendiente a obtener el icono
+        try{
+            this.repo=new RepositoryBuilder()
+                    .setGitDir(this.git_dir)
+                    .readEnvironment()
+                    .findGitDir()
+                    .build();
+            this.git=new Git(this.repo);
+        }catch(Exception ex){
+            AppLogger.debug("Error al contruir repositorio existente").exception(ex);
+        }
     }
     
+    // Iniciar repositorio
+    public WorldState initializeRepository(){
+        try{
+            if(this.hasGitRepository()) return WorldState.INITIALIZED;
+            this.git=Git.init().setDirectory(this.getFile()).setInitialBranch(this.main_branch).call();
+            this.repo=this.git.getRepository();
+            if(new Storage(this.getSrc()+"/level.dat").exists()){
+                return this.createSnapshot("Respaldo inicial del mundo");
+            }
+            return this.getState();
+        }catch(Exception ex){
+            AppLogger.error(ex.getMessage()).exception(ex);
+        }
+        return WorldState.ERROR;
+    }
+    
+    // Verificar si el mundo esta bloqueado
     public boolean isWorldLocked(){
         if(!this.world_lock.exists()) return false;
         try(FileInputStream fis=new FileInputStream(this.world_lock)){
@@ -55,8 +102,7 @@ public class World extends ModelDirectory{
                 return false;
             }
         }catch(Exception ex){
-            ex.printStackTrace();
-            AppLogger.error(ex.getMessage());
+            AppLogger.debug("Error al verificar si el mundo esta bloqueado").exception(ex);
             return true;
         }
     }
@@ -77,7 +123,7 @@ public class World extends ModelDirectory{
         }catch(Exception ex){
             ex.printStackTrace();
         }
-        return this.git.exists();
+        return (this.repo!=null && this.repo.getDirectory().exists());
     }
     
     public boolean isGitLocked(){
@@ -92,29 +138,24 @@ public class World extends ModelDirectory{
             if(this.isGitLocked()){
                 return WorldState.COMMIT_IN_PROGRESS;
             }
-            ExecutionObserver check_head=this.executeGitCommand("rev-parse --verify HEAD");
-            check_head.start();
-            if(check_head.exitCode()!=0){
+            if(this.repo.resolve(Constants.HEAD)==null){
                 return WorldState.DIRTY;
             }
-            ExecutionObserver check=this.executeGitCommand("diff --quiet");
-            check.start();
-            if(check.exitCode()!=0){
-                return WorldState.DIRTY;
-            }
-            final boolean[] dirty={false};
-            ExecutionObserver status=this.executeGitCommand("status --porcelain");
-            status.start((line,posi)->{
-                if(!line.trim().isEmpty()){
-                    dirty[0]=true;
-                }
-            });
-            return dirty[0]?WorldState.DIRTY:WorldState.CLEAN;
+            Status status=this.git.status().call();
+            return status.isClean()?WorldState.CLEAN:WorldState.DIRTY;
         }catch(Exception ex){
-            ex.printStackTrace();
-            AppLogger.error(ex.getMessage());
+            AppLogger.error("Error al obtener estado del mundo segun el repositorio").exception(ex);
             return WorldState.ERROR;
         }
+    }
+    
+    public String getCurrentBranch(){
+        try{
+            return this.repo.getBranch();
+        }catch(Exception ex){
+            AppLogger.error("Error al obtener rama del repositorio").exception(ex);
+        }
+        return null;
     }
     
     public ExecutionObserver executeGitCommand(String command){
@@ -124,51 +165,13 @@ public class World extends ModelDirectory{
                     .command(World.GIT_PATH+" "+command);
     }
     
-    // Iniciar repositorio si no existe
-    public WorldState initializeRepository(){
-        try{
-            if(this.hasGitRepository()) return WorldState.INITIALIZED;
-            
-            // Iniciar repositorio
-            ExecutionObserver init=this.executeGitCommand("init -b "+this.main_branch);
-            init.start();
-            if(init.exitCode()==0){
-                AppLogger.info("Se creó repositorio: "+this.getSrc());
-            }else{
-                AppLogger.error("Error al crear repositorio: "+this.getSrc());
-                return WorldState.NOT_INITIALIZED;
-            }
-            // Agregar todo el contenido inicial al mundo y crear commit inicial
-            return new Storage(this.getSrc()+"/level.dat").exists()?this.createSnapshot("Respaldo inicial del mundo"):this.getState();
-        }catch(Exception ex){
-            ex.printStackTrace();
-            AppLogger.error(ex.getMessage());
-        }
-        return WorldState.ERROR;
-    }
-    
-    public String getCurrentBranch(){
-        try{
-            StringBuilder str=new StringBuilder();
-            ExecutionObserver branch=this.executeGitCommand("rev-parse --abbrev-ref HEAD");
-            branch.start((line,posi)->{
-                str.append(line.trim());
-            });
-            return str.toString();
-        }catch(Exception ex){
-            ex.printStackTrace();
-            AppLogger.error(ex.getMessage());
-        }
-        return null;
-    }
-    
     public WorldState createSnapshot(String message){
         try{
             WorldState state=this.getState();
             switch(state){
                 case NOT_INITIALIZED:
                 case COMMIT_IN_PROGRESS:{
-                    AppLogger.warning(state.toString()).showMessage();
+                    AppLogger.warning(state.toString());
                     return state;
                 }
                 case DIRTY:{
@@ -213,8 +216,7 @@ public class World extends ModelDirectory{
                 default: return WorldState.ERROR;
             }
         }catch(Exception ex){
-            ex.printStackTrace();
-            AppLogger.error(ex.getMessage());
+            AppLogger.error("Error al crear respaldo").exception(ex);
         }
         return WorldState.ERROR;
     }
@@ -222,16 +224,15 @@ public class World extends ModelDirectory{
     public ListSnapshots getSnapshots(){
         ListSnapshots list=new ListSnapshots();
         try{
-            ExecutionObserver log=this.executeGitCommand("log --pretty=format:\"%H %s\" -10");
-            log.start((line,posi)->{
-                int first_space=line.indexOf(" ");
-                if(first_space>0){
-                    list.append(new Snapshot(line.substring(0,first_space),line.substring(first_space+1)));
-                }
-            });
+            if(this.repo.resolve(Constants.HEAD)==null){
+                return list;
+            }
+            Iterable<RevCommit> logs=this.git.log().setMaxCount(10).call();
+            for(RevCommit commit:logs){
+                list.append(new Snapshot(commit.getId().getName(),commit.getShortMessage()));
+            }
         }catch(Exception ex){
-            ex.printStackTrace();
-            AppLogger.error(ex.getMessage());
+            AppLogger.error("Error al obtener respaldos").exception(ex);
         }
         return list;
     }
@@ -247,25 +248,22 @@ public class World extends ModelDirectory{
                     return state;
                 }
                 case CLEAN:{
-                    ExecutionObserver checkout=this.executeGitCommand("checkout -b "+this.tmp_branch+" "+snap.getHash());
-                    checkout.start();
-                    if(checkout.exitCode()==0){
-                        AppLogger.info("Se cargo el respaldo \""+snap.getMessage()+"\" ("+snap.getHash()+"): "+this.getSrc()).showMessage();
-                        return WorldState.CHECKED_OUT;
-                    }else{
-                        AppLogger.error("Error cargar el respaldo \""+snap.getMessage()+"\" ("+snap.getHash()+"): "+this.getSrc()).showMessage();
-                        return state;
-                    }
+                    this.git.checkout()
+                            .setName(this.tmp_branch)
+                            .setCreateBranch(true)
+                            .setStartPoint(snap.getHash())
+                            .call();
+                    AppLogger.info("Se cargó el respaldo \""+snap.getMessage()+"\" ("+snap.getHash()+"): "+this.getSrc()).showMessage();
+                    return WorldState.CHECKED_OUT;
                 }
                 case ERROR:{
-                    AppLogger.error(state.toString()).showMessage();
+                    AppLogger.error(state.toString());
                     return state;
                 }
                 default: return WorldState.ERROR;
             }
         }catch(Exception ex){
-            ex.printStackTrace();
-            AppLogger.error(ex.getMessage());
+            AppLogger.error("Error al cargar respaldo").exception(ex);
         }
         return WorldState.ERROR;
     }
@@ -276,29 +274,23 @@ public class World extends ModelDirectory{
             switch(state){
                 case NOT_INITIALIZED:
                 case COMMIT_IN_PROGRESS:{
-                    AppLogger.warning(state.toString()).showMessage();
+                    AppLogger.warning(state.toString());
                     return state;
                 }
                 case CLEAN:
                 case DIRTY:{
-                    ExecutionObserver clean=this.executeGitCommand("clean -fd");
-                    ExecutionObserver checkout=this.executeGitCommand("checkout .");
-                    ExecutionObserver branch=this.executeGitCommand("checkout "+this.main_branch);
-                    ExecutionObserver branch_tmp=this.executeGitCommand("branch -D "+this.tmp_branch);
-                    clean.start();
-                    checkout.start();
-                    branch.start();
-                    branch_tmp.start();
-                    if(branch.exitCode()==0){
-                        AppLogger.info("Se descartarón los cambios actuales: "+this.getSrc()).showMessage();
-                        return WorldState.CLEAN;
-                    }else{
-                        AppLogger.error("Error al descartar los cambios actuales: "+this.getSrc()).showMessage();
-                        return WorldState.ERROR;
+                    this.git.clean().setForce(true).setCleanDirectories(true).call();
+                    this.git.reset().setMode(ResetCommand.ResetType.HARD).call();
+                    this.git.checkout().setName(this.main_branch).call();
+                    Ref tmp_ref=this.repo.findRef(this.tmp_branch);
+                    if(tmp_ref!=null){
+                        this.git.branchDelete().setBranchNames(this.tmp_branch).setForce(true).call();
                     }
+                    AppLogger.info("Cambios descartados: "+this.getSrc());
+                    return WorldState.CLEAN;
                 }
                 case ERROR:{
-                    AppLogger.error(state.toString()).showMessage();
+                    AppLogger.error(state.toString());
                     return state;
                 }
                 default: return WorldState.ERROR;

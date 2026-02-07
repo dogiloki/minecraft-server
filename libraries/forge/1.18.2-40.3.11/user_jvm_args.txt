@@ -1,1 +1,1 @@
--Xms1024M -Xmx2045M -XX:+UseG1GC -XX:+UseG1GC -XX:+UnlockExperimentalVMOptions -XX:G1NewSizePercent=20 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20 -XX:MaxGCPauseMillis=50 -XX:+DisableExplicitGC
+-Xms2045M -Xmx1024M -XX:+UseG1GC -XX:+UseG1GC -XX:+UnlockExperimentalVMOptions -XX:G1NewSizePercent=20 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20 -XX:MaxGCPauseMillis=50 -XX:+DisableExplicitGC

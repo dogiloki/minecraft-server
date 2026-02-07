@@ -415,7 +415,7 @@ public final class ServerPanel extends javax.swing.JPanel{
     }//GEN-LAST:event_create_snapshot_btnActionPerformed
 
     private void restore_snapshot_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_restore_snapshot_btnActionPerformed
-        ConfirmHelper.runWithConfirm("¿Cargar respaldo? Asegúrese de respaldar o descargar los cambios actuales",()->{
+        ConfirmHelper.runWithConfirm("¿Cargar respaldo? Asegúrese de respaldar o descartar los cambios actuales",()->{
             Snapshot snapshot=this.getSelectedSnapshot();
             if(snapshot==null) return;
             this.world.restoreSnapshot(snapshot);
