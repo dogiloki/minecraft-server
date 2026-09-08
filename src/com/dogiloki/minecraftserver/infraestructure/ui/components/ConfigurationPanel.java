@@ -43,7 +43,7 @@ public final class ConfigurationPanel extends javax.swing.JPanel {
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Java"));
 
-        jLabel2.setText("Instalación de java");
+        jLabel2.setText("Instalación de java (java.exe)");
 
         path_java_box.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {

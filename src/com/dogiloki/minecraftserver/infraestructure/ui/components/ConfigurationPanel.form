@@ -80,7 +80,7 @@
       <SubComponents>
         <Component class="javax.swing.JLabel" name="jLabel2">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Instalaci&#xf3;n de java"/>
+            <Property name="text" type="java.lang.String" value="Instalaci&#xf3;n de java (java.exe)"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="path_java_box">

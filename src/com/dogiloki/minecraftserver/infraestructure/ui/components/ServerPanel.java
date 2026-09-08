@@ -32,6 +32,7 @@ public final class ServerPanel extends javax.swing.JPanel{
     private final World world;
     private MinecraftServer minecraft_server;
     private Storage file_run;
+    private Storage file_start;
     private Storage file_eula;
     private ExecutionObserver execution;
     
@@ -118,9 +119,9 @@ public final class ServerPanel extends javax.swing.JPanel{
     }
     
     public void createFiles(){
-        this.file_run=new Storage(this.ins.getSrc()+"/"+Properties.folders.instances_server+"/start.bat");
-        this.file_eula=new Storage(this.file_run.getFolder()+"/eula.txt");
-        String game_dir=this.file_run.getFile().getParentFile().getAbsolutePath();
+        this.file_start=new Storage(this.ins.getSrc()+"/"+Properties.folders.instances_server+"/start.bat");
+        this.file_eula=new Storage(this.file_start.getFolder()+"/eula.txt");
+        String game_dir=this.file_start.getFile().getParentFile().getAbsolutePath();
         StringBuilder user_jvm_args=new StringBuilder();
         user_jvm_args.append("-Xms").append(this.ins.cfg.memory_min)
                 .append(" -Xmx").append(this.ins.cfg.memory_max)
@@ -138,49 +139,75 @@ public final class ServerPanel extends javax.swing.JPanel{
                 " ../../../"+this.minecraft_server.server_jar.getSrc()+
                 " nogui";
         if(this.ins.cfg.usedForge()){
-            Storage file_args=new Storage(this.minecraft_server.forge_jar.getFolder()+"/user_jvm_args.txt",DirectoryType.FILE).notExists();
-            file_args.write(user_jvm_args.toString());
-            file_args.flush();
-            file_args.close();
-            command=new Storage(this.minecraft_server.forge_jar.getSrc()).read();
-            command=command.replace("java -jar ","\""+this.ins.cfg.java_path+"\" -jar ");
-            command=command.replace("java","\""+this.ins.cfg.java_path+"\"");
-            if(command==null || command.equals("")){
-                DirectoryList jar_files=new Storage(minecraft_server.forge_jar.getFolder()).listFiles();
+            String forge_folder=Properties.folders.libraries_folder+"/"+Properties.folders.libraries_forge+"/"+this.ins.cfg.forge_version;
+            this.file_run=new Storage(forge_folder+"/run.bat",DirectoryType.FILE);
+            // Forge moderno versión igual o mayor a minecraft 1.17 (run.bat y win_args.txt)
+            if(this.file_run.exists() && !this.file_run.read().trim().equals("")){
+                Storage file_args=new Storage(this.file_run.getFolder()+"/user_jvm_args.txt",DirectoryType.FILE).notExists();
+                file_args.write(user_jvm_args.toString());
+                file_args.flush();
+                file_args.close();
+                
+                // win_args.txt original de Forge
+                Storage original_win_args=new Storage(forge_folder+"/libraries/net/minecraftforge/forge/"+this.ins.cfg.forge_version+"/win_args.txt",DirectoryType.FILE);
+                
+                // Ruta absoluta de las librerias globales de Forge
+                String forge_libraries=new Storage(forge_folder+"/libraries",DirectoryType.FOLDER).getFile().getAbsolutePath().replace("\\","/");
+                
+                // Generar argumentos globales sustituye las rutas "libraries/..." por rutas absolutas globales
+                String forge_args_content=original_win_args.read()
+                        .replace("libraries/",forge_libraries+"/")
+                        .replace("-DlibraryDirectory=libraries","-DlibraryDirectory="+forge_libraries);
+                
+                String shim_name="forge-"+this.ins.cfg.forge_version+"-shim.jar";
+                Storage shim_jar=new Storage(forge_folder+"/"+shim_name,DirectoryType.FILE);
+                if(shim_jar.exists()){
+                    String shim_path=shim_jar.getFile().getAbsolutePath().replace("\\","/");
+                    forge_args_content=forge_args_content.replace(shim_name,"\""+shim_path+"\"");
+                }
+                
+                // Archivo local para no duplicar librerías
+                Storage local_forge_args=new Storage(this.file_start.getFolder()+"/forge_win_args.txt",DirectoryType.FILE).notExists();
+                local_forge_args.write(forge_args_content);
+                local_forge_args.flush();
+                local_forge_args.close();
+                
+                String user_jvm_args_path=file_args.getFile().getAbsolutePath();
+                
+                command="@echo off\r\n"+
+                        "\""+this.ins.cfg.java_path+"\" "+
+                        "@\""+user_jvm_args_path+"\" "+
+                        "@forge_win_args.txt nogui \r\n"+
+                        "pause";
+            }else{ // Forge antiguo usando JAR universal
+                DirectoryList jar_files=new Storage(forge_folder,DirectoryType.FOLDER).listFiles();
+                Path legacy_forge_jar=null;
                 Path jar_file;
                 while((jar_file=jar_files.next())!=null){
                     String name=jar_file.getFileName().toString();
-                    if(!name.contains("universal") && !name.contains("forge")) continue;
-                    command="\""+this.ins.cfg.java_path+"\""+
-                        " -jar "+user_jvm_args.toString()+
-                        " ../../../"+jar_file.toString()+
-                        " nogui";
+                    if(name.contains("universal")){
+                        legacy_forge_jar=jar_file;
+                        break;
+                    }
                 }
-            }else{
-                AppLogger.error("Actualmente la aplicación no es compatible con la versión de server-forge "+this.ins.cfg.forge_version).showMessage();
-                return;
-            }
-            try{
-                /*
-                // Librerias para forge
-                Storage.deleteFile(Storage.getDir()+"/"+this.ins.getSrc()+"/"+Properties.folders.instances_server+"/libraries");
-                Files.createSymbolicLink(
-                    Paths.get(Storage.getDir()+"/"+this.ins.getSrc()+"/"+Properties.folders.instances_server+"/libraries"),
-                    Paths.get(Storage.getDir()+"/"+this.minecraft_server.forge_jar.getFolder()+"/libraries")
-                );
-                */
-            }catch(Exception ex){
-                ex.printStackTrace();
+                if(legacy_forge_jar==null){
+                    AppLogger.error("No se encontró run.bat ni un JAR universal de Forge: "+this.ins.cfg.forge_version).showMessage();
+                    return;
+                }
+                command="\""+this.ins.cfg.java_path+"\" "+
+                        user_jvm_args.toString()+" "+
+                        "-jar \""+legacy_forge_jar.toAbsolutePath()+"\" "+
+                        "nogui";
             }
         }
         // -Djava.awt.headless=true
         try{
-            this.file_run.write(command);
+            this.file_start.write(command);
             this.file_eula.write("#https://account.mojang.com/documents/minecraft_eula \neula=true");
             this.ins.server_properties.level_name=Properties.folders.instances_worlds+"/"+this.world.getName();
             this.ins.server_properties.save();
             this.file_eula.flush();
-            this.file_run.flush();
+            this.file_start.flush();
             this.start();
         }catch(Exception ex){
             AppLogger.error(ex.getMessage()).showMessage().exception(ex);
@@ -190,9 +217,9 @@ public final class ServerPanel extends javax.swing.JPanel{
     public void start(){
         try{
             this.execution=new ExecutionObserver(
-                    "cmd /c start cmd /k \"title "+this.getId()+" && call \""+this.file_run.getFile().getAbsolutePath()+"\"",
+                    "cmd /c start cmd /k \"title "+this.getId()+" && call \""+this.file_start.getFile().getAbsolutePath()+"\"",
                     //this.minecraft_server.forge_jar.getFolder()
-                    this.file_run.getFolder()
+                    this.file_start.getFolder()
             );
             this.execution.start();
             this.canStart(true);
