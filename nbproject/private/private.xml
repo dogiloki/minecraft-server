@@ -4,6 +4,11 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/E:/Github/Netbeans/minecraft-server/src/com/dogiloki/minecraftserver/infraestructure/ui/MainForm.java</file>
+            <file>file:/E:/Github/Netbeans/minecraft-server/src/com/dogiloki/minecraftserver/infraestructure/ui/InstanceDialog.java</file>
+            <file>file:/E:/Github/Netbeans/minecraft-server/src/com/dogiloki/minecraftserver/core/services/MinecraftClient.java</file>
+            <file>file:/E:/Github/Netbeans/minecraft-server/src/com/dogiloki/minecraftserver/core/services/World.java</file>
+            <file>file:/E:/Github/Netbeans/minecraft-server/src/com/dogiloki/minecraftserver/core/world/LevelDat.java</file>
+            <file>file:/E:/Github/Netbeans/minecraft-server/src/com/dogiloki/minecraftserver/infraestructure/ui/components/ClientPanel.java</file>
         </group>
     </open-files>
 </project-private>

@@ -2,6 +2,7 @@ package com.dogiloki.minecraftserver.core.services;
 
 import com.dogiloki.minecraftserver.core.entities.ListSnapshots;
 import com.dogiloki.minecraftserver.core.entities.enums.WorldState;
+import com.dogiloki.minecraftserver.core.world.LevelDat;
 import com.dogiloki.multitaks.directory.ModelDirectory;
 import com.dogiloki.multitaks.directory.Storage;
 import com.dogiloki.multitaks.directory.annotations.Directory;
@@ -22,8 +23,12 @@ import javax.swing.Icon;
 @Directory(type=DirectoryType.FOLDER)
 public class World extends ModelDirectory{
     
-    public static String DEFAULT_NAME="world";
-    public static String GIT_PATH="git";
+    public static final String DEFAULT_NAME="world";
+    public static final String GIT_PATH="git";
+    public static final String LEVEL_DAT="level.dat";
+    public static final String PLAYERDATA_FOLDER="playerdata";
+    public static final String STATS_FOLDER="stats";
+    public static final String ADVANCEMENTS_FOLDER="advancements";
     
     private final Icon icon=null;
     private final File git;
@@ -39,6 +44,26 @@ public class World extends ModelDirectory{
         this.git_lock=new File(this.git.getPath(),"index.lock");
         this.world_lock=new File(this.getSrc(),"session.lock");
         //this.icon= // Pendiente a obtener el icono
+    }
+    
+    public Storage getLevelDatFile(){
+        return new Storage(this.getSrc()+"/"+LEVEL_DAT,DirectoryType.FILE);
+    }
+    
+    public Storage getPlayerDataFolder(){
+        return new Storage(this.getSrc()+"/"+PLAYERDATA_FOLDER,DirectoryType.FOLDER);
+    }
+    
+    public Storage getStatsFolder(){
+        return new Storage(this.getSrc()+"/"+STATS_FOLDER,DirectoryType.FOLDER);
+    }
+    
+    public Storage getAdvancementsFolder(){
+        return new Storage(this.getSrc()+"/"+ADVANCEMENTS_FOLDER,DirectoryType.FOLDER);
+    }
+    
+    public LevelDat getLevelDat(){
+        return new LevelDat(this.getSrc()+"/"+LEVEL_DAT);
     }
     
     public boolean isWorldLocked(){

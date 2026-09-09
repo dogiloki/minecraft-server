@@ -16,7 +16,12 @@ import com.dogiloki.multitaks.download.DownloadDialog;
 import com.dogiloki.multitaks.logger.AppLogger;
 import com.dogiloki.multitaks.persistent.ExecutionObserver;
 import java.awt.Frame;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.LinkOption;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 
@@ -143,42 +148,37 @@ public final class ServerPanel extends javax.swing.JPanel{
             this.file_run=new Storage(forge_folder+"/run.bat",DirectoryType.FILE);
             // Forge moderno versión igual o mayor a minecraft 1.17 (run.bat y win_args.txt)
             if(this.file_run.exists() && !this.file_run.read().trim().equals("")){
-                Storage file_args=new Storage(this.file_run.getFolder()+"/user_jvm_args.txt",DirectoryType.FILE).notExists();
+                try{
+                    Path local_libraries=Paths.get(this.file_start.getFolder(),"libraries").toAbsolutePath();
+                    Path global_libraries=Paths.get(forge_folder,"libraries").toAbsolutePath();
+                    
+                    if(!Files.exists(global_libraries)){
+                        AppLogger.error("No existen las librerías de Forge: "+global_libraries).showMessage();
+                        return;
+                    }
+                    if(!Files.exists(local_libraries,LinkOption.NOFOLLOW_LINKS)){
+                        Process process=new ProcessBuilder("cmd.exe","/c","mklink /J \""+local_libraries+"\" \""+global_libraries+"\"").redirectErrorStream(true).start();
+                        if(process.waitFor()!=0){
+                            throw new IOException("No se pudo crear la unión de librerias");
+                        }
+                    }
+                    String shim_name="forge-"+this.ins.cfg.forge_version+"-shim.jar";
+                    Path global_shim=Paths.get(forge_folder,shim_name).toAbsolutePath();
+                    Path local_shim=Paths.get(this.file_start.getFolder(),shim_name).toAbsolutePath();
+                    if(Files.exists(global_shim)){
+                        Files.copy(global_shim,local_shim,StandardCopyOption.REPLACE_EXISTING);
+                    }
+                }catch(Exception ex){
+                    ex.printStackTrace();
+                    AppLogger.error(ex.getMessage()).showMessage().exception(ex);
+                    return;
+                }
+                
+                Storage file_args=new Storage(this.file_start.getFolder()+"/user_jvm_args.txt",DirectoryType.FILE).notExists();
                 file_args.write(user_jvm_args.toString());
                 file_args.flush();
                 file_args.close();
-                
-                // win_args.txt original de Forge
-                Storage original_win_args=new Storage(forge_folder+"/libraries/net/minecraftforge/forge/"+this.ins.cfg.forge_version+"/win_args.txt",DirectoryType.FILE);
-                
-                // Ruta absoluta de las librerias globales de Forge
-                String forge_libraries=new Storage(forge_folder+"/libraries",DirectoryType.FOLDER).getFile().getAbsolutePath().replace("\\","/");
-                
-                // Generar argumentos globales sustituye las rutas "libraries/..." por rutas absolutas globales
-                String forge_args_content=original_win_args.read()
-                        .replace("libraries/",forge_libraries+"/")
-                        .replace("-DlibraryDirectory=libraries","-DlibraryDirectory="+forge_libraries);
-                
-                String shim_name="forge-"+this.ins.cfg.forge_version+"-shim.jar";
-                Storage shim_jar=new Storage(forge_folder+"/"+shim_name,DirectoryType.FILE);
-                if(shim_jar.exists()){
-                    String shim_path=shim_jar.getFile().getAbsolutePath().replace("\\","/");
-                    forge_args_content=forge_args_content.replace(shim_name,"\""+shim_path+"\"");
-                }
-                
-                // Archivo local para no duplicar librerías
-                Storage local_forge_args=new Storage(this.file_start.getFolder()+"/forge_win_args.txt",DirectoryType.FILE).notExists();
-                local_forge_args.write(forge_args_content);
-                local_forge_args.flush();
-                local_forge_args.close();
-                
-                String user_jvm_args_path=file_args.getFile().getAbsolutePath();
-                
-                command="@echo off\r\n"+
-                        "\""+this.ins.cfg.java_path+"\" "+
-                        "@\""+user_jvm_args_path+"\" "+
-                        "@forge_win_args.txt nogui \r\n"+
-                        "pause";
+                command=this.file_run.read().replace("java","\""+this.ins.cfg.java_path+"\"");
             }else{ // Forge antiguo usando JAR universal
                 DirectoryList jar_files=new Storage(forge_folder,DirectoryType.FOLDER).listFiles();
                 Path legacy_forge_jar=null;
@@ -217,7 +217,7 @@ public final class ServerPanel extends javax.swing.JPanel{
     public void start(){
         try{
             this.execution=new ExecutionObserver(
-                    "cmd /c start cmd /k \"title "+this.getId()+" && call \""+this.file_start.getFile().getAbsolutePath()+"\"",
+                    "cmd /c start cmd /k \"title "+this.getId()+" && call \""+this.file_start.getFile().getAbsolutePath()+"\"\" nogui",
                     //this.minecraft_server.forge_jar.getFolder()
                     this.file_start.getFolder()
             );
