@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
@@ -44,7 +45,6 @@ public class ClientPanel extends javax.swing.JPanel {
     public MinecraftClient client;
     public World world;
     private NBTService nbt;
-    private DefaultMutableTreeNode current=null;
     
     public ClientPanel(Frame parent, MinecraftClient client, World world){
         initComponents();
@@ -62,74 +62,41 @@ public class ClientPanel extends javax.swing.JPanel {
     
     public void loadLevelDat(){
         if(this.nbt==null) return;
-        DefaultMutableTreeNode root=new DefaultMutableTreeNode(world.getLevelDatFile().getName());
-        this.nbt.tree().index().forEach((path,node)->{
-            buildTreeNode(root,path,node);
-        });
+        Node<NBTNode> root_node=this.nbt.tree().rootNode();
+        NBTNode root_value=root_node.getValue();
+        DefaultMutableTreeNode root=new TreeNodeWrapper(root_node,root_value.getName()+" ("+root_value.getType()+")");
+        for(Node<NBTNode> child:root_node.childNodes()){
+            this.buildTreeNode(root,child);
+        }
         this.level_tree.setModel(new DefaultTreeModel(root));
     }
     
-    private void buildTreeNode(DefaultMutableTreeNode root, String path, Node<NBTNode> value){
-        String[] parts=path.split("\\.");
-        this.current=root;
-        for(String part:parts){
-            DefaultMutableTreeNode child=null;
-            // Buscar si el nodo existe
-            for(int a=0; a<this.current.getChildCount(); a++){
-                DefaultMutableTreeNode node=(DefaultMutableTreeNode)this.current.getChildAt(a);
-                if(node.getUserObject().equals(part)){
-                    child=node;
-                    break;
-                }
-            }
-            // Si no existe crearlo
-            if(child==null){
-                child=new TreeNodeWrapper(part,part+" ("+value.getValue().getType()+")");
-                this.current.add(child);
-            }
-            this.current=child;
+    private void buildTreeNode(DefaultMutableTreeNode root, Node<NBTNode> value){
+        NBTNode nbt=value.getValue();
+        DefaultMutableTreeNode node=new TreeNodeWrapper(value,nbt.getName()+" ("+nbt.getType()+")");
+        root.add(node);
+        for(Node<NBTNode> child:value.childNodes()){
+            this.buildTreeNode(node,child);
         }
-        DefaultMutableTreeNode leaf=new TreeNodeWrapper(value,value.getValue().getValue()+" ("+value.getValue().getType()+")");
-        this.current.add(leaf);
-    }
-    
-    /*
-    private void buildValueNode(DefaultMutableTreeNode parent, Node<NBTNode> node, Object value){
-        if(value instanceof HashFields){
-            HashFields<?,?> hash=(HashFields<?,?>)value;
-            hash.forEach((name,item)->{
-                DefaultMutableTreeNode field=new TreeNodeWrapper(node,name);
-                parent.add(field);
-                this.buildValueNode(field,node,item);
-            });
-        }else if(value instanceof ListFields){
-            System.out.println("lis");
-            ListFields<?> list=(ListFields<?>)value;
-            int index=0;
-            for(Object item:list){
-                if(item instanceof HashFields){
-                    DefaultMutableTreeNode element=new TreeNodeWrapper(node,index++);
-                    parent.add(element);
-                    this.buildValueNode(element,node,item);
-                }else{
-                    DefaultMutableTreeNode element=new TreeNodeWrapper(node,item);
-                    parent.add(element);
-                }
-            }
-        }else{
-            DefaultMutableTreeNode leaf=new TreeNodeWrapper(node,value);
-            parent.add(leaf);
+        // Agregar el calor como nodo final usando el mismo Node<NBTNode>
+        if(value.childNodes().isEmpty()){
+            DefaultMutableTreeNode value_node=new TreeNodeWrapper(value,nbt.getValue());
+            node.add(value_node);
         }
     }
-    */
     
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        nbt_popup = new javax.swing.JPopupMenu();
+        nbt_popup_new = new javax.swing.JMenuItem();
         jScrollPane2 = new javax.swing.JScrollPane();
         level_tree = new javax.swing.JTree();
         name_instance_label = new javax.swing.JLabel();
+
+        nbt_popup_new.setText("Nuevo");
+        nbt_popup.add(nbt_popup_new);
 
         level_tree.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
@@ -164,14 +131,17 @@ public class ClientPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void level_treeMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_level_treeMousePressed
-        if(evt.getClickCount()!=1) return;
         TreePath path=this.level_tree.getPathForLocation(evt.getX(),evt.getY());
         if(path==null) return;
         DefaultMutableTreeNode root_node=(DefaultMutableTreeNode)path.getLastPathComponent();
-        // Solo hojas
-        if(!root_node.isLeaf()) return;
         Node<NBTNode> node=(Node<NBTNode>)root_node.getUserObject();
         NBTNode value=node.getValue();
+        this.level_tree.setSelectionPath(path);
+        if(SwingUtilities.isRightMouseButton(evt)){
+            this.nbt_popup.show(this.level_tree,evt.getX(),evt.getY());
+            return;
+        }
+        if(!root_node.isLeaf()) return;
         String old_value=value.getValue().toString();
         String new_value=JOptionPane.showInputDialog(this.parent,"Nuevo valor: ",old_value);
         if(new_value==null) return;
@@ -235,5 +205,7 @@ public class ClientPanel extends javax.swing.JPanel {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTree level_tree;
     private javax.swing.JLabel name_instance_label;
+    private javax.swing.JPopupMenu nbt_popup;
+    private javax.swing.JMenuItem nbt_popup_new;
     // End of variables declaration//GEN-END:variables
 }
