@@ -1,16 +1,37 @@
 package com.dogiloki.minecraftserver.infraestructure.ui.components;
 
 import com.dogiloki.minecraftserver.core.entities.NBTNode;
+import static com.dogiloki.minecraftserver.core.entities.enums.NBTType.BYTE;
 import com.dogiloki.minecraftserver.core.services.MinecraftClient;
 import com.dogiloki.minecraftserver.core.services.NBTService;
 import com.dogiloki.minecraftserver.core.services.World;
-import com.dogiloki.multitaks.datastructure.tree.TreeIterator;
+import com.dogiloki.multitaks.datastructure.Node;
+import com.dogiloki.multitaks.datastructure.tree.TreeNodeWrapper;
+import com.dogiloki.multitaks.directory.HashFields;
+import com.dogiloki.multitaks.directory.ListFields;
 import com.dogiloki.multitaks.logger.AppLogger;
 import java.awt.Frame;
-import java.util.Iterator;
-import net.querz.nbt.io.NBTSerializer;
-import net.querz.nbt.io.NamedTag;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
+import net.querz.nbt.tag.ByteArrayTag;
+import net.querz.nbt.tag.ByteTag;
 import net.querz.nbt.tag.CompoundTag;
+import net.querz.nbt.tag.DoubleTag;
+import net.querz.nbt.tag.EndTag;
+import net.querz.nbt.tag.FloatTag;
+import net.querz.nbt.tag.IntArrayTag;
+import net.querz.nbt.tag.IntTag;
+import net.querz.nbt.tag.ListTag;
+import net.querz.nbt.tag.LongArrayTag;
+import net.querz.nbt.tag.LongTag;
+import net.querz.nbt.tag.ShortTag;
+import net.querz.nbt.tag.StringTag;
+import net.querz.nbt.tag.Tag;
 
 /**
  *
@@ -19,59 +40,200 @@ import net.querz.nbt.tag.CompoundTag;
 
 public class ClientPanel extends javax.swing.JPanel {
 
-    public Frame frame;
+    public Frame parent;
     public MinecraftClient client;
     public World world;
+    private NBTService nbt;
+    private DefaultMutableTreeNode current=null;
     
-    public ClientPanel(Frame frame, MinecraftClient client, World world){
+    public ClientPanel(Frame parent, MinecraftClient client, World world){
         initComponents();
-        this.frame=frame;
+        this.parent=parent;
         this.client=client;
         this.world=world;
         try{
-            NBTService nbt=new NBTService(world.getLevelDatFile().getFile());
-            nbt.tree().index().forEach((key,value)->{
-                System.out.println(key+" -> "+value.getValue().toString());
-            });
+            this.nbt=new NBTService(this.world.getLevelDatFile().getFile());
         }catch(Exception ex){
             AppLogger.error("Error al cargar").showMessage().exception(ex);
         }
+        this.name_instance_label.setText(client.getName()+" - "+this.world.getName());
+        this.loadLevelDat();
     }
     
+    public void loadLevelDat(){
+        if(this.nbt==null) return;
+        DefaultMutableTreeNode root=new DefaultMutableTreeNode(world.getLevelDatFile().getName());
+        this.nbt.tree().index().forEach((path,node)->{
+            buildTreeNode(root,path,node);
+        });
+        this.level_tree.setModel(new DefaultTreeModel(root));
+    }
+    
+    private void buildTreeNode(DefaultMutableTreeNode root, String path, Node<NBTNode> value){
+        String[] parts=path.split("\\.");
+        this.current=root;
+        for(String part:parts){
+            DefaultMutableTreeNode child=null;
+            // Buscar si el nodo existe
+            for(int a=0; a<this.current.getChildCount(); a++){
+                DefaultMutableTreeNode node=(DefaultMutableTreeNode)this.current.getChildAt(a);
+                if(node.getUserObject().equals(part)){
+                    child=node;
+                    break;
+                }
+            }
+            // Si no existe crearlo
+            if(child==null){
+                child=new TreeNodeWrapper(part,part+" ("+value.getValue().getType()+")");
+                this.current.add(child);
+            }
+            this.current=child;
+        }
+        DefaultMutableTreeNode leaf=new TreeNodeWrapper(value,value.getValue().getValue()+" ("+value.getValue().getType()+")");
+        this.current.add(leaf);
+    }
+    
+    /*
+    private void buildValueNode(DefaultMutableTreeNode parent, Node<NBTNode> node, Object value){
+        if(value instanceof HashFields){
+            HashFields<?,?> hash=(HashFields<?,?>)value;
+            hash.forEach((name,item)->{
+                DefaultMutableTreeNode field=new TreeNodeWrapper(node,name);
+                parent.add(field);
+                this.buildValueNode(field,node,item);
+            });
+        }else if(value instanceof ListFields){
+            System.out.println("lis");
+            ListFields<?> list=(ListFields<?>)value;
+            int index=0;
+            for(Object item:list){
+                if(item instanceof HashFields){
+                    DefaultMutableTreeNode element=new TreeNodeWrapper(node,index++);
+                    parent.add(element);
+                    this.buildValueNode(element,node,item);
+                }else{
+                    DefaultMutableTreeNode element=new TreeNodeWrapper(node,item);
+                    parent.add(element);
+                }
+            }
+        }else{
+            DefaultMutableTreeNode leaf=new TreeNodeWrapper(node,value);
+            parent.add(leaf);
+        }
+    }
+    */
     
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jScrollPane1 = new javax.swing.JScrollPane();
-        area = new javax.swing.JTextArea();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        level_tree = new javax.swing.JTree();
+        name_instance_label = new javax.swing.JLabel();
 
-        area.setColumns(20);
-        area.setRows(5);
-        area.setText("ds");
-        jScrollPane1.setViewportView(area);
+        level_tree.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                level_treeMousePressed(evt);
+            }
+        });
+        jScrollPane2.setViewportView(level_tree);
+
+        name_instance_label.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+        name_instance_label.setText("jLabel1");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(105, 105, 105)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 318, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(344, Short.MAX_VALUE))
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(name_instance_label, javax.swing.GroupLayout.DEFAULT_SIZE, 697, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(179, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(148, 148, 148))
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(name_instance_label)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 398, Short.MAX_VALUE)
+                .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void level_treeMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_level_treeMousePressed
+        if(evt.getClickCount()!=1) return;
+        TreePath path=this.level_tree.getPathForLocation(evt.getX(),evt.getY());
+        if(path==null) return;
+        DefaultMutableTreeNode root_node=(DefaultMutableTreeNode)path.getLastPathComponent();
+        // Solo hojas
+        if(!root_node.isLeaf()) return;
+        Node<NBTNode> node=(Node<NBTNode>)root_node.getUserObject();
+        NBTNode value=node.getValue();
+        String old_value=value.getValue().toString();
+        String new_value=JOptionPane.showInputDialog(this.parent,"Nuevo valor: ",old_value);
+        if(new_value==null) return;
+        try{
+            Tag<?> new_tag;
+            switch(value.getType()){
+                case BYTE: new_tag=new ByteTag(Byte.parseByte(new_value)); break;
+                case SHORT: new_tag=new ShortTag(Short.parseShort(new_value)); break;
+                case INT: new_tag=new IntTag(Integer.parseInt(new_value)); break;
+                case LONG: new_tag=new LongTag(Long.parseLong(new_value)); break;
+                case FLOAT: new_tag=new FloatTag(Float.parseFloat(new_value)); break;
+                case DOUBLE: new_tag=new DoubleTag(Double.parseDouble(new_value)); break;
+                case STRING: new_tag=new StringTag(new_value); break;
+                default: AppLogger.alert("Es tipo de NBT ("+value.getPath()+") no se puede editar aquí").showMessage(); return;
+            }
+            value.setTag(new_tag);
+            // Sincronizar cambios
+            Node<NBTNode> parent=node.parent();
+            if(parent==null){
+                AppLogger.debug("El nodo no tiene padre "+node.toString());
+                return;
+            }
+            NBTNode parent_value=parent.getValue();
+            Tag<?> parent_tag=parent_value.getTag();
+            if(parent_tag instanceof CompoundTag){
+                CompoundTag compound=(CompoundTag)parent_tag;
+                compound.put(value.getName(),new_tag);
+            }else if(parent_tag instanceof ListTag){
+                ListTag list=(ListTag)parent_tag;
+                int index=Integer.parseInt(value.getName());
+                list.set(index,new_tag);
+            }else if(parent_tag instanceof ByteArrayTag){
+                ByteArrayTag array=(ByteArrayTag)parent_tag;
+                int index=Integer.parseInt(value.getName());
+                array.getValue()[index]=((ByteTag)new_tag).asByte();
+            }else if(parent_tag instanceof IntArrayTag){
+                IntArrayTag array=(IntArrayTag)parent_tag;
+                int index=Integer.parseInt(value.getName());
+                array.getValue()[index]=((IntTag)new_tag).asInt();
+            }else if(parent_tag instanceof LongArrayTag){
+                LongArrayTag array=(LongArrayTag)parent_tag;
+                int index=Integer.parseInt(value.getName());
+                array.getValue()[index]=((LongTag)new_tag).asLong();
+            }else{
+                AppLogger.alert("No se puede modificar el padre tipo "+parent_tag.getClass().getSimpleName()).showMessage();
+                return;
+            }
+            // Guardar cambios
+            this.nbt.save();
+            this.loadLevelDat();
+            AppLogger.info("Se cambio el valor "+value.getName()+": de "+old_value+" a "+new_value);
+        }catch(NumberFormatException ex){
+            AppLogger.error("El valor no es válido para "+value.getTag().getClass()).exception(ex).showMessage();
+        }catch(IOException ex){
+            AppLogger.error("Error al guardar la datos \n"+ex.getMessage()).exception(ex).showMessage();
+        }
+    }//GEN-LAST:event_level_treeMousePressed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTextArea area;
-    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JTree level_tree;
+    private javax.swing.JLabel name_instance_label;
     // End of variables declaration//GEN-END:variables
 }

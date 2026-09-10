@@ -2,7 +2,6 @@ package com.dogiloki.minecraftserver.core.services;
 
 import com.dogiloki.minecraftserver.core.entities.ListSnapshots;
 import com.dogiloki.minecraftserver.core.entities.enums.WorldState;
-import com.dogiloki.minecraftserver.core.world.LevelDat;
 import com.dogiloki.multitaks.directory.ModelDirectory;
 import com.dogiloki.multitaks.directory.Storage;
 import com.dogiloki.multitaks.directory.annotations.Directory;
@@ -60,10 +59,6 @@ public class World extends ModelDirectory{
     
     public Storage getAdvancementsFolder(){
         return new Storage(this.getSrc()+"/"+ADVANCEMENTS_FOLDER,DirectoryType.FOLDER);
-    }
-    
-    public LevelDat getLevelDat(){
-        return new LevelDat(this.getSrc()+"/"+LEVEL_DAT);
     }
     
     public boolean isWorldLocked(){

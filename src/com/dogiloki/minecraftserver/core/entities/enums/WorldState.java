@@ -16,7 +16,7 @@ public enum WorldState{
     CHECKED_OUT("Esta cargado el respaldo: {0}"),
     ERROR("Fallo inesperado");
     
-    private String str;
+    private final String str;
     
     private WorldState(String str){
         this.str=str;
